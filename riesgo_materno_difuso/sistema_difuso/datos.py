@@ -30,6 +30,7 @@ def cargar_datos(ruta_csv):
     if datos[VARIABLES_ENTRADA].isna().any().any():
         raise ValueError("El CSV contiene valores faltantes o no numericos.")
 
+    datos = quitar_registros_con_frecuencia_cardiaca_erronea(datos)
     return datos
 
 
@@ -87,3 +88,11 @@ def validar_proporciones():
     total = sum(PROPORCIONES_SPLIT.values())
     if abs(total - 1.0) > 1e-9:
         raise ValueError("Las proporciones de entrenamiento, validacion y prueba deben sumar 1.")
+
+
+def quitar_registros_con_frecuencia_cardiaca_erronea(datos):
+    # Limpieza puntual del dataset original:
+    # existen 2 filas con frecuencia cardiaca igual a 7, valor que no debe
+    # participar en el entrenamiento ni en la optimizacion.
+    datos_limpios = datos.loc[datos["frecuencia_cardiaca"] != 7].copy()
+    return datos_limpios.reset_index(drop=True)

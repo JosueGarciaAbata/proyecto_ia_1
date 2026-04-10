@@ -12,6 +12,12 @@ def principal():
     print("-" * 50)
     print(f"Sistema usado: {resultado['sistema']}")
     print(f"Origen del modelo: {resultado['origen_modelo']}")
+    for ajuste in resultado["ajustes_entrada"]:
+        print(
+            "Ajuste aplicado: "
+            f"{ajuste['variable']} "
+            f"{ajuste['valor_original']} -> {ajuste['valor_ajustado']}"
+        )
     print(f"Puntaje de riesgo: {resultado['puntaje']:.4f}")
     print(f"Riesgo: {resultado['riesgo']}")
 

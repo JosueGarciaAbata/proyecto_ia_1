@@ -140,6 +140,23 @@ Nota importante:
 - la primera ejecucion puede tardar porque entrena el modelo;
 - las ejecuciones siguientes reutilizan `modelo_optimizado.json`;
 - si quieres reentrenar manualmente, usa `optimizar_mamdani_ag.py`.
+- en la entrada por CLI, si un valor queda apenas fuera del dominio operativo, el sistema lo satura al limite; si queda demasiado fuera, lo rechaza.
+
+Tolerancias de saturacion en la CLI:
+
+- `edad`: 2 unidades
+- `presion_sistolica`: 5 unidades
+- `presion_diastolica`: 5 unidades
+- `azucar_sangre`: 0.5 unidades
+- `temperatura_corporal`: 0.5 unidades
+- `frecuencia_cardiaca`: 5 unidades
+
+Ejemplos:
+
+- si `frecuencia_cardiaca = 102`, se ajusta a `100`
+- si `frecuencia_cardiaca = 140`, se rechaza
+- si `edad = 76`, se ajusta a `75`
+- si `edad = 120`, se rechaza
 
 ## Ejecutar solo la optimizacion
 

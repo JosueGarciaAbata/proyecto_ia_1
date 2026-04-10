@@ -155,7 +155,7 @@ REGLAS = [
         ],
         "consecuente": "medio",
     },
-    {
+   {
         "numero": 14,
         "antecedentes": [
             ("edad", "adulta"),
@@ -163,7 +163,7 @@ REGLAS = [
             ("presion_diastolica", "normal"),
             ("azucar_sangre", "normal"),
             ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "taquicardia"),
+            ("frecuencia_cardiaca", "elevada"),
         ],
         "consecuente": "medio",
     },
@@ -244,7 +244,7 @@ REGLAS = [
         "antecedentes": [
             ("edad", "adulta"),
             ("presion_sistolica", "alta"),
-            ("presion_diastolica", "severa"),
+            ("presion_diastolica", "alta"),        # era "severa"
             ("azucar_sangre", "normal"),
             ("temperatura_corporal", "normal"),
             ("frecuencia_cardiaca", "normal"),
@@ -275,7 +275,7 @@ REGLAS = [
         ],
         "consecuente": "alto",
     },
-    {
+      {
         "numero": 24,
         "antecedentes": [
             ("edad", "adulta"),
@@ -283,7 +283,7 @@ REGLAS = [
             ("presion_diastolica", "normal"),
             ("azucar_sangre", "normal"),
             ("temperatura_corporal", "fiebre"),
-            ("frecuencia_cardiaca", "taquicardia"),
+            ("frecuencia_cardiaca", "elevada"),    # era "taquicardia"
         ],
         "consecuente": "alto",
     },
@@ -299,7 +299,7 @@ REGLAS = [
         ],
         "consecuente": "alto",
     },
-    {
+      {
         "numero": 26,
         "antecedentes": [
             ("edad", "adulta"),
@@ -307,7 +307,7 @@ REGLAS = [
             ("presion_diastolica", "normal"),
             ("azucar_sangre", "elevada"),
             ("temperatura_corporal", "subfebril_elevada"),
-            ("frecuencia_cardiaca", "taquicardia"),
+            ("frecuencia_cardiaca", "elevada"),    # era "taquicardia"
         ],
         "consecuente": "alto",
     },

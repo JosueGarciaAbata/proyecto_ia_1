@@ -43,6 +43,7 @@ ESPECIFICACIONES_VARIABLES = OrderedDict(
             {
                 "limites": (10.0, 75.0),
                 "epsilon": 0.5,
+                "tolerancia_saturacion": 2.0,
                 "categorias": OrderedDict(
                     [
                         ("adolescente", [10.0, 10.0, 17.0, 20.0]),
@@ -57,6 +58,7 @@ ESPECIFICACIONES_VARIABLES = OrderedDict(
             {
                 "limites": (65.0, 170.0),
                 "epsilon": 1.0,
+                "tolerancia_saturacion": 5.0,
                 "categorias": OrderedDict(
                     [
                         ("baja", [65.0, 65.0, 85.0, 95.0]),
@@ -71,15 +73,15 @@ ESPECIFICACIONES_VARIABLES = OrderedDict(
         (
             "presion_diastolica",
             {
-                "limites": (45.0, 140.0),
+                "limites": (45.0, 105.0),
                 "epsilon": 1.0,
+                "tolerancia_saturacion": 5.0,
                 "categorias": OrderedDict(
                     [
                         ("baja", [45.0, 45.0, 55.0, 60.0]),
                         ("normal", [55.0, 60.0, 75.0, 85.0]),
                         ("limitrofe", [80.0, 84.0, 89.0, 92.0]),
-                        ("alta", [90.0, 95.0, 105.0, 112.0]),
-                        ("severa", [108.0, 110.0, 140.0, 140.0]),
+                        ("alta", [90.0, 95.0, 105.0, 105.0]),
                     ]
                 ),
             },
@@ -89,9 +91,10 @@ ESPECIFICACIONES_VARIABLES = OrderedDict(
             {
                 "limites": (5.5, 20.0),
                 "epsilon": 0.1,
+                "tolerancia_saturacion": 0.5,
                 "categorias": OrderedDict(
                     [
-                        ("normal", [6.5, 7.0, 9.0, 11.0]),
+                        ("normal", [5.5, 5.5, 6.3, 7.0]),
                         ("elevada", [6.5, 7.0, 9.0, 11.0]),
                         ("muy_elevada", [10.0, 12.0, 20.0, 20.0]),
                     ]
@@ -103,6 +106,7 @@ ESPECIFICACIONES_VARIABLES = OrderedDict(
             {
                 "limites": (97.0, 104.0),
                 "epsilon": 0.1,
+                "tolerancia_saturacion": 0.5,
                 "categorias": OrderedDict(
                     [
                         ("normal", [97.0, 97.5, 99.1, 99.6]),
@@ -118,13 +122,12 @@ ESPECIFICACIONES_VARIABLES = OrderedDict(
             {
                 "limites": (55.0, 100.0),
                 "epsilon": 1.0,
+                "tolerancia_saturacion": 5.0,
                 "categorias": OrderedDict(
                     [
                         ("baja", [55.0, 55.0, 62.0, 68.0]),
                         ("normal", [64.0, 70.0, 80.0, 86.0]),
                         ("elevada", [82.0, 86.0, 100.0, 100.0]),
-                        ("taquicardia", [90.0, 94.0, 100.0, 100.0]),
-                        ("taquicardia_marcada", [95.0, 98.0, 100.0, 100.0]),
                     ]
                 ),
             },
