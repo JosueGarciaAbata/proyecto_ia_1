@@ -1,361 +1,144 @@
+# Reglas del sistema difuso Mamdani para riesgo materno
+#
+# Cada regla tiene:
+#   - antecedentes: lista de (variable, categoria) conectados por AND (minimo)
+#   - consecuente: "bajo", "medio" o "alto"
+#
+# Disenadas a partir de los percentiles del dataset y conocimiento clinico.
+# Azucar en sangre (BS) es el predictor mas fuerte de alto riesgo.
+# No hay reglas redundantes (ninguna esta subsumida por otra).
+# 15 reglas para mantener interpretabilidad.
+
 REGLAS = [
+    # --- BAJO RIESGO ---
     {
         "numero": 1,
         "antecedentes": [
-            ("edad", "adulta"),
+            ("azucar_sangre", "normal"),
             ("presion_sistolica", "normal"),
             ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
         ],
         "consecuente": "bajo",
     },
     {
         "numero": 2,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
             ("azucar_sangre", "normal"),
+            ("presion_diastolica", "normal"),
             ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "elevada"),
         ],
         "consecuente": "bajo",
     },
+    # --- MEDIO RIESGO ---
+    # Azucar ligeramente elevada sin otros factores criticos
     {
         "numero": 3,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "baja"),
+            ("azucar_sangre", "elevada"),
             ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
         ],
-        "consecuente": "bajo",
+        "consecuente": "medio",
     },
+    # Presion elevada sin azucar critica
     {
         "numero": 4,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "baja"),
+            ("presion_sistolica", "elevada"),
             ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
         ],
-        "consecuente": "bajo",
+        "consecuente": "medio",
     },
     {
         "numero": 5,
         "antecedentes": [
-            ("edad", "adolescente"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
+            ("presion_diastolica", "elevada"),
             ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
         ],
         "consecuente": "medio",
     },
+    # Edad avanzada con valores normales
     {
         "numero": 6,
         "antecedentes": [
             ("edad", "avanzada"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
             ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
+            ("presion_diastolica", "normal"),
         ],
         "consecuente": "medio",
     },
+    # Temperatura elevada (subfebril)
     {
         "numero": 7,
         "antecedentes": [
-            ("edad", "adolescente"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "elevada"),
+            ("temperatura_corporal", "elevada"),
         ],
         "consecuente": "medio",
     },
+    # --- ALTO RIESGO ---
+    # Azucar muy alta: indicador primario por si solo
     {
         "numero": 8,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "limitrofe"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
+            ("azucar_sangre", "alta"),
         ],
-        "consecuente": "medio",
+        "consecuente": "alto",
     },
+    # Combinacion azucar elevada + presion elevada
     {
         "numero": 9,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "limitrofe"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
+            ("azucar_sangre", "elevada"),
+            ("presion_diastolica", "elevada"),
         ],
-        "consecuente": "medio",
+        "consecuente": "alto",
     },
     {
         "numero": 10,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "limitrofe"),
-            ("presion_diastolica", "limitrofe"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
+            ("azucar_sangre", "elevada"),
+            ("presion_sistolica", "elevada"),
         ],
-        "consecuente": "medio",
+        "consecuente": "alto",
     },
+    # Combinacion azucar elevada + edad avanzada
     {
         "numero": 11,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
             ("azucar_sangre", "elevada"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
+            ("edad", "avanzada"),
         ],
-        "consecuente": "medio",
+        "consecuente": "alto",
     },
+    # Presion diastolica alta: peligro por si sola
     {
         "numero": 12,
         "antecedentes": [
-            ("edad", "avanzada"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "elevada"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
+            ("presion_diastolica", "alta"),
         ],
-        "consecuente": "medio",
+        "consecuente": "alto",
     },
+    # Presion sistolica alta: peligro por si sola
     {
         "numero": 13,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "subfebril_elevada"),
-            ("frecuencia_cardiaca", "normal"),
+            ("presion_sistolica", "alta"),
         ],
-        "consecuente": "medio",
+        "consecuente": "alto",
     },
-   {
+    # Fiebre: riesgo de infeccion/sepsis
+    {
         "numero": 14,
         "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "elevada"),
+            ("temperatura_corporal", "fiebre"),
         ],
-        "consecuente": "medio",
+        "consecuente": "alto",
     },
+    # Edad avanzada + presion diastolica elevada
     {
         "numero": 15,
         "antecedentes": [
             ("edad", "avanzada"),
-            ("presion_sistolica", "limitrofe"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "medio",
-    },
-    {
-        "numero": 16,
-        "antecedentes": [
-            ("edad", "adolescente"),
-            ("presion_sistolica", "limitrofe"),
-            ("presion_diastolica", "limitrofe"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "medio",
-    },
-    {
-        "numero": 17,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "alta"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 18,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "alta"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 19,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "alta"),
-            ("presion_diastolica", "alta"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 20,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "severa"),
-            ("presion_diastolica", "alta"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 21,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "alta"),
-            ("presion_diastolica", "alta"),        # era "severa"
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 22,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "muy_elevada"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 23,
-        "antecedentes": [
-            ("edad", "avanzada"),
-            ("presion_sistolica", "limitrofe"),
-            ("presion_diastolica", "limitrofe"),
-            ("azucar_sangre", "elevada"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "normal"),
-        ],
-        "consecuente": "alto",
-    },
-      {
-        "numero": 24,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "fiebre"),
-            ("frecuencia_cardiaca", "elevada"),    # era "taquicardia"
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 25,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "normal"),
-            ("temperatura_corporal", "fiebre_alta"),
-            ("frecuencia_cardiaca", "elevada"),
-        ],
-        "consecuente": "alto",
-    },
-      {
-        "numero": 26,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "elevada"),
-            ("temperatura_corporal", "subfebril_elevada"),
-            ("frecuencia_cardiaca", "elevada"),    # era "taquicardia"
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 27,
-        "antecedentes": [
-            ("edad", "avanzada"),
-            ("presion_sistolica", "alta"),
-            ("presion_diastolica", "normal"),
-            ("azucar_sangre", "elevada"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "elevada"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 28,
-        "antecedentes": [
-            ("edad", "avanzada"),
-            ("presion_sistolica", "normal"),
-            ("presion_diastolica", "alta"),
-            ("azucar_sangre", "elevada"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "elevada"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 29,
-        "antecedentes": [
-            ("edad", "adolescente"),
-            ("presion_sistolica", "alta"),
-            ("presion_diastolica", "limitrofe"),
-            ("azucar_sangre", "elevada"),
-            ("temperatura_corporal", "normal"),
-            ("frecuencia_cardiaca", "elevada"),
-        ],
-        "consecuente": "alto",
-    },
-    {
-        "numero": 30,
-        "antecedentes": [
-            ("edad", "adulta"),
-            ("presion_sistolica", "limitrofe"),
-            ("presion_diastolica", "limitrofe"),
-            ("azucar_sangre", "elevada"),
-            ("temperatura_corporal", "subfebril_elevada"),
-            ("frecuencia_cardiaca", "elevada"),
+            ("presion_diastolica", "elevada"),
         ],
         "consecuente": "alto",
     },
