@@ -3,6 +3,7 @@ import math
 
 import numpy as np
 import pandas as pd
+import pygad
 
 from ..logica_difusa.motor import SistemaDifusoMamdani
 from ..sistema_difuso.configuracion import PARAMETROS_AG, PESOS_FITNESS
@@ -36,70 +37,92 @@ class Individuo:
 
 
 def ejecutar_algoritmo_genetico(datos_validacion):
-    poblacion = [
-        evaluar_individuo(cromosoma, datos_validacion)
-        for cromosoma in inicializar_poblacion()
-    ]
-    poblacion.sort(key=lambda individuo: individuo.fitness, reverse=True)
-    mejor_individuo = poblacion[0]
-    historial = [
-        {
-            "generacion": 0,
-            "mejor_fitness": mejor_individuo.fitness,
-            "fitness_promedio": float(np.mean([individuo.fitness for individuo in poblacion])),
-            "macro_f1_validacion": mejor_individuo.macro_f1_validacion,
-            "recall_alto_validacion": mejor_individuo.recall_alto_validacion,
-        }
-    ]
+    evaluaciones_cache = {}
+    historial = []
+    mejor_individuo = None
     generaciones_sin_mejora = 0
+    poblacion_inicial = inicializar_poblacion()
 
-    for generacion in range(1, PARAMETROS_AG["maximo_generaciones"] + 1):
-        padres = [
-            seleccionar_por_torneo(poblacion, PARAMETROS_AG["tamano_torneo"])
-            for _ in range(PARAMETROS_AG["cantidad_hijos"])
-        ]
-        hijos = []
+    def obtener_individuo(solucion):
+        clave = crear_clave_solucion(solucion)
+        if clave not in evaluaciones_cache:
+            evaluaciones_cache[clave] = evaluar_individuo(solucion, datos_validacion)
+        return evaluaciones_cache[clave]
 
-        for indice in range(0, PARAMETROS_AG["cantidad_hijos"], 2):
-            padre_uno = padres[indice].cromosoma
-            padre_dos = padres[indice + 1].cromosoma
-            hijo_uno, hijo_dos = cruce_aritmetico(padre_uno, padre_dos)
-            hijo_uno = mutacion_gaussiana(hijo_uno)
-            hijo_dos = mutacion_gaussiana(hijo_dos)
-            hijos.append(evaluar_individuo(hijo_uno, datos_validacion))
-            hijos.append(evaluar_individuo(hijo_dos, datos_validacion))
+    def fitness_func(instancia_ga, solucion, indice_solucion):
+        return obtener_individuo(solucion).fitness
 
-        competencia = poblacion + hijos
-        competencia.sort(key=lambda individuo: individuo.fitness, reverse=True)
-        poblacion = competencia[: PARAMETROS_AG["tamano_poblacion"]]
-        mejor_generacion = poblacion[0]
+    def on_generation(instancia_ga):
+        nonlocal mejor_individuo, generaciones_sin_mejora
+        poblacion = [obtener_individuo(solucion) for solucion in instancia_ga.population]
+        mejor_generacion = max(poblacion, key=lambda individuo: individuo.fitness)
+        promedio_fitness = float(np.mean([individuo.fitness for individuo in poblacion]))
 
         historial.append(
             {
-                "generacion": generacion,
+                "generacion": int(instancia_ga.generations_completed),
                 "mejor_fitness": mejor_generacion.fitness,
-                "fitness_promedio": float(np.mean([individuo.fitness for individuo in poblacion])),
+                "fitness_promedio": promedio_fitness,
                 "macro_f1_validacion": mejor_generacion.macro_f1_validacion,
                 "recall_alto_validacion": mejor_generacion.recall_alto_validacion,
             }
         )
 
         print(
-            f"Generacion {generacion:03d} | "
+            f"Generacion {instancia_ga.generations_completed:03d} | "
             f"fitness={mejor_generacion.fitness:.4f} | "
             f"macro_f1={mejor_generacion.macro_f1_validacion:.4f} | "
             f"recall_alto={mejor_generacion.recall_alto_validacion:.4f}"
         )
 
-        if mejor_generacion.fitness > mejor_individuo.fitness:
+        if mejor_individuo is None or mejor_generacion.fitness > mejor_individuo.fitness:
             mejor_individuo = mejor_generacion
             generaciones_sin_mejora = 0
         else:
             generaciones_sin_mejora += 1
 
         if generaciones_sin_mejora >= PARAMETROS_AG["paciencia"]:
-            break
+            return "stop"
+        return None
 
+    poblacion_evaluada = [obtener_individuo(solucion) for solucion in poblacion_inicial]
+    mejor_inicial = max(poblacion_evaluada, key=lambda individuo: individuo.fitness)
+    historial.append(
+        {
+            "generacion": 0,
+            "mejor_fitness": mejor_inicial.fitness,
+            "fitness_promedio": float(np.mean([individuo.fitness for individuo in poblacion_evaluada])),
+            "macro_f1_validacion": mejor_inicial.macro_f1_validacion,
+            "recall_alto_validacion": mejor_inicial.recall_alto_validacion,
+        }
+    )
+    mejor_individuo = mejor_inicial
+
+    instancia_ga = pygad.GA(
+        initial_population=poblacion_inicial,
+        num_parents_mating=PARAMETROS_AG["cantidad_hijos"],
+        fitness_func=fitness_func,
+        num_generations=PARAMETROS_AG["maximo_generaciones"],
+        parent_selection_type="tournament",
+        K_tournament=PARAMETROS_AG["tamano_torneo"],
+        keep_elitism=PARAMETROS_AG["elitismo"],
+        crossover_type=cruce_aritmetico,
+        crossover_probability=PARAMETROS_AG["probabilidad_cruce"],
+        mutation_type=mutacion_gaussiana,
+        mutation_probability=PARAMETROS_AG["probabilidad_mutacion"],
+        gene_type=float,
+        gene_space=[
+            {"low": float(limite_inferior), "high": float(limite_superior)}
+            for limite_inferior, limite_superior in zip(LIMITES_INFERIORES, LIMITES_SUPERIORES)
+        ],
+        on_generation=on_generation,
+        save_solutions=False,
+        suppress_warnings=True,
+    )
+    instancia_ga.run()
+
+    mejor_solucion, _, _ = instancia_ga.best_solution()
+    mejor_individuo = obtener_individuo(mejor_solucion)
     return mejor_individuo, pd.DataFrame(historial)
 
 
@@ -160,37 +183,56 @@ def inicializar_poblacion():
         cromosoma_reparado, _ = reparar_cromosoma(cromosoma_aleatorio)
         poblacion.append(cromosoma_reparado)
 
-    return poblacion
+    return np.asarray(poblacion, dtype=float)
 
 
-def seleccionar_por_torneo(poblacion, tamano_torneo):
-    indices = np.random.randint(0, len(poblacion), size=tamano_torneo)
-    candidatos = [poblacion[indice] for indice in indices]
-    return max(candidatos, key=lambda individuo: individuo.fitness)
+def cruce_aritmetico(padres, tamano_descendencia, instancia_ga):
+    descendencia = []
+    cantidad_genes = padres.shape[1]
+    indice_padre = 0
+
+    while len(descendencia) < tamano_descendencia[0]:
+        padre_uno = padres[indice_padre % len(padres)]
+        padre_dos = padres[(indice_padre + 1) % len(padres)]
+        hijo_uno = padre_uno.copy()
+        hijo_dos = padre_dos.copy()
+
+        if np.random.random() < PARAMETROS_AG["probabilidad_cruce"]:
+            lambdas = np.random.uniform(0.25, 0.75, size=cantidad_genes)
+            hijo_uno = lambdas * padre_uno + (1.0 - lambdas) * padre_dos
+            hijo_dos = (1.0 - lambdas) * padre_uno + lambdas * padre_dos
+
+        hijo_uno, _ = reparar_cromosoma(hijo_uno)
+        hijo_dos, _ = reparar_cromosoma(hijo_dos)
+        descendencia.append(hijo_uno)
+
+        if len(descendencia) < tamano_descendencia[0]:
+            descendencia.append(hijo_dos)
+
+        indice_padre += 2
+
+    return np.asarray(descendencia, dtype=float)
 
 
-def cruce_aritmetico(padre_uno, padre_dos):
-    hijo_uno = padre_uno.copy()
-    hijo_dos = padre_dos.copy()
-
-    if np.random.random() < PARAMETROS_AG["probabilidad_cruce"]:
-        lambdas = np.random.uniform(0.25, 0.75, size=padre_uno.shape[0])
-        hijo_uno = lambdas * padre_uno + (1.0 - lambdas) * padre_dos
-        hijo_dos = (1.0 - lambdas) * padre_uno + lambdas * padre_dos
-
-    return hijo_uno, hijo_dos
-
-
-def mutacion_gaussiana(cromosoma):
-    cromosoma_mutado = cromosoma.copy()
-    mascara = (
-        np.random.random(size=cromosoma_mutado.shape[0])
-        < PARAMETROS_AG["probabilidad_mutacion"]
-    )
+def mutacion_gaussiana(descendencia, instancia_ga):
+    descendencia_mutada = np.asarray(descendencia, dtype=float).copy()
     sigma = 0.05 * RANGOS_GENES
-    cromosoma_mutado[mascara] += np.random.normal(
-        loc=0.0,
-        scale=sigma[mascara],
-        size=mascara.sum(),
-    )
-    return cromosoma_mutado
+
+    for indice in range(descendencia_mutada.shape[0]):
+        mascara = (
+            np.random.random(size=descendencia_mutada.shape[1])
+            < PARAMETROS_AG["probabilidad_mutacion"]
+        )
+        if mascara.any():
+            descendencia_mutada[indice, mascara] += np.random.normal(
+                loc=0.0,
+                scale=sigma[mascara],
+                size=mascara.sum(),
+            )
+        descendencia_mutada[indice], _ = reparar_cromosoma(descendencia_mutada[indice])
+
+    return descendencia_mutada
+
+
+def crear_clave_solucion(solucion):
+    return np.asarray(solucion, dtype=np.float64).round(8).tobytes()

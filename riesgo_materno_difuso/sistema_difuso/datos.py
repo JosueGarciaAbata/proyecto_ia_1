@@ -1,5 +1,5 @@
-import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 from .configuracion import (
     COLUMNA_RIESGO_CSV,
@@ -34,47 +34,27 @@ def cargar_datos(ruta_csv):
 
 
 def dividir_datos_estratificados(tabla):
-    proporcion_entrenamiento = PROPORCIONES_SPLIT["entrenamiento"]
-    proporcion_validacion = PROPORCIONES_SPLIT["validacion"]
-    proporcion_prueba = PROPORCIONES_SPLIT["prueba"]
+    validar_proporciones()
+    proporcion_temporal = PROPORCIONES_SPLIT["validacion"] + PROPORCIONES_SPLIT["prueba"]
 
-    if not np.isclose(
-        proporcion_entrenamiento + proporcion_validacion + proporcion_prueba,
-        1.0,
-    ):
-        raise ValueError("Las proporciones de entrenamiento, validacion y prueba deben sumar 1.")
+    entrenamiento, temporal = train_test_split(
+        tabla,
+        train_size=PROPORCIONES_SPLIT["entrenamiento"],
+        stratify=tabla["riesgo"],
+        shuffle=True,
+    )
+    validacion, prueba = train_test_split(
+        temporal,
+        train_size=PROPORCIONES_SPLIT["validacion"] / proporcion_temporal,
+        stratify=temporal["riesgo"],
+        shuffle=True,
+    )
 
-    indices_por_split = {
-        "entrenamiento": [],
-        "validacion": [],
-        "prueba": [],
+    return {
+        "entrenamiento": entrenamiento.reset_index(drop=True),
+        "validacion": validacion.reset_index(drop=True),
+        "prueba": prueba.reset_index(drop=True),
     }
-
-    for etiqueta in ETIQUETAS_RIESGO:
-        indices = tabla.index[tabla["riesgo"] == etiqueta].to_numpy()
-        indices_barajados = np.random.permutation(indices)
-        total = len(indices_barajados)
-        cantidad_entrenamiento = int(np.floor(total * proporcion_entrenamiento))
-        cantidad_validacion = int(np.floor(total * proporcion_validacion))
-
-        indices_por_split["entrenamiento"].extend(
-            indices_barajados[:cantidad_entrenamiento].tolist()
-        )
-        indices_por_split["validacion"].extend(
-            indices_barajados[
-                cantidad_entrenamiento : cantidad_entrenamiento + cantidad_validacion
-            ].tolist()
-        )
-        indices_por_split["prueba"].extend(
-            indices_barajados[cantidad_entrenamiento + cantidad_validacion :].tolist()
-        )
-
-    splits = {}
-    for nombre_split, indices in indices_por_split.items():
-        indices_finales = np.random.permutation(np.array(indices))
-        splits[nombre_split] = tabla.loc[indices_finales].reset_index(drop=True)
-
-    return splits
 
 
 def convertir_split_a_diccionario(tabla_split):
@@ -101,3 +81,9 @@ def resumir_splits(splits):
             }
         )
     return pd.DataFrame(filas)
+
+
+def validar_proporciones():
+    total = sum(PROPORCIONES_SPLIT.values())
+    if abs(total - 1.0) > 1e-9:
+        raise ValueError("Las proporciones de entrenamiento, validacion y prueba deben sumar 1.")

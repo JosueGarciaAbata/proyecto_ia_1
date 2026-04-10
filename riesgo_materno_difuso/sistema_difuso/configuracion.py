@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 RUTA_CSV = "Maternal Health Risk Data Set.csv"
 COLUMNA_RIESGO_CSV = "RiskLevel"
+RUTA_MODELO_OPTIMIZADO = "modelo_optimizado.json"
 
 MAPA_COLUMNAS_CSV = OrderedDict(
     [
@@ -134,7 +135,7 @@ ESPECIFICACIONES_VARIABLES = OrderedDict(
 PARAMETROS_AG = {
     "tamano_poblacion": 60,
     "cantidad_hijos": 60,
-    "maximo_generaciones": 200,
+    "maximo_generaciones": 50,
     "probabilidad_cruce": 0.85,
     "probabilidad_mutacion": 0.03,
     "elitismo": 4,
@@ -157,4 +158,3 @@ PROPORCIONES_SPLIT = {
 
 PUNTOS_SALIDA = 401
 PUNTOS_GRAFICA = 300
-RUTA_SALIDAS = "salidas"

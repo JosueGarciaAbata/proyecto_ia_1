@@ -6,12 +6,12 @@ from riesgo_materno_difuso.sistema_difuso.prediccion import predecir_caso
 def principal():
     argumentos = crear_parser().parse_args()
     valores = recoger_valores(argumentos)
-    resultado = predecir_caso(valores, usar_sistema=argumentos.sistema)
+    resultado = predecir_caso(valores)
 
     print("Prediccion de riesgo materno")
     print("-" * 50)
     print(f"Sistema usado: {resultado['sistema']}")
-    print(f"Origen de membresias: {resultado['origen_membresias']}")
+    print(f"Origen del modelo: {resultado['origen_modelo']}")
     print(f"Puntaje de riesgo: {resultado['puntaje']:.4f}")
     print(f"Riesgo: {resultado['riesgo']}")
 
@@ -61,12 +61,6 @@ def crear_parser():
     parser.add_argument("--azucar-sangre", dest="azucar_sangre", type=float, help="Azucar en sangre en mmol/L.")
     parser.add_argument("--temperatura-corporal", dest="temperatura_corporal", type=float, help="Temperatura corporal en F.")
     parser.add_argument("--frecuencia-cardiaca", dest="frecuencia_cardiaca", type=float, help="Frecuencia cardiaca en bpm.")
-    parser.add_argument(
-        "--sistema",
-        choices=["optimizado", "base"],
-        default="optimizado",
-        help="Sistema a usar para la prediccion.",
-    )
     return parser
 
 

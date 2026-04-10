@@ -1,0 +1,5 @@
+numpy
+pandas
+scikit-fuzzy
+pygad
+scikit-learn

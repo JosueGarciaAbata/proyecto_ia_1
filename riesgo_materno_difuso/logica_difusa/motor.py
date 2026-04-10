@@ -1,76 +1,119 @@
 import numpy as np
+import skfuzzy as fuzz
 
-from ..sistema_difuso.configuracion import PUNTOS_SALIDA, SALIDA_DIFUSA, VARIABLES_ENTRADA
+from ..sistema_difuso.configuracion import (
+    ESPECIFICACIONES_VARIABLES,
+    PUNTOS_GRAFICA,
+    PUNTOS_SALIDA,
+    SALIDA_DIFUSA,
+    VARIABLES_ENTRADA,
+)
 from .reglas import REGLAS
 
 
 class SistemaDifusoMamdani:
     def __init__(self, membresias_entrada):
         self.membresias_entrada = membresias_entrada
-        minimo_salida, maximo_salida = SALIDA_DIFUSA["universo"]
-        self.universo_salida = np.linspace(minimo_salida, maximo_salida, PUNTOS_SALIDA)
         self.puntaje_neutro = 50.0
-        self.membresias_salida = {
-            etiqueta: pertenencia_trapezoidal(self.universo_salida, puntos)
-            for etiqueta, puntos in SALIDA_DIFUSA["categorias"].items()
-        }
+        self.universos_entrada = self.crear_universos_entrada()
+        self.universo_salida = self.crear_universo_salida()
+        self.curvas_entrada = self.crear_curvas_entrada()
+        self.curvas_salida = self.crear_curvas_salida()
 
     def inferir_lote(self, entradas):
-        borrosificados = self.fusificar_lote(entradas)
-        cantidad_muestras = len(next(iter(entradas.values())))
-        activaciones = {
-            "bajo": np.zeros(cantidad_muestras, dtype=float),
-            "medio": np.zeros(cantidad_muestras, dtype=float),
-            "alto": np.zeros(cantidad_muestras, dtype=float),
-        }
+        puntajes = []
+        riesgos = []
+        activaciones = []
+        cantidad_casos = len(next(iter(entradas.values())))
 
-        for regla in REGLAS:
-            grados_antecedentes = [
-                borrosificados[variable][categoria]
-                for variable, categoria in regla["antecedentes"]
-            ]
-            fuerza_regla = np.minimum.reduce(grados_antecedentes)
-            activacion_actual = activaciones[regla["consecuente"]]
-            activaciones[regla["consecuente"]] = np.maximum(
-                activacion_actual,
-                fuerza_regla,
-            )
+        for indice in range(cantidad_casos):
+            caso = {
+                variable: float(np.asarray(entradas[variable], dtype=float)[indice])
+                for variable in VARIABLES_ENTRADA
+            }
+            resultado = self.inferir_caso(caso)
+            puntajes.append(resultado["puntaje"])
+            riesgos.append(resultado["riesgo"])
+            activaciones.append(resultado["activaciones"])
 
-        puntajes = self.desfusificar_lote(activaciones)
-        riesgos = np.array([puntaje_a_riesgo(puntaje) for puntaje in puntajes], dtype=object)
         return {
-            "puntajes": puntajes,
-            "riesgos": riesgos,
+            "puntajes": np.asarray(puntajes, dtype=float),
+            "riesgos": np.asarray(riesgos, dtype=object),
             "activaciones": activaciones,
         }
 
-    def fusificar_lote(self, entradas):
-        borrosificados = {}
+    def inferir_caso(self, caso):
+        pertenencias = self.fusificar_caso(caso)
+        activaciones = self.evaluar_reglas(pertenencias)
+        puntaje = self.desfusificar_activaciones(activaciones)
+        return {
+            "puntaje": float(puntaje),
+            "riesgo": puntaje_a_riesgo(puntaje),
+            "activaciones": activaciones,
+        }
+
+    def fusificar_caso(self, caso):
+        pertenencias = {}
         for variable in VARIABLES_ENTRADA:
-            valores = np.asarray(entradas[variable], dtype=float)
-            borrosificados[variable] = {
-                categoria: pertenencia_trapezoidal(valores, puntos)
-                for categoria, puntos in self.membresias_entrada[variable].items()
-            }
-        return borrosificados
+            pertenencias[variable] = {}
+            universo = self.universos_entrada[variable]
+            for categoria, curva in self.curvas_entrada[variable].items():
+                pertenencias[variable][categoria] = float(
+                    fuzz.interp_membership(universo, curva, caso[variable])
+                )
+        return pertenencias
 
-    def desfusificar_lote(self, activaciones):
-        salidas_recortadas = [
-            np.minimum(activaciones[etiqueta][:, None], membresia[None, :])
-            for etiqueta, membresia in self.membresias_salida.items()
-        ]
-        salida_agregada = np.maximum.reduce(salidas_recortadas)
-        divisor = np.trapezoid(salida_agregada, self.universo_salida, axis=1)
-        dividendo = np.trapezoid(
-            salida_agregada * self.universo_salida[None, :],
-            self.universo_salida,
-            axis=1,
-        )
+    def evaluar_reglas(self, pertenencias):
+        activaciones = {"bajo": 0.0, "medio": 0.0, "alto": 0.0}
 
-        puntajes = np.full(salida_agregada.shape[0], np.nan, dtype=float)
-        puntajes[divisor > 0.0] = dividendo[divisor > 0.0] / divisor[divisor > 0.0]
-        puntajes[divisor == 0.0] = self.puntaje_neutro
-        return puntajes
+        for regla in REGLAS:
+            grados = [
+                pertenencias[variable][categoria]
+                for variable, categoria in regla["antecedentes"]
+            ]
+            fuerza_regla = float(np.min(grados))
+            consecuente = regla["consecuente"]
+            activaciones[consecuente] = max(activaciones[consecuente], fuerza_regla)
+
+        return activaciones
+
+    def desfusificar_activaciones(self, activaciones):
+        salida_agregada = np.zeros_like(self.universo_salida, dtype=float)
+
+        for categoria, curva_salida in self.curvas_salida.items():
+            salida_recortada = np.fmin(activaciones[categoria], curva_salida)
+            salida_agregada = np.fmax(salida_agregada, salida_recortada)
+
+        if float(np.max(salida_agregada)) == 0.0:
+            return self.puntaje_neutro
+
+        return float(fuzz.defuzz(self.universo_salida, salida_agregada, "centroid"))
+
+    def crear_universos_entrada(self):
+        universos = {}
+        for variable, especificacion in ESPECIFICACIONES_VARIABLES.items():
+            minimo, maximo = especificacion["limites"]
+            universos[variable] = np.linspace(minimo, maximo, PUNTOS_GRAFICA)
+        return universos
+
+    def crear_universo_salida(self):
+        minimo_salida, maximo_salida = SALIDA_DIFUSA["universo"]
+        return np.linspace(minimo_salida, maximo_salida, PUNTOS_SALIDA)
+
+    def crear_curvas_entrada(self):
+        curvas = {}
+        for variable, categorias in self.membresias_entrada.items():
+            universo = self.universos_entrada[variable]
+            curvas[variable] = {}
+            for categoria, puntos in categorias.items():
+                curvas[variable][categoria] = fuzz.trapmf(universo, puntos)
+        return curvas
+
+    def crear_curvas_salida(self):
+        curvas = {}
+        for categoria, puntos in SALIDA_DIFUSA["categorias"].items():
+            curvas[categoria] = fuzz.trapmf(self.universo_salida, puntos)
+        return curvas
 
 
 def puntaje_a_riesgo(puntaje):
@@ -81,44 +124,3 @@ def puntaje_a_riesgo(puntaje):
     if puntaje < 70.0:
         return "mid risk"
     return "high risk"
-
-
-def pertenencia_trapezoidal(x, puntos):
-    a, b, c, d = [float(valor) for valor in puntos]
-    x = np.asarray(x, dtype=float)
-    pertenencia = np.zeros_like(x, dtype=float)
-
-    if a == b:
-        pertenencia[(x >= a) & (x <= c)] = 1.0
-    else:
-        subida = (a < x) & (x < b)
-        pertenencia[subida] = (x[subida] - a) / (b - a)
-        pertenencia[(x >= b) & (x <= c)] = 1.0
-
-    if c == d:
-        pertenencia[(x >= b) & (x <= d)] = np.maximum(
-            pertenencia[(x >= b) & (x <= d)],
-            1.0,
-        )
-    else:
-        bajada = (c < x) & (x < d)
-        pertenencia[bajada] = (d - x[bajada]) / (d - c)
-        pertenencia[(x >= b) & (x <= c)] = 1.0
-
-    return np.clip(pertenencia, 0.0, 1.0)
-
-
-def pertenencia_triangular(x, puntos):
-    a, b, c = [float(valor) for valor in puntos]
-    x = np.asarray(x, dtype=float)
-    pertenencia = np.zeros_like(x, dtype=float)
-
-    if b > a:
-        subida = (a < x) & (x < b)
-        pertenencia[subida] = (x[subida] - a) / (b - a)
-    if c > b:
-        bajada = (b < x) & (x < c)
-        pertenencia[bajada] = (c - x[bajada]) / (c - b)
-
-    pertenencia[x == b] = 1.0
-    return np.clip(pertenencia, 0.0, 1.0)
