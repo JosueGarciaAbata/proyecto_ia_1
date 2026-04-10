@@ -18,22 +18,22 @@ La solucion implementa un sistema Mamdani completo con fuzzificacion trapezoidal
 
 ## Estructura modular
 
-- `run_mamdani_ga.py`
-- `maternal_risk_fuzzy/config.py`
-- `maternal_risk_fuzzy/data.py`
-- `maternal_risk_fuzzy/fuzzy_engine.py`
-- `maternal_risk_fuzzy/rules.py`
-- `maternal_risk_fuzzy/chromosome.py`
-- `maternal_risk_fuzzy/penalties.py`
-- `maternal_risk_fuzzy/ga.py`
-- `maternal_risk_fuzzy/metrics.py`
-- `maternal_risk_fuzzy/evaluation.py`
-- `maternal_risk_fuzzy/visualization.py`
+- `optimizar_mamdani_ag.py`
+- `predecir_cli.py`
+- `riesgo_materno_difuso/logica_difusa/`
+- `riesgo_materno_difuso/sistema_difuso/`
+- `riesgo_materno_difuso/optimizacion/`
+
+## Separacion por carpetas
+
+- `riesgo_materno_difuso/logica_difusa/`: logica difusa pura, reglas, funciones de pertenencia e inferencia Mamdani.
+- `riesgo_materno_difuso/sistema_difuso/`: configuracion del sistema, carga de datos, metricas, evaluacion y prediccion.
+- `riesgo_materno_difuso/optimizacion/`: cromosoma, reparacion, penalizaciones, algoritmo genetico y graficos.
 
 ## Ejecucion
 
 ```powershell
-python run_mamdani_ga.py
+python optimizar_mamdani_ag.py
 ```
 
 ## Prediccion por CLI
@@ -41,20 +41,20 @@ python run_mamdani_ga.py
 Para usar el sistema como clasificador simple desde consola:
 
 ```powershell
-python predict_cli.py --age 25 --systolicbp 130 --diastolicbp 80 --bs 7.2 --bodytemp 98.4 --heartrate 86
+python predecir_cli.py --edad 25 --presion-sistolica 130 --presion-diastolica 80 --azucar-sangre 7.2 --temperatura-corporal 98.4 --frecuencia-cardiaca 86
 ```
 
 Si omites algun argumento, el script lo pedira por teclado.
 
-Por defecto usa `outputs/optimized_memberships.csv` si ya existe. Si quieres forzar el sistema base:
+Por defecto usa `salidas/membresias_optimizadas.csv` si ya existe. Si quieres forzar el sistema base:
 
 ```powershell
-python predict_cli.py --system base
+python predecir_cli.py --sistema base
 ```
 
 ## Artefactos esperados
 
-El script genera en `outputs/`:
+El script genera en `salidas/`:
 
 - `report.txt`
 - `metrics_comparison.csv`

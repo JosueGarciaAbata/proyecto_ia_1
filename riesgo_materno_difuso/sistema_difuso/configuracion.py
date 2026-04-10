@@ -1,49 +1,48 @@
 from collections import OrderedDict
 
 
-DATASET_PATH = "Maternal Health Risk Data Set.csv"
-TARGET_COLUMN = "RiskLevel"
-INPUT_COLUMNS = [
-    "Age",
-    "SystolicBP",
-    "DiastolicBP",
-    "BS",
-    "BodyTemp",
-    "HeartRate",
-]
+RUTA_CSV = "Maternal Health Risk Data Set.csv"
+COLUMNA_RIESGO_CSV = "RiskLevel"
 
-CLASS_LABELS = ["low risk", "mid risk", "high risk"]
-CLASS_TO_INDEX = {label: idx for idx, label in enumerate(CLASS_LABELS)}
-INDEX_TO_CLASS = {idx: label for label, idx in CLASS_TO_INDEX.items()}
+MAPA_COLUMNAS_CSV = OrderedDict(
+    [
+        ("edad", "Age"),
+        ("presion_sistolica", "SystolicBP"),
+        ("presion_diastolica", "DiastolicBP"),
+        ("azucar_sangre", "BS"),
+        ("temperatura_corporal", "BodyTemp"),
+        ("frecuencia_cardiaca", "HeartRate"),
+    ]
+)
 
-OUTPUT_VARIABLE = {
-    "name": "RiskScore",
-    "universe": (0.0, 100.0),
-    "terms": OrderedDict(
+VARIABLES_ENTRADA = list(MAPA_COLUMNAS_CSV.keys())
+ETIQUETAS_RIESGO = ["low risk", "mid risk", "high risk"]
+
+SALIDA_DIFUSA = {
+    "nombre": "puntaje_riesgo",
+    "universo": (0.0, 100.0),
+    "categorias": OrderedDict(
         [
-            ("low", [0.0, 0.0, 25.0, 45.0]),
-            ("mid", [35.0, 45.0, 55.0, 70.0]),
-            ("high", [60.0, 80.0, 100.0, 100.0]),
+            ("bajo", [0.0, 0.0, 25.0, 45.0]),
+            ("medio", [35.0, 45.0, 55.0, 70.0]),
+            ("alto", [60.0, 80.0, 100.0, 100.0]),
         ]
     ),
 }
 
-# Conservative implementation note:
-# - DiastolicBP is clipped to 140 instead of 105 because the fixed base term
-#   "severa" is explicitly defined as [108, 110, 140, 140]. Using 105 would make
-#   the mandatory base chromosome infeasible.
-# - HeartRate includes the extra terms "taquicardia" and
-#   "taquicardia_marcada" because the fixed rule base uses them although the
-#   initial list only provided three categories. The added terms are nested
-#   right-shoulder sets to preserve the original semantics.
-VARIABLE_SPECS = OrderedDict(
+# Nota conservadora:
+# - presion_diastolica usa limite superior 140 porque la categoria fija
+#   "severa" fue definida asi en la especificacion base.
+# - frecuencia_cardiaca incluye "taquicardia" y "taquicardia_marcada"
+#   porque las reglas fijas las usan explicitamente.
+ESPECIFICACIONES_VARIABLES = OrderedDict(
     [
         (
-            "Age",
+            "edad",
             {
-                "bounds": (10.0, 75.0),
+                "limites": (10.0, 75.0),
                 "epsilon": 0.5,
-                "terms": OrderedDict(
+                "categorias": OrderedDict(
                     [
                         ("adolescente", [10.0, 10.0, 17.0, 20.0]),
                         ("adulta", [18.0, 22.0, 34.0, 40.0]),
@@ -53,11 +52,11 @@ VARIABLE_SPECS = OrderedDict(
             },
         ),
         (
-            "SystolicBP",
+            "presion_sistolica",
             {
-                "bounds": (65.0, 170.0),
+                "limites": (65.0, 170.0),
                 "epsilon": 1.0,
-                "terms": OrderedDict(
+                "categorias": OrderedDict(
                     [
                         ("baja", [65.0, 65.0, 85.0, 95.0]),
                         ("normal", [90.0, 100.0, 120.0, 130.0]),
@@ -69,11 +68,11 @@ VARIABLE_SPECS = OrderedDict(
             },
         ),
         (
-            "DiastolicBP",
+            "presion_diastolica",
             {
-                "bounds": (45.0, 140.0),
+                "limites": (45.0, 140.0),
                 "epsilon": 1.0,
-                "terms": OrderedDict(
+                "categorias": OrderedDict(
                     [
                         ("baja", [45.0, 45.0, 55.0, 60.0]),
                         ("normal", [55.0, 60.0, 75.0, 85.0]),
@@ -85,11 +84,11 @@ VARIABLE_SPECS = OrderedDict(
             },
         ),
         (
-            "BS",
+            "azucar_sangre",
             {
-                "bounds": (5.5, 20.0),
+                "limites": (5.5, 20.0),
                 "epsilon": 0.1,
-                "terms": OrderedDict(
+                "categorias": OrderedDict(
                     [
                         ("normal", [6.5, 7.0, 9.0, 11.0]),
                         ("elevada", [6.5, 7.0, 9.0, 11.0]),
@@ -99,11 +98,11 @@ VARIABLE_SPECS = OrderedDict(
             },
         ),
         (
-            "BodyTemp",
+            "temperatura_corporal",
             {
-                "bounds": (97.0, 104.0),
+                "limites": (97.0, 104.0),
                 "epsilon": 0.1,
-                "terms": OrderedDict(
+                "categorias": OrderedDict(
                     [
                         ("normal", [97.0, 97.5, 99.1, 99.6]),
                         ("subfebril_elevada", [99.2, 99.6, 100.2, 100.7]),
@@ -114,11 +113,11 @@ VARIABLE_SPECS = OrderedDict(
             },
         ),
         (
-            "HeartRate",
+            "frecuencia_cardiaca",
             {
-                "bounds": (55.0, 100.0),
+                "limites": (55.0, 100.0),
                 "epsilon": 1.0,
-                "terms": OrderedDict(
+                "categorias": OrderedDict(
                     [
                         ("baja", [55.0, 55.0, 62.0, 68.0]),
                         ("normal", [64.0, 70.0, 80.0, 86.0]),
@@ -132,29 +131,30 @@ VARIABLE_SPECS = OrderedDict(
     ]
 )
 
-GA_SETTINGS = {
-    "population_size": 60,
-    "offspring_size": 60,
-    "max_generations": 200,
-    "crossover_probability": 0.85,
-    "mutation_probability": 0.03,
-    "elitism": 4,
-    "tournament_size": 3,
-    "patience": 25,
+PARAMETROS_AG = {
+    "tamano_poblacion": 60,
+    "cantidad_hijos": 60,
+    "maximo_generaciones": 200,
+    "probabilidad_cruce": 0.85,
+    "probabilidad_mutacion": 0.03,
+    "elitismo": 4,
+    "tamano_torneo": 3,
+    "paciencia": 25,
 }
 
-FITNESS_WEIGHTS = {
+PESOS_FITNESS = {
     "macro_f1": 0.6,
-    "recall_high": 0.4,
-    "interpretability": 0.2,
-    "deviation": 0.2,
+    "recall_alto": 0.4,
+    "interpretabilidad": 0.2,
+    "desviacion": 0.2,
 }
 
-SPLIT_RATIOS = {
-    "train": 0.70,
-    "validation": 0.15,
-    "test": 0.15,
+PROPORCIONES_SPLIT = {
+    "entrenamiento": 0.70,
+    "validacion": 0.15,
+    "prueba": 0.15,
 }
 
-OUTPUT_GRID_SIZE = 401
-PLOT_GRID_SIZE = 300
+PUNTOS_SALIDA = 401
+PUNTOS_GRAFICA = 300
+RUTA_SALIDAS = "salidas"
