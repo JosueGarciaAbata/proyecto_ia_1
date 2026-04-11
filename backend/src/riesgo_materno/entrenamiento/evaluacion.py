@@ -11,6 +11,10 @@ def evaluar_cromosoma_en_splits(cromosoma, datos_por_split):
     return evaluar_membresias_en_splits(membresias, datos_por_split)
 
 
+# Al final lo que queremos medir no es “qué bonito se ve el cromosoma”,
+# sino cómo se comporta el sistema difuso que ese cromosoma produce.
+
+# Recordemos que el cromosoma representa funciones de pertenencia.
 def evaluar_membresias_en_splits(membresias, datos_por_split):
     sistema = SistemaDifusoMamdani(membresias)
     resultados = {}

@@ -35,6 +35,7 @@ def entrenar_y_guardar():
         nombre: convertir_split_a_diccionario(tabla)
         for nombre, tabla in splits.items()
     }
+    # Se necesita un punto de comparacion, despues no sabemos si el optimizado realmente mejoró.
     resultados_base = evaluar_membresias_en_splits(MEMBRESIAS_BASE, datos_por_split)
     mejor_individuo, historial = ejecutar_algoritmo_genetico(datos_por_split["validacion"])
     membresias_optimizadas = decodificar_cromosoma(mejor_individuo.cromosoma)

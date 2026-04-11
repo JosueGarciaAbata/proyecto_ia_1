@@ -136,6 +136,7 @@ def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE
     riesgos_reales = datos_validacion["riesgos"]
     riesgos_predichos = inferencia["riesgos"]
 
+    # ...
     macro_f1 = calcular_macro_f1(riesgos_reales, riesgos_predichos)
     recall_alto = calcular_recall_de_riesgo_alto(riesgos_reales, riesgos_predichos)
     penalizacion_interpretabilidad = calcular_penalizacion_interpretabilidad(cromosoma_reparado)
@@ -165,7 +166,11 @@ def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE
 
 def inicializar_poblacion():
     tamano = PARAMETROS_AG["tamano_poblacion"]
+    
+    # Controla qué tan fuerte o qué tan suave será la variación aleatoria
     sigma = 0.05 * (LIMITES_SUPERIORES - LIMITES_INFERIORES)
+    
+    # Cromosoma base es una solución conocida y válida, a partir de la cual se generan variaciones.
     poblacion = [CROMOSOMA_BASE.copy()]
     cantidad_perturbados = math.floor(0.65 * (tamano - 1))
     cantidad_aleatorios = tamano - 1 - cantidad_perturbados
@@ -191,7 +196,9 @@ def cruce_aritmetico(padres, tamano_descendencia, instancia_ga):
     cantidad_genes = padres.shape[1]
     indice_padre = 0
 
+    # ...
     while len(descendencia) < tamano_descendencia[0]:
+        # Selecciona padres consecutivos y si llega al final de la lsita, vuelve al inicio (circular)
         padre_uno = padres[indice_padre % len(padres)]
         padre_dos = padres[(indice_padre + 1) % len(padres)]
         hijo_uno = padre_uno.copy()
@@ -219,6 +226,7 @@ def mutacion_gaussiana(descendencia, instancia_ga):
     sigma = 0.05 * RANGOS_GENES
 
     for indice in range(descendencia_mutada.shape[0]):
+        # Esto decide en que posiciones habra cambio
         mascara = (
             np.random.random(size=descendencia_mutada.shape[1])
             < PARAMETROS_AG["probabilidad_mutacion"]

@@ -20,10 +20,16 @@ class SistemaDifusoMamdani:
     def __init__(self, membresias_entrada):
         self.membresias_entrada = membresias_entrada
         self.puntaje_neutro = 50.0
+        
+        # Recordar: universo -> posibles valores de una variable
         self.universos_entrada = self._crear_universos_entrada()
         self.universo_salida = self._crear_universo_salida()
+
+        # Las funciones de pertenencai son la definicion maetmatica minima de la curva.
+        # Las curvas son el mecanismo real que convierte numeros exactso en significados difusos.
         self.curvas_entrada = self._crear_curvas_entrada()
         self.curvas_salida = self._crear_curvas_salida()
+        
         # Pre-compilar reglas para evaluacion rapida
         self._reglas_compiladas = self._compilar_reglas()
 
@@ -34,6 +40,8 @@ class SistemaDifusoMamdani:
         n = len(next(iter(entradas.values())))
 
         # Paso 1: fusificar todas las variables de golpe
+        # pertenencias["edad"]["avanzada"] = [0.3]
+        
         pertenencias = {}  # pertenencias[var][cat] = array de n floats
         for variable in VARIABLES_ENTRADA:
             pertenencias[variable] = {}
@@ -44,8 +52,9 @@ class SistemaDifusoMamdani:
                     [fuzz.interp_membership(universo, curva, v) for v in valores],
                     dtype=float,
                 )
-
+        
         # Paso 2: evaluar reglas vectorizadamente
+        # Activacion; que tan fuerte quedo actividad esta salida despues de aplicar reglas.
         act_bajo = np.zeros(n, dtype=float)
         act_medio = np.zeros(n, dtype=float)
         act_alto = np.zeros(n, dtype=float)
@@ -112,7 +121,7 @@ class SistemaDifusoMamdani:
     def _crear_universos_entrada(self):
         universos = {}
         for variable, espec in ESPECIFICACIONES_VARIABLES.items():
-            minimo, maximo = espec["limites"]
+            minimo,  maximo = espec["limites"]
             universos[variable] = np.linspace(minimo, maximo, PUNTOS_GRAFICA)
         return universos
 
