@@ -34,7 +34,6 @@ class SistemaDifusoMamdani:
         self._reglas_compiladas = self._compilar_reglas()
 
     # -- Inferencia (vectorizada para velocidad) --
-
     def inferir_lote(self, entradas):
         """Clasifica un lote de casos de forma vectorizada."""
         n = len(next(iter(entradas.values())))
@@ -91,8 +90,67 @@ class SistemaDifusoMamdani:
             "activaciones": activaciones,
         }
 
-    # -- Desfusificacion --
+    def inferir_con_explicacion(self, entradas):
+        """Infiere el riesgo de un paciente exponiendo cada paso del proceso difuso.
 
+        entradas: dict {variable: float}
+
+        Retorna:
+          pertenencias:      grado de membresia de cada valor en cada categoria.
+          reglas_activadas:  reglas con fuerza > 0, con el detalle del AND de sus antecedentes.
+          activaciones:      fuerza final de cada nivel de riesgo tras aplicar OR entre reglas.
+          puntaje y riesgo:  resultado de la desfusificacion.
+        """
+        # Paso 1: fusificacion — cuanto pertenece cada valor ingresado a cada categoria
+        pertenencias = {}
+        for variable in VARIABLES_ENTRADA:
+            universo = self.universos_entrada[variable]
+            valor = float(entradas[variable])
+            pertenencias[variable] = {
+                categoria: float(fuzz.interp_membership(universo, curva, valor))
+                for categoria, curva in self.curvas_entrada[variable].items()
+            }
+
+        # Paso 2: evaluacion de reglas
+        activaciones = {"bajo": 0.0, "medio": 0.0, "alto": 0.0}
+        reglas_activadas = []
+
+        for regla in REGLAS:
+            antecedentes_con_valor = [
+                {
+                    "variable":    variable,
+                    "categoria":   categoria,
+                    "pertenencia": pertenencias[variable][categoria],
+                }
+                for variable, categoria in regla["antecedentes"]
+            ]
+
+            # AND: la fuerza de la regla es el minimo de las pertenencias de sus antecedentes
+            fuerza = min(a["pertenencia"] for a in antecedentes_con_valor)
+
+            # OR: si otra regla ya activo este consecuente con mas fuerza, se conserva el maximo
+            activaciones[regla["consecuente"]] = max(activaciones[regla["consecuente"]], fuerza)
+
+            if fuerza > 0.0:
+                reglas_activadas.append({
+                    "numero":       regla["numero"],
+                    "antecedentes": antecedentes_con_valor,
+                    "fuerza":       fuerza,
+                    "consecuente":  regla["consecuente"],
+                })
+
+        # Paso 3: desfusificacion — centroide del area resultante
+        puntaje = self._desfusificar(activaciones)
+
+        return {
+            "pertenencias":     pertenencias,
+            "reglas_activadas": reglas_activadas,
+            "activaciones":     activaciones,
+            "puntaje":          float(puntaje),
+            "riesgo":           puntaje_a_riesgo(puntaje),
+        }
+
+    # -- Desfusificacion --
     def _desfusificar(self, activaciones):
         """Agrega las salidas recortadas y calcula el centroide."""
         salida_agregada = np.zeros_like(self.universo_salida, dtype=float)
@@ -107,7 +165,6 @@ class SistemaDifusoMamdani:
         return float(fuzz.defuzz(self.universo_salida, salida_agregada, "centroid"))
 
     # -- Compilacion de reglas --
-
     def _compilar_reglas(self):
         """Convierte las reglas a tuplas para evaluacion rapida."""
         compiladas = []
@@ -117,7 +174,6 @@ class SistemaDifusoMamdani:
         return compiladas
 
     # -- Construccion de universos y curvas --
-
     def _crear_universos_entrada(self):
         universos = {}
         for variable, espec in ESPECIFICACIONES_VARIABLES.items():
