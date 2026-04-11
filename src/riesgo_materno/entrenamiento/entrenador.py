@@ -82,7 +82,7 @@ def guardar_modelo_optimizado(resultado):
     mejor_individuo = resultado["mejor_individuo"]
     historial = resultado["historial"]
     contenido = {
-        "ruta_csv": RUTA_CSV,
+        "ruta_csv": str(RUTA_CSV),
         "mejor_cromosoma": [float(valor) for valor in mejor_individuo.cromosoma.tolist()],
         "fitness": float(mejor_individuo.fitness),
         "macro_f1_validacion": float(mejor_individuo.macro_f1_validacion),

@@ -30,8 +30,8 @@ PARAMETROS_AG = {
 }
 
 PESOS_FITNESS = {
-    "macro_f1": 0.65,
-    "recall_alto": 0.35,
+    "macro_f1": 0.55,
+    "recall_alto": 0.25,
     "interpretabilidad": 0.15,
     "desviacion": 0.10,
 }
