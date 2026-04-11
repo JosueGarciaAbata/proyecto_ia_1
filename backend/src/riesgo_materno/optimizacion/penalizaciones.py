@@ -10,6 +10,7 @@ from .cromosoma import decodificar_cromosoma
 MAX_FRACCION_SOLAPAMIENTO = 0.30
 
 
+
 # ---------------------------------------------------------------------------
 # Penalizaciones individuales
 # ---------------------------------------------------------------------------
