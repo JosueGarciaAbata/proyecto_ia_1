@@ -2,8 +2,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import {
   ActivitySquare,
+  AlertTriangle,
   BarChart3,
-  Brain,
   FlaskConical,
   GitBranch,
   Microscope,
@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { AnalyticsSection } from "./components/sections/AnalyticsSection";
 import { ArchitectureSection } from "./components/sections/ArchitectureSection";
-import { ExplainabilitySection } from "./components/sections/ExplainabilitySection";
 import { HeroSection } from "./components/sections/HeroSection";
 import { MembershipFunctionsSection } from "./components/sections/MembershipFunctionsSection";
 import { OptimizationSection } from "./components/sections/OptimizationSection";
@@ -19,35 +18,74 @@ import { PatientDataSection } from "./components/sections/PatientDataSection";
 import { RecommendationSection } from "./components/sections/RecommendationSection";
 import {
   initialPatientForm,
-  mockActivatedRules,
-  mockRecommendation,
   type PatientFormData,
 } from "./data/mockData";
+import {
+  buildPredictionPayload,
+  explicarPrediccion,
+  type ExplicacionResponse,
+  type PrediccionRequest,
+} from "./lib/riesgoMaterno";
 import { cn } from "./lib/utils";
 
 const navigation = [
-  { key: "patient-entry", label: "Ingreso de datos", icon: Stethoscope },
-  { key: "recommendation", label: "Resultado", icon: ActivitySquare },
-  { key: "explainability", label: "Explicabilidad", icon: Brain },
-  { key: "membership-functions", label: "Membresias", icon: FlaskConical },
-  { key: "optimization", label: "Optimizacion", icon: Microscope },
-  { key: "analytics", label: "Analitica", icon: BarChart3 },
-  { key: "architecture", label: "Arquitectura", icon: GitBranch },
+  {
+    key: "patient-entry",
+    label: "Ingreso de datos",
+    icon: Stethoscope,
+    requiresAnalysis: false,
+  },
+  {
+    key: "recommendation",
+    label: "Resultado",
+    icon: ActivitySquare,
+    requiresAnalysis: true,
+  },
+  {
+    key: "membership-functions",
+    label: "Membresias",
+    icon: FlaskConical,
+    requiresAnalysis: false,
+  },
+  {
+    key: "optimization",
+    label: "Optimizacion",
+    icon: Microscope,
+    requiresAnalysis: false,
+  },
+  {
+    key: "analytics",
+    label: "Analitica",
+    icon: BarChart3,
+    requiresAnalysis: false,
+  },
+  {
+    key: "architecture",
+    label: "Arquitectura",
+    icon: GitBranch,
+    requiresAnalysis: false,
+  },
 ] as const;
 
 type SectionKey = (typeof navigation)[number]["key"];
 
 export default function App() {
   const [formData, setFormData] = useState<PatientFormData>(initialPatientForm);
-  const [hasAnalyzed, setHasAnalyzed] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [explanationResult, setExplanationResult] = useState<ExplicacionResponse | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<SectionKey>("patient-entry");
-  const analysisTimeoutRef = useRef<number | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const hasAnalyzed = explanationResult !== null;
 
   function handleFieldChange(
     field: keyof PatientFormData,
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
+    if (explanationResult || analysisError || isAnalyzing) {
+      resetAnalysisState();
+    }
+
     setFormData((current) => ({
       ...current,
       [field]: event.target.value,
@@ -56,28 +94,60 @@ export default function App() {
 
   useEffect(() => {
     return () => {
-      if (analysisTimeoutRef.current !== null) {
-        window.clearTimeout(analysisTimeoutRef.current);
-      }
+      abortRef.current?.abort();
     };
   }, []);
 
-  function handleAnalyze() {
+  useEffect(() => {
+    if (!hasAnalyzed && !isAnalyzing && activeSection === "recommendation") {
+      setActiveSection("patient-entry");
+    }
+  }, [activeSection, hasAnalyzed, isAnalyzing]);
+
+  async function handleAnalyze() {
     if (isAnalyzing) {
       return;
     }
 
-    setIsAnalyzing(true);
+    let payload: PrediccionRequest;
 
-    if (analysisTimeoutRef.current !== null) {
-      window.clearTimeout(analysisTimeoutRef.current);
+    try {
+      payload = buildPredictionPayload(formData);
+    } catch (error) {
+      setAnalysisError(getErrorMessage(error));
+      return;
     }
 
-    analysisTimeoutRef.current = window.setTimeout(() => {
-      setHasAnalyzed(true);
-      setActiveSection("recommendation");
+    resetAnalysisState();
+    setIsAnalyzing(true);
+    setActiveSection("recommendation");
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      const result = await explicarPrediccion(payload, controller.signal);
+
+      if (abortRef.current !== controller) {
+        return;
+      }
+
+      abortRef.current = null;
+      setExplanationResult(result);
+      setAnalysisError(null);
       setIsAnalyzing(false);
-    }, 700);
+    } catch (error) {
+      if (controller.signal.aborted) {
+        return;
+      }
+
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+      }
+
+      setAnalysisError(getErrorMessage(error));
+      setIsAnalyzing(false);
+    }
   }
 
   function renderActiveSection() {
@@ -92,9 +162,13 @@ export default function App() {
           />
         );
       case "recommendation":
-        return <RecommendationSection analyzed={hasAnalyzed} result={mockRecommendation} />;
-      case "explainability":
-        return <ExplainabilitySection rules={mockActivatedRules} />;
+        return (
+          <RecommendationSection
+            result={explanationResult}
+            isLoading={isAnalyzing}
+            error={analysisError}
+          />
+        );
       case "membership-functions":
         return <MembershipFunctionsSection />;
       case "optimization":
@@ -107,6 +181,20 @@ export default function App() {
         return null;
     }
   }
+
+  function resetAnalysisState() {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setExplanationResult(null);
+    setAnalysisError(null);
+    setIsAnalyzing(false);
+  }
+
+  const visibleNavigation = navigation.filter(
+    (item) => !item.requiresAnalysis || hasAnalyzed,
+  );
+  const activeSectionLabel =
+    navigation.find((item) => item.key === activeSection)?.label ?? "Ingreso de datos";
 
   return (
     <div className="relative overflow-hidden">
@@ -138,7 +226,7 @@ export default function App() {
 
             <nav className="overflow-x-auto pb-1">
               <div className="flex min-w-max items-center gap-2">
-                {navigation.map((item) => {
+                {visibleNavigation.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeSection === item.key;
 
@@ -166,15 +254,25 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-[1480px] px-4 pb-16 sm:px-6 xl:px-8">
+        {analysisError ? (
+          <div className="mt-6 flex items-start gap-3 rounded-[1.75rem] border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+              <div className="font-semibold">No se pudo ejecutar el analisis.</div>
+              <div className="mt-1">{analysisError}</div>
+            </div>
+          </div>
+        ) : null}
+
         <HeroSection
-          activeSectionLabel={navigation.find((item) => item.key === activeSection)?.label ?? ""}
+          activeSectionLabel={activeSectionLabel}
           onOpenOptimization={() => setActiveSection("optimization")}
           onOpenPatientEntry={() => setActiveSection("patient-entry")}
         />
 
         <div className="mt-6 rounded-[2rem] border border-sky-100 bg-white/70 px-4 py-3 sm:px-5">
           <div className="w-fit rounded-full border border-cyan-300/35 bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-800">
-            Seccion actual: {navigation.find((item) => item.key === activeSection)?.label}
+            Seccion actual: {activeSectionLabel}
           </div>
         </div>
 
@@ -193,4 +291,8 @@ export default function App() {
       </main>
     </div>
   );
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Ocurrio un error inesperado.";
 }

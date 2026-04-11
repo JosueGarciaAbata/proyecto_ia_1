@@ -47,7 +47,7 @@ class ExplicacionResponse(BaseModel):
     pertenencias: dict[str, dict[str, float]]
     reglas_activadas: list[ReglaActivada]
 
-    # FFuerza final de cada nivel de riesgo tras acumular todas las reglas con OR: { "bajo": 0.05, "medio": 0.20, "alto": 0.70 }
+    # Fuerza final de cada nivel de riesgo tras acumular todas las reglas con OR: { "bajo": 0.05, "medio": 0.20, "alto": 0.70 }
     activaciones: dict[str, float]
 
     # Número entre 0 y 100 resultado de la desfusificación (centroide).

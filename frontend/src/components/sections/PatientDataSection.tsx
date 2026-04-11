@@ -4,12 +4,14 @@ import {
   Droplets,
   HeartPulse,
   LoaderCircle,
+  type LucideIcon,
   Stethoscope,
   Thermometer,
   UserRound,
 } from "lucide-react";
 import type { ChangeEvent, FormEvent } from "react";
 import type { PatientFormData } from "../../data/mockData";
+import { getFieldRange, numericFieldSpecs, type NumericFormField } from "../../lib/riesgoMaterno";
 import { GlassPanel } from "../ui/GlassPanel";
 import { SectionHeader } from "../ui/SectionHeader";
 
@@ -23,56 +25,14 @@ interface PatientDataSectionProps {
   onAnalyze: () => void;
 }
 
-const fields = [
-  {
-    key: "age",
-    label: "Edad",
-    helper: "Edad materna en anos",
-    placeholder: "31",
-    unit: "anos",
-    icon: UserRound,
-  },
-  {
-    key: "systolicBP",
-    label: "Presion sistolica",
-    helper: "Valor superior de referencia",
-    placeholder: "146",
-    unit: "mmHg",
-    icon: Stethoscope,
-  },
-  {
-    key: "diastolicBP",
-    label: "Presion diastolica",
-    helper: "Valor inferior de referencia",
-    placeholder: "94",
-    unit: "mmHg",
-    icon: Activity,
-  },
-  {
-    key: "bloodGlucose",
-    label: "Glucosa / BS",
-    helper: "Medicion de glucosa en sangre",
-    placeholder: "7.8",
-    unit: "mmol/L",
-    icon: Droplets,
-  },
-  {
-    key: "bodyTemperature",
-    label: "Temperatura corporal",
-    helper: "Registro termico observado",
-    placeholder: "100.1",
-    unit: "F",
-    icon: Thermometer,
-  },
-  {
-    key: "heartRate",
-    label: "Frecuencia cardiaca",
-    helper: "Frecuencia cardiaca observada",
-    placeholder: "118",
-    unit: "bpm",
-    icon: HeartPulse,
-  },
-] as const;
+const iconByField: Record<NumericFormField, LucideIcon> = {
+  age: UserRound,
+  systolicBP: Stethoscope,
+  diastolicBP: Activity,
+  bloodGlucose: Droplets,
+  bodyTemperature: Thermometer,
+  heartRate: HeartPulse,
+};
 
 export function PatientDataSection({
   formData,
@@ -96,12 +56,12 @@ export function PatientDataSection({
         <div className="grid gap-0 lg:grid-cols-[1.2fr_0.8fr]">
           <form className="p-6 sm:p-8" onSubmit={handleSubmit}>
             <div className="grid gap-5 md:grid-cols-2">
-              {fields.map((field, index) => {
-                const Icon = field.icon;
+              {numericFieldSpecs.map((field, index) => {
+                const Icon = iconByField[field.formKey];
 
                 return (
                   <motion.label
-                    key={field.key}
+                    key={field.formKey}
                     className="rounded-3xl border border-sky-100 bg-white/78 p-4 transition hover:border-cyan-300/35 hover:bg-cyan-50"
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -117,7 +77,10 @@ export function PatientDataSection({
                           <span className="block text-sm font-semibold text-slate-900">
                             {field.label}
                           </span>
-                          <span className="text-xs text-slate-500">{field.helper}</span>
+                          <span className="block text-xs text-slate-500">{field.helper}</span>
+                          <span className="block text-[11px] text-slate-400">
+                            Rango del modelo: {getFieldRange(field.formKey)}
+                          </span>
                         </div>
                       </div>
                       <span className="rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-xs font-medium text-slate-600">
@@ -127,10 +90,13 @@ export function PatientDataSection({
                     <input
                       className="w-full rounded-2xl border border-sky-100 bg-white px-4 py-3 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-200"
                       inputMode="decimal"
+                      max={field.max}
+                      min={field.min}
                       placeholder={field.placeholder}
-                      type="text"
-                      value={formData[field.key]}
-                      onChange={(event) => onFieldChange(field.key, event)}
+                      step={field.step}
+                      type="number"
+                      value={formData[field.formKey]}
+                      onChange={(event) => onFieldChange(field.formKey, event)}
                     />
                   </motion.label>
                 );
@@ -181,13 +147,16 @@ export function PatientDataSection({
               </div>
               <div className="mt-3 grid gap-3 text-sm text-slate-700">
                 <div className="rounded-2xl border border-sky-100 bg-white px-4 py-3">
-                  Edad, presion sistolica, presion diastolica
+                  Edad, presion sistolica y presion diastolica
                 </div>
                 <div className="rounded-2xl border border-sky-100 bg-white px-4 py-3">
-                  Glucosa, temperatura corporal, frecuencia cardiaca
+                  Glucosa, temperatura corporal y frecuencia cardiaca
                 </div>
                 <div className="rounded-2xl border border-sky-100 bg-white px-4 py-3">
                   Observaciones clinicas
+                </div>
+                <div className="rounded-2xl border border-sky-100 bg-white px-4 py-3 text-slate-500">
+                  El backend valida automaticamente los rangos antes de inferir.
                 </div>
               </div>
             </div>

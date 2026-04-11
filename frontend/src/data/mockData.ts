@@ -62,7 +62,7 @@ export const initialPatientForm: PatientFormData = {
   diastolicBP: "94",
   bloodGlucose: "7.8",
   bodyTemperature: "100.1",
-  heartRate: "118",
+  heartRate: "88",
   observations: "Cefalea persistente, edema en extremidades inferiores y fatiga reciente.",
 };
 
