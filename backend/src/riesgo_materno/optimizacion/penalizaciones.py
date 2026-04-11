@@ -3,74 +3,105 @@ import numpy as np
 from ..logica_difusa.variables import ESPECIFICACIONES_VARIABLES
 from .cromosoma import decodificar_cromosoma
 
+# Maximo solapamiento permitido entre dos trapecios vecinos.
+# El soporte es la base completa del trapecio, desde a hasta d.
+# Este limite se calcula usando el soporte del trapecio mas pequeno.
+# Debe ser la misma que se usa en cromosoma.py.
+MAX_FRACCION_SOLAPAMIENTO = 0.30
+
+
+# ---------------------------------------------------------------------------
+# Penalizaciones individuales
+# ---------------------------------------------------------------------------
+
+def _penalizacion_hueco(izquierda, derecha, rango_variable):
+    """Mide si hay espacio vacio entre dos trapecios vecinos.
+
+    Hay hueco cuando el trapecio izquierdo termina antes de que empiece el derecho.
+    Si se tocan o se solapan, la penalizacion es 0.
+    Mientras mas grande sea el hueco, mas se acerca el valor a 1.
+    """
+    _, _, _, d_izq = izquierda
+    a_der, _, _, _ = derecha
+    hueco = max(0.0, a_der - d_izq)
+    return float(np.clip(hueco / max(rango_variable, 1e-9), 0.0, 1.0))
+
+
+def _penalizacion_solapamiento_excesivo(izquierda, derecha, rango_variable):
+    """Mide si dos trapecios vecinos se montan mas de lo permitido.
+
+    Un poco de solapamiento es util porque evita cortes bruscos entre categorias.
+    El problema aparece cuando se superponen demasiado y dejan de distinguirse bien.
+    Si el solapamiento real no supera el limite, la penalizacion es 0.
+    """
+    a_izq, _, _, d_izq = izquierda
+    a_der, _, _, d_der = derecha
+    solapamiento = max(0.0, d_izq - a_der)
+    maximo_permitido = MAX_FRACCION_SOLAPAMIENTO * min(d_izq - a_izq, d_der - a_der)
+    exceso = max(0.0, solapamiento - maximo_permitido)
+    return float(np.clip(exceso / max(rango_variable, 1e-9), 0.0, 1.0))
+
+
+# ---------------------------------------------------------------------------
+# Funciones principales de penalizacion
+# Interpretabilidad: revisa si las funciones de membresia quedaron bien formadas.
+# ---------------------------------------------------------------------------
 
 def calcular_penalizacion_interpretabilidad(cromosoma):
+    """Resume que tan claras y ordenadas quedaron las funciones de membresia.
+
+    Para cada variable revisa pares de trapecios vecinos y calcula dos cosas:
+    si hay huecos y si hay demasiado solapamiento.
+
+    Devuelve un dict con valores entre 0 y 1:
+      huecos: promedio de espacios vacios entre categorias vecinas.
+      solapamiento: promedio del exceso de solapamiento entre vecinas.
+      total: promedio de ambos criterios.
+    """
     membresias = decodificar_cromosoma(cromosoma)
-    penalizaciones_soporte = []
-    penalizaciones_huecos = []
-    penalizaciones_solapamiento = []
-    penalizaciones_desorden = []
+
+    pen_huecos = []
+    pen_solapamiento = []
 
     for variable, especificacion in ESPECIFICACIONES_VARIABLES.items():
         limite_inferior, limite_superior = especificacion["limites"]
         rango_variable = limite_superior - limite_inferior
-        soporte_minimo = 0.05 * rango_variable
-        filas = np.asarray(list(membresias[variable].values()), dtype=float)
-        centros = (filas[:, 1] + filas[:, 2]) / 2.0
 
-        for fila in filas:
-            ancho = fila[3] - fila[0]
-            penalizacion = max(0.0, soporte_minimo - ancho) / max(soporte_minimo, 1e-9)
-            penalizaciones_soporte.append(np.clip(penalizacion, 0.0, 1.0))
+        trapecios = list(membresias[variable].values())
 
-        for indice in range(len(filas) - 1):
-            izquierda = filas[indice]
-            derecha = filas[indice + 1]
-            hueco = max(0.0, derecha[0] - izquierda[3])
-            solapamiento = max(0.0, izquierda[3] - derecha[0])
-            maximo_solapamiento = 0.30 * min(
-                izquierda[3] - izquierda[0],
-                derecha[3] - derecha[0],
+        for i in range(len(trapecios) - 1):
+            pen_huecos.append(
+                _penalizacion_hueco(trapecios[i], trapecios[i + 1], rango_variable)
             )
-            exceso_solapamiento = max(0.0, solapamiento - maximo_solapamiento)
-            desorden = max(0.0, centros[indice] - centros[indice + 1])
-
-            penalizaciones_huecos.append(np.clip(hueco / max(rango_variable, 1e-9), 0.0, 1.0))
-            penalizaciones_solapamiento.append(
-                np.clip(exceso_solapamiento / max(rango_variable, 1e-9), 0.0, 1.0)
-            )
-            penalizaciones_desorden.append(
-                np.clip(desorden / max(rango_variable, 1e-9), 0.0, 1.0)
+            pen_solapamiento.append(
+                _penalizacion_solapamiento_excesivo(
+                    trapecios[i], trapecios[i + 1], rango_variable
+                )
             )
 
-    penalizacion_soporte = float(np.mean(penalizaciones_soporte)) if penalizaciones_soporte else 0.0
-    penalizacion_huecos = float(np.mean(penalizaciones_huecos)) if penalizaciones_huecos else 0.0
-    penalizacion_solapamiento = (
-        float(np.mean(penalizaciones_solapamiento)) if penalizaciones_solapamiento else 0.0
-    )
-    penalizacion_desorden = (
-        float(np.mean(penalizaciones_desorden)) if penalizaciones_desorden else 0.0
-    )
+    def promedio(valores):
+        return float(np.mean(valores)) if valores else 0.0
+
+    p_huecos = promedio(pen_huecos)
+    p_solapamiento = promedio(pen_solapamiento)
 
     return {
-        "soporte": penalizacion_soporte,
-        "huecos": penalizacion_huecos,
-        "solapamiento": penalizacion_solapamiento,
-        "desorden": penalizacion_desorden,
-        "total": float(
-            np.mean(
-                [
-                    penalizacion_soporte,
-                    penalizacion_huecos,
-                    penalizacion_solapamiento,
-                    penalizacion_desorden,
-                ]
-            )
-        ),
+        "huecos": p_huecos,
+        "solapamiento": p_solapamiento,
+        "total": promedio([p_huecos, p_solapamiento]),
     }
 
 
+# Desviacion: cuanto se alejo del diseno experto original.
 def calcular_penalizacion_desviacion(cromosoma, cromosoma_base, rangos_genes):
+    """Mide que tan distinto es el cromosoma frente al cromosoma base.
+
+    Compara gen por gen, toma la diferencia absoluta y la divide por el rango
+    de cada gen para que todos aporten en la misma escala.
+
+    Devuelve un valor entre 0 y 1:
+    0 significa igual al experto; valores mayores significan mas diferencia.
+    """
     desviaciones = np.abs(np.asarray(cromosoma) - np.asarray(cromosoma_base)) / np.asarray(
         rangos_genes
     )

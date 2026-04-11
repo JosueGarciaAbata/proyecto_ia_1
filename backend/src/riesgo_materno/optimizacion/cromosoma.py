@@ -4,112 +4,94 @@ import numpy as np
 
 from ..logica_difusa.variables import ESPECIFICACIONES_VARIABLES
 
+# Maximo solapamiento permitido entre dos trapecios vecinos.
+# El soporte es la base completa del trapecio, desde a hasta d.
+# Este limite se calcula usando el soporte del trapecio mas pequeno.
+MAX_FRACCION_SOLAPAMIENTO = 0.30
 
-def reparar_cromosoma(cromosoma):
-    cromosoma = np.asarray(cromosoma, dtype=float).copy()
-    genes_reparados = []
-    es_valido = True
-    cursor = 0
-
-    for variable, especificacion in ESPECIFICACIONES_VARIABLES.items():
-        cantidad_categorias = len(especificacion["categorias"])
-        bloque = cromosoma[cursor : cursor + cantidad_categorias * 4].reshape(
-            cantidad_categorias,
-            4,
-        )
-        bloque_reparado, bloque_valido = reparar_bloque_variable(
-            bloque,
-            limite_inferior=especificacion["limites"][0],
-            limite_superior=especificacion["limites"][1],
-            epsilon=especificacion["epsilon"],
-        )
-        genes_reparados.extend(bloque_reparado.reshape(-1).tolist())
-        es_valido = es_valido and bloque_valido
-        cursor += cantidad_categorias * 4
-
-    cromosoma_reparado = np.asarray(genes_reparados, dtype=float)
-    if np.isnan(cromosoma_reparado).any():
-        es_valido = False
-
-    return cromosoma_reparado, es_valido
+# Numero de veces que se repite el ajuste entre categorias vecinas.
+# Se hacen varias pasadas porque al corregir un par se puede afectar al siguiente.
+ITERACIONES_REPARACION = 5
 
 
-def reparar_bloque_variable(bloque, limite_inferior, limite_superior, epsilon):
-    bloque = np.clip(np.asarray(bloque, dtype=float), limite_inferior, limite_superior)
-    bloque = np.sort(bloque, axis=1)
-    bloque = np.asarray(
-        [
-            reparar_trapecio(fila, limite_inferior, limite_superior, epsilon)
-            for fila in bloque
-        ],
-        dtype=float,
-    )
-    bloque = ordenar_categorias_por_centro(bloque)
-    bloque = ajustar_categorias_adyacentes(
-        bloque,
+# ---------------------------------------------------------------------------
+# Funciones basicas de trapecios
+# Un trapecio difuso se guarda como [a, b, c, d]:
+#   a, d -> inicio y fin del soporte
+#   b, c -> inicio y fin del nucleo
+# ---------------------------------------------------------------------------
+
+def centro_de_trapecio(trapecio):
+    """Devuelve el centro del nucleo del trapecio."""
+    return float((trapecio[1] + trapecio[2]) / 2.0)
+
+
+def ancho_de_soporte(trapecio):
+    """Devuelve el ancho del soporte, es decir, d - a."""
+    return float(trapecio[3] - trapecio[0])
+
+
+def reparar_trapecio(trapecio, limite_inferior, limite_superior, epsilon):
+    """Corrige un trapecio para que no quede fuera de forma.
+
+    Esta funcion se asegura de tres cosas:
+    1. que los puntos queden dentro del dominio de la variable,
+    2. que esten ordenados como a <= b <= c <= d,
+    3. que el trapecio no se vuelva demasiado pequeno.
+    """
+    trapecio = np.clip(
+        np.sort(np.asarray(trapecio, dtype=float)),
         limite_inferior,
         limite_superior,
-        epsilon,
     )
-    bloque = ordenar_categorias_por_centro(bloque)
-    bloque = np.asarray(
-        [
-            reparar_trapecio(fila, limite_inferior, limite_superior, epsilon)
-            for fila in bloque
-        ],
-        dtype=float,
-    )
-    return bloque, validar_bloque_variable(
-        bloque,
-        limite_inferior,
-        limite_superior,
-        epsilon,
-    )
+    a, b, c, d = trapecio
+
+    ancho_minimo = max(epsilon * 0.5, 1e-6)
+
+    if d - a < ancho_minimo:
+        # Si el soporte es muy pequeno, se abre un poco desde el centro.
+        punto_medio = np.clip((a + d) / 2.0, limite_inferior, limite_superior)
+        mitad = ancho_minimo / 2.0
+        a = max(limite_inferior, punto_medio - mitad)
+        d = min(limite_superior, punto_medio + mitad)
+
+        if d - a < ancho_minimo:
+            # Si esta pegado a un borde, se extiende hacia adentro del dominio.
+            if a <= limite_inferior:
+                d = min(limite_superior, limite_inferior + ancho_minimo)
+            else:
+                a = max(limite_inferior, limite_superior - ancho_minimo)
+                d = limite_superior
+
+    b = np.clip(b, a, d)
+    c = np.clip(c, b, d)
+    return np.asarray([a, b, c, d], dtype=float)
 
 
-def validar_bloque_variable(bloque, limite_inferior, limite_superior, epsilon, tolerancia=1e-9):
-    if np.isnan(bloque).any():
-        return False
-    if np.any(bloque < limite_inferior - tolerancia) or np.any(
-        bloque > limite_superior + tolerancia
-    ):
-        return False
-    if np.any(np.diff(bloque, axis=1) < -tolerancia):
-        return False
-    if np.any((bloque[:, 3] - bloque[:, 0]) <= tolerancia):
-        return False
+# ---------------------------------------------------------------------------
+# Orden y ajuste entre categorias
+# ---------------------------------------------------------------------------
 
+def ordenar_categorias_por_centro(bloque):
+    """Ordena los trapecios de una variable de izquierda a derecha."""
     centros = np.asarray([centro_de_trapecio(fila) for fila in bloque], dtype=float)
-    if np.any(np.diff(centros) < -tolerancia):
-        return False
-
-    for indice in range(len(bloque) - 1):
-        izquierda = bloque[indice]
-        derecha = bloque[indice + 1]
-        if izquierda[2] - derecha[1] > tolerancia:
-            return False
-        if izquierda[3] + tolerancia < derecha[0]:
-            return False
-        solapamiento = izquierda[3] - derecha[0]
-        maximo_solapamiento = 0.30 * min(
-            ancho_de_soporte(izquierda),
-            ancho_de_soporte(derecha),
-        )
-        if solapamiento - maximo_solapamiento > max(epsilon * 0.1, tolerancia):
-            return False
-
-    return True
+    orden = np.argsort(centros, kind="stable")
+    return bloque[orden]
 
 
 def ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsilon):
+    """Ajusta trapecios vecinos para que queden mejor organizados.
+
+    En cada par revisa tres cosas:
+    1. que no haya huecos,
+    2. que no haya demasiado solapamiento,
+    3. que los nucleos no se crucen.
+    """
     bloque = bloque.copy()
 
-    for _ in range(5):
+    for _ in range(ITERACIONES_REPARACION):
         bloque = np.asarray(
-            [
-                reparar_trapecio(fila, limite_inferior, limite_superior, epsilon)
-                for fila in bloque
-            ],
+            [reparar_trapecio(fila, limite_inferior, limite_superior, epsilon) for fila in bloque],
             dtype=float,
         )
         bloque = ordenar_categorias_por_centro(bloque)
@@ -118,6 +100,7 @@ def ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsi
             izquierda = bloque[indice].copy()
             derecha = bloque[indice + 1].copy()
 
+            # Si hay hueco entre soportes, ambos se unen en el punto medio.
             if izquierda[3] < derecha[0]:
                 punto_medio = (izquierda[3] + derecha[0]) / 2.0
                 izquierda[3] = punto_medio
@@ -126,8 +109,9 @@ def ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsi
             izquierda = reparar_trapecio(izquierda, limite_inferior, limite_superior, epsilon)
             derecha = reparar_trapecio(derecha, limite_inferior, limite_superior, epsilon)
 
+            # Si se montan demasiado, se reduce el exceso en ambos lados.
             solapamiento = izquierda[3] - derecha[0]
-            maximo_solapamiento = 0.30 * min(
+            maximo_solapamiento = MAX_FRACCION_SOLAPAMIENTO * min(
                 ancho_de_soporte(izquierda),
                 ancho_de_soporte(derecha),
             )
@@ -139,6 +123,7 @@ def ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsi
             izquierda = reparar_trapecio(izquierda, limite_inferior, limite_superior, epsilon)
             derecha = reparar_trapecio(derecha, limite_inferior, limite_superior, epsilon)
 
+            # Si un nucleo invade al otro, se separan un poco.
             if izquierda[2] > derecha[1]:
                 punto_medio = (izquierda[2] + derecha[1]) / 2.0
                 izquierda[2] = punto_medio - epsilon / 2.0
@@ -152,82 +137,77 @@ def ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsi
     return bloque
 
 
-def ordenar_categorias_por_centro(bloque):
-    centros = np.asarray([centro_de_trapecio(fila) for fila in bloque], dtype=float)
-    orden = np.argsort(centros, kind="stable")
-    return bloque[orden]
+# ---------------------------------------------------------------------------
+# Reparacion del cromosoma completo
+# ---------------------------------------------------------------------------
 
+def reparar_bloque_variable(bloque, limite_inferior, limite_superior, epsilon):
+    """Repara todos los trapecios de una variable.
 
-def reparar_trapecio(trapecio, limite_inferior, limite_superior, epsilon):
-    trapecio = np.clip(
-        np.sort(np.asarray(trapecio, dtype=float)),
-        limite_inferior,
-        limite_superior,
+    El proceso es:
+    recortar al dominio, ordenar puntos, reparar trapecios,
+    ordenar categorias, ajustar vecinas y reparar otra vez.
+    """
+    bloque = np.clip(np.asarray(bloque, dtype=float), limite_inferior, limite_superior)
+    bloque = np.sort(bloque, axis=1)
+    bloque = np.asarray(
+        [reparar_trapecio(fila, limite_inferior, limite_superior, epsilon) for fila in bloque],
+        dtype=float,
     )
-    a, b, c, d = trapecio
-    soporte_minimo = max(epsilon * 0.5, 1e-6)
-
-    if d - a < soporte_minimo:
-        punto_medio = np.clip((a + d) / 2.0, limite_inferior, limite_superior)
-        mitad = soporte_minimo / 2.0
-        a = max(limite_inferior, punto_medio - mitad)
-        d = min(limite_superior, punto_medio + mitad)
-        if d - a < soporte_minimo:
-            if a <= limite_inferior:
-                d = min(limite_superior, limite_inferior + soporte_minimo)
-            else:
-                a = max(limite_inferior, limite_superior - soporte_minimo)
-                d = limite_superior
-
-    b = np.clip(b, a, d)
-    c = np.clip(c, b, d)
-    return np.asarray([a, b, c, d], dtype=float)
+    bloque = ordenar_categorias_por_centro(bloque)
+    bloque = ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsilon)
+    bloque = ordenar_categorias_por_centro(bloque)
+    bloque = np.asarray(
+        [reparar_trapecio(fila, limite_inferior, limite_superior, epsilon) for fila in bloque],
+        dtype=float,
+    )
+    return bloque
 
 
-def centro_de_trapecio(trapecio):
-    return float((trapecio[1] + trapecio[2]) / 2.0)
+def reparar_cromosoma(cromosoma):
+    """Repara todo el cromosoma, variable por variable."""
+    cromosoma = np.asarray(cromosoma, dtype=float).copy()
+    genes_reparados = []
+    cursor = 0
+
+    for variable, especificacion in ESPECIFICACIONES_VARIABLES.items():
+        cantidad_categorias = len(especificacion["categorias"])
+        bloque = cromosoma[cursor : cursor + cantidad_categorias * 4].reshape(cantidad_categorias, 4)
+        bloque_reparado = reparar_bloque_variable(
+            bloque,
+            limite_inferior=especificacion["limites"][0],
+            limite_superior=especificacion["limites"][1],
+            epsilon=especificacion["epsilon"],
+        )
+        genes_reparados.extend(bloque_reparado.reshape(-1).tolist())
+        cursor += cantidad_categorias * 4
+
+    return np.asarray(genes_reparados, dtype=float)
 
 
-def ancho_de_soporte(trapecio):
-    return float(trapecio[3] - trapecio[0])
-
-
-def crear_tabla_de_membresias(membresias):
-    filas = []
-    for variable, categorias in membresias.items():
-        for categoria, puntos in categorias.items():
-            filas.append(
-                {
-                    "variable": variable,
-                    "categoria": categoria,
-                    "a": float(puntos[0]),
-                    "b": float(puntos[1]),
-                    "c": float(puntos[2]),
-                    "d": float(puntos[3]),
-                }
-            )
-    return filas
-
+# ---------------------------------------------------------------------------
+# Codificacion y decodificacion
+# ---------------------------------------------------------------------------
 
 def decodificar_cromosoma(cromosoma):
+    """Convierte el cromosoma plano en variable -> categoria -> [a, b, c, d]."""
     membresias = OrderedDict()
     cursor = 0
     for variable, especificacion in ESPECIFICACIONES_VARIABLES.items():
         membresias[variable] = OrderedDict()
         for categoria in especificacion["categorias"].keys():
-            membresias[variable][categoria] = np.asarray(
-                cromosoma[cursor : cursor + 4],
-                dtype=float,
-            )
+            membresias[variable][categoria] = np.asarray(cromosoma[cursor : cursor + 4], dtype=float)
             cursor += 4
     return membresias
 
 
 def aplanar_membresias(membresias):
-    genes = []
-    minimos = []
-    maximos = []
-    rangos = []
+    """Convierte las membresias en arreglos utiles para el optimizador.
+
+    Devuelve cuatro arreglos:
+    genes, minimos, maximos y rangos.
+    """
+    genes, minimos, maximos, rangos = [], [], [], []
 
     for variable, especificacion in ESPECIFICACIONES_VARIABLES.items():
         limite_inferior, limite_superior = especificacion["limites"]
@@ -248,6 +228,7 @@ def aplanar_membresias(membresias):
 
 
 def crear_membresias_base():
+    """Crea las membresias iniciales usando ESPECIFICACIONES_VARIABLES."""
     membresias = OrderedDict()
     for variable, especificacion in ESPECIFICACIONES_VARIABLES.items():
         membresias[variable] = OrderedDict()
@@ -255,9 +236,12 @@ def crear_membresias_base():
             membresias[variable][categoria] = np.asarray(puntos, dtype=float)
     return membresias
 
+# ---------------------------------------------------------------------------
+# Cromosoma base: punto de partida del optimizador
+# ---------------------------------------------------------------------------
 
 MEMBRESIAS_BASE = crear_membresias_base()
 CROMOSOMA_BASE_CRUDO, LIMITES_INFERIORES, LIMITES_SUPERIORES, RANGOS_GENES = aplanar_membresias(
     MEMBRESIAS_BASE
 )
-CROMOSOMA_BASE, CROMOSOMA_BASE_VALIDO = reparar_cromosoma(CROMOSOMA_BASE_CRUDO)
+CROMOSOMA_BASE = reparar_cromosoma(CROMOSOMA_BASE_CRUDO)

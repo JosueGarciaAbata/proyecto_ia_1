@@ -67,8 +67,8 @@ def cargar_modelo_optimizado():
 
     datos_modelo = json.loads(ruta_modelo.read_text(encoding="utf-8"))
     cromosoma = np.asarray(datos_modelo["mejor_cromosoma"], dtype=float)
-    cromosoma_reparado, es_valido = reparar_cromosoma(cromosoma)
-    if not es_valido or np.isnan(cromosoma_reparado).any():
+    cromosoma_reparado = reparar_cromosoma(cromosoma)
+    if np.isnan(cromosoma_reparado).any():
         return None
 
     return {

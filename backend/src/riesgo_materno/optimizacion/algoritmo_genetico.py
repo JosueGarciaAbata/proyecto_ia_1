@@ -24,6 +24,21 @@ from .penalizaciones import (
 
 FITNESS_INVALIDO = -1000.0
 
+# Fraccion de la poblacion inicial generada como variaciones del cromosoma base.
+# El resto se genera de forma completamente aleatoria para mantener diversidad.
+FRACCION_POBLACION_PERTURBADA = 0.65
+
+# Intensidad del ruido al crear variaciones del cromosoma base (como fraccion del rango de cada gen).
+SIGMA_INICIALIZACION = 0.05
+
+# Intensidad del cambio por mutacion en cada gen (como fraccion del rango de cada gen).
+SIGMA_MUTACION = 0.05
+
+# Limites del coeficiente de mezcla en el cruce aritmetico.
+# Restringir a [0.25, 0.75] evita producir hijos identicos a uno solo de los padres.
+LAMBDA_CRUCE_MIN = 0.25
+LAMBDA_CRUCE_MAX = 0.75
+
 
 @dataclass
 class Individuo:
@@ -33,7 +48,6 @@ class Individuo:
     recall_alto_validacion: float
     penalizacion_interpretabilidad: float
     penalizacion_desviacion: float
-    es_valido: bool
 
 
 def ejecutar_algoritmo_genetico(datos_validacion):
@@ -127,16 +141,15 @@ def ejecutar_algoritmo_genetico(datos_validacion):
 
 
 def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE):
-    cromosoma_reparado, es_valido = reparar_cromosoma(cromosoma)
-    if not es_valido or np.isnan(cromosoma_reparado).any():
-        return Individuo(cromosoma_reparado, FITNESS_INVALIDO, 0.0, 0.0, 1.0, 1.0, False)
+    cromosoma_reparado = reparar_cromosoma(cromosoma)
+    if np.isnan(cromosoma_reparado).any():
+        return Individuo(cromosoma_reparado, FITNESS_INVALIDO, 0.0, 0.0, 1.0, 1.0)
 
     sistema = SistemaDifusoMamdani(decodificar_cromosoma(cromosoma_reparado))
     inferencia = sistema.inferir_lote(datos_validacion["entradas"])
     riesgos_reales = datos_validacion["riesgos"]
     riesgos_predichos = inferencia["riesgos"]
 
-    # ...
     macro_f1 = calcular_macro_f1(riesgos_reales, riesgos_predichos)
     recall_alto = calcular_recall_de_riesgo_alto(riesgos_reales, riesgos_predichos)
     penalizacion_interpretabilidad = calcular_penalizacion_interpretabilidad(cromosoma_reparado)
@@ -160,33 +173,27 @@ def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE
         float(recall_alto),
         float(penalizacion_interpretabilidad["total"]),
         float(penalizacion_desviacion),
-        True,
     )
 
 
 def inicializar_poblacion():
     tamano = PARAMETROS_AG["tamano_poblacion"]
     
-    # Controla qué tan fuerte o qué tan suave será la variación aleatoria
-    sigma = 0.05 * (LIMITES_SUPERIORES - LIMITES_INFERIORES)
-    
-    # Cromosoma base es una solución conocida y válida, a partir de la cual se generan variaciones.
+    sigma = SIGMA_INICIALIZACION * (LIMITES_SUPERIORES - LIMITES_INFERIORES)
     poblacion = [CROMOSOMA_BASE.copy()]
-    cantidad_perturbados = math.floor(0.65 * (tamano - 1))
+    cantidad_perturbados = math.floor(FRACCION_POBLACION_PERTURBADA * (tamano - 1))
     cantidad_aleatorios = tamano - 1 - cantidad_perturbados
 
     for _ in range(cantidad_perturbados):
         ruido = np.random.normal(loc=0.0, scale=sigma)
-        cromosoma_reparado, _ = reparar_cromosoma(CROMOSOMA_BASE + ruido)
-        poblacion.append(cromosoma_reparado)
+        poblacion.append(reparar_cromosoma(CROMOSOMA_BASE + ruido))
 
     for _ in range(cantidad_aleatorios):
         cromosoma_aleatorio = np.random.uniform(
             low=LIMITES_INFERIORES,
             high=LIMITES_SUPERIORES,
         )
-        cromosoma_reparado, _ = reparar_cromosoma(cromosoma_aleatorio)
-        poblacion.append(cromosoma_reparado)
+        poblacion.append(reparar_cromosoma(cromosoma_aleatorio))
 
     return np.asarray(poblacion, dtype=float)
 
@@ -196,21 +203,20 @@ def cruce_aritmetico(padres, tamano_descendencia, instancia_ga):
     cantidad_genes = padres.shape[1]
     indice_padre = 0
 
-    # ...
     while len(descendencia) < tamano_descendencia[0]:
-        # Selecciona padres consecutivos y si llega al final de la lsita, vuelve al inicio (circular)
+        # Selecciona padres de forma circular: al llegar al final de la lista vuelve al inicio
         padre_uno = padres[indice_padre % len(padres)]
         padre_dos = padres[(indice_padre + 1) % len(padres)]
         hijo_uno = padre_uno.copy()
         hijo_dos = padre_dos.copy()
 
         if np.random.random() < PARAMETROS_AG["probabilidad_cruce"]:
-            lambdas = np.random.uniform(0.25, 0.75, size=cantidad_genes)
+            lambdas = np.random.uniform(LAMBDA_CRUCE_MIN, LAMBDA_CRUCE_MAX, size=cantidad_genes)
             hijo_uno = lambdas * padre_uno + (1.0 - lambdas) * padre_dos
             hijo_dos = (1.0 - lambdas) * padre_uno + lambdas * padre_dos
 
-        hijo_uno, _ = reparar_cromosoma(hijo_uno)
-        hijo_dos, _ = reparar_cromosoma(hijo_dos)
+        hijo_uno = reparar_cromosoma(hijo_uno)
+        hijo_dos = reparar_cromosoma(hijo_dos)
         descendencia.append(hijo_uno)
 
         if len(descendencia) < tamano_descendencia[0]:
@@ -223,7 +229,7 @@ def cruce_aritmetico(padres, tamano_descendencia, instancia_ga):
 
 def mutacion_gaussiana(descendencia, instancia_ga):
     descendencia_mutada = np.asarray(descendencia, dtype=float).copy()
-    sigma = 0.05 * RANGOS_GENES
+    sigma = SIGMA_MUTACION * RANGOS_GENES
 
     for indice in range(descendencia_mutada.shape[0]):
         # Esto decide en que posiciones habra cambio
@@ -237,7 +243,7 @@ def mutacion_gaussiana(descendencia, instancia_ga):
                 scale=sigma[mascara],
                 size=mascara.sum(),
             )
-        descendencia_mutada[indice], _ = reparar_cromosoma(descendencia_mutada[indice])
+        descendencia_mutada[indice] = reparar_cromosoma(descendencia_mutada[indice])
 
     return descendencia_mutada
 
