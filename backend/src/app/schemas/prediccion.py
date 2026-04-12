@@ -95,8 +95,34 @@ class GAComparacionResponse(BaseModel):
 
 class ReentrenarRequest(BaseModel):
     tamano_poblacion: int = 50
+    cantidad_hijos: int = 50
     maximo_generaciones: int = 60
-    paciencia: int = 20
+    probabilidad_cruce: float = 0.85
+    probabilidad_mutacion: float = 0.04
+
+    model_config = {"json_schema_extra": {"example": {
+        "tamano_poblacion": 50,
+        "cantidad_hijos": 50,
+        "maximo_generaciones": 60,
+        "probabilidad_cruce": 0.85,
+        "probabilidad_mutacion": 0.04,
+    }}}
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls._validate
+
+    def model_post_init(self, __context):
+        if self.tamano_poblacion < 4:
+            raise ValueError("tamano_poblacion debe ser al menos 4")
+        if self.cantidad_hijos < 2:
+            raise ValueError("cantidad_hijos debe ser al menos 2")
+        if self.maximo_generaciones < 1:
+            raise ValueError("maximo_generaciones debe ser al menos 1")
+        if not (0.0 < self.probabilidad_cruce <= 1.0):
+            raise ValueError("probabilidad_cruce debe estar en (0, 1]")
+        if not (0.0 < self.probabilidad_mutacion <= 1.0):
+            raise ValueError("probabilidad_mutacion debe estar en (0, 1]")
 
 
 class ReentrenarResponse(BaseModel):

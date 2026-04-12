@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { ActivitySquare, AlertTriangle, FlaskConical, Microscope, Stethoscope } from "lucide-react";
 import { DifusoSection } from "./components/sections/DifusoSection";
@@ -84,35 +83,6 @@ export default function App() {
     setIsAnalyzing(false);
   }
 
-  function renderActiveSection() {
-    switch (activeSection) {
-      case "prediccion":
-        return (
-          <div className="space-y-6">
-            <PatientDataSection
-              formData={formData}
-              isAnalyzing={isAnalyzing}
-              onAnalyze={handleAnalyze}
-              onFieldChange={handleFieldChange}
-            />
-            {(isAnalyzing || explanationResult || analysisError) && (
-              <RecommendationSection
-                result={explanationResult}
-                isLoading={isAnalyzing}
-                error={analysisError}
-              />
-            )}
-          </div>
-        );
-      case "difuso":
-        return <DifusoSection explanationResult={explanationResult} />;
-      case "ga":
-        return <OptimizationSection />;
-      default:
-        return null;
-    }
-  }
-
   const activeSectionLabel =
     navigation.find((item) => item.key === activeSection)?.label ?? "Prediccion";
 
@@ -187,17 +157,32 @@ export default function App() {
           )}
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeSection}
-            initial={{ opacity: 0, y: 22, scale: 0.99 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.99 }}
-            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {renderActiveSection()}
-          </motion.div>
-        </AnimatePresence>
+        {/* Secciones siempre montadas — se ocultan con CSS para no perder estado */}
+        <div className={activeSection === "prediccion" ? undefined : "hidden"}>
+          <div className="space-y-6">
+            <PatientDataSection
+              formData={formData}
+              isAnalyzing={isAnalyzing}
+              onAnalyze={handleAnalyze}
+              onFieldChange={handleFieldChange}
+            />
+            {(isAnalyzing || explanationResult || analysisError) && (
+              <RecommendationSection
+                result={explanationResult}
+                isLoading={isAnalyzing}
+                error={analysisError}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className={activeSection === "difuso" ? undefined : "hidden"}>
+          <DifusoSection explanationResult={explanationResult} />
+        </div>
+
+        <div className={activeSection === "ga" ? undefined : "hidden"}>
+          <OptimizationSection />
+        </div>
       </main>
     </div>
   );

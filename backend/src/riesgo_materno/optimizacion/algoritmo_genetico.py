@@ -50,12 +50,13 @@ class Individuo:
     penalizacion_desviacion: float
 
 
-def ejecutar_algoritmo_genetico(datos_validacion):
+def ejecutar_algoritmo_genetico(datos_validacion, parametros_override=None, progress_callback=None):
+    parametros = {**PARAMETROS_AG, **(parametros_override or {})}
     evaluaciones_cache = {}
     historial = []
     mejor_individuo = None
     generaciones_sin_mejora = 0
-    poblacion_inicial = inicializar_poblacion()
+    poblacion_inicial = inicializar_poblacion(parametros["tamano_poblacion"])
 
     def obtener_individuo(solucion):
         clave = crear_clave_solucion(solucion)
@@ -89,13 +90,29 @@ def ejecutar_algoritmo_genetico(datos_validacion):
             f"recall_alto={mejor_generacion.recall_alto_validacion:.4f}"
         )
 
+        if progress_callback is not None:
+            membresias = decodificar_cromosoma(mejor_generacion.cromosoma)
+            membresias_serializables = {
+                var: {cat: puntos.tolist() for cat, puntos in cats.items()}
+                for var, cats in membresias.items()
+            }
+            progress_callback({
+                "tipo": "generacion",
+                "generacion": int(instancia_ga.generations_completed),
+                "mejor_fitness": round(mejor_generacion.fitness, 4),
+                "fitness_promedio": round(promedio_fitness, 4),
+                "macro_f1_validacion": round(mejor_generacion.macro_f1_validacion, 4),
+                "recall_alto_validacion": round(mejor_generacion.recall_alto_validacion, 4),
+                "membresias_decodificadas": membresias_serializables,
+            })
+
         if mejor_individuo is None or mejor_generacion.fitness > mejor_individuo.fitness:
             mejor_individuo = mejor_generacion
             generaciones_sin_mejora = 0
         else:
             generaciones_sin_mejora += 1
 
-        if generaciones_sin_mejora >= PARAMETROS_AG["paciencia"]:
+        if generaciones_sin_mejora >= parametros["paciencia"]:
             return "stop"
         return None
 
@@ -114,16 +131,16 @@ def ejecutar_algoritmo_genetico(datos_validacion):
 
     instancia_ga = pygad.GA(
         initial_population=poblacion_inicial,
-        num_parents_mating=PARAMETROS_AG["cantidad_hijos"],
+        num_parents_mating=parametros["cantidad_hijos"],
         fitness_func=fitness_func,
-        num_generations=PARAMETROS_AG["maximo_generaciones"],
+        num_generations=parametros["maximo_generaciones"],
         parent_selection_type="tournament",
-        K_tournament=PARAMETROS_AG["tamano_torneo"],
-        keep_elitism=PARAMETROS_AG["elitismo"],
+        K_tournament=parametros["tamano_torneo"],
+        keep_elitism=parametros["elitismo"],
         crossover_type=cruce_aritmetico,
-        crossover_probability=PARAMETROS_AG["probabilidad_cruce"],
+        crossover_probability=parametros["probabilidad_cruce"],
         mutation_type=mutacion_gaussiana,
-        mutation_probability=PARAMETROS_AG["probabilidad_mutacion"],
+        mutation_probability=parametros["probabilidad_mutacion"],
         gene_type=float,
         gene_space=[
             {"low": float(limite_inferior), "high": float(limite_superior)}
@@ -176,9 +193,10 @@ def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE
     )
 
 
-def inicializar_poblacion():
-    tamano = PARAMETROS_AG["tamano_poblacion"]
-    
+def inicializar_poblacion(tamano=None):
+    if tamano is None:
+        tamano = PARAMETROS_AG["tamano_poblacion"]
+
     sigma = SIGMA_INICIALIZACION * (LIMITES_SUPERIORES - LIMITES_INFERIORES)
     poblacion = [CROMOSOMA_BASE.copy()]
     cantidad_perturbados = math.floor(FRACCION_POBLACION_PERTURBADA * (tamano - 1))

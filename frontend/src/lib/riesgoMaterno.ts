@@ -390,11 +390,95 @@ export async function obtenerComparacionGA() {
   return apiRequest<GAComparacionResponse>("/ga/comparacion", { method: "GET" });
 }
 
-export async function reentrenarGA() {
+export interface ReentrenarParams {
+  tamano_poblacion: number;
+  cantidad_hijos: number;
+  maximo_generaciones: number;
+  probabilidad_cruce: number;
+  probabilidad_mutacion: number;
+}
+
+export const defaultReentrenarParams: ReentrenarParams = {
+  tamano_poblacion: 50,
+  cantidad_hijos: 50,
+  maximo_generaciones: 60,
+  probabilidad_cruce: 0.85,
+  probabilidad_mutacion: 0.04,
+};
+
+export interface GAProgresoDone {
+  tipo: "done";
+  exito: boolean;
+  fitness: number;
+  generaciones: number;
+  macro_f1_validacion: number;
+  recall_alto_validacion: number;
+}
+
+export interface GAProgresoGeneracion {
+  tipo: "generacion";
+  generacion: number;
+  mejor_fitness: number;
+  fitness_promedio: number;
+  macro_f1_validacion: number;
+  recall_alto_validacion: number;
+  membresias_decodificadas: Record<string, Record<string, number[]>>;
+}
+
+export interface GAProgresoError {
+  tipo: "error";
+  mensaje: string;
+}
+
+export type GAProgresoEvento = GAProgresoGeneracion | GAProgresoDone | GAProgresoError;
+
+export async function reentrenarGA(params: ReentrenarParams = defaultReentrenarParams) {
   return apiRequest<{ exito: boolean; fitness: number; generaciones: number; macro_f1_validacion: number; recall_alto_validacion: number }>(
     "/ga/reentrenar",
-    { method: "POST", body: "{}" },
+    { method: "POST", body: JSON.stringify(params) },
   );
+}
+
+export async function* reentrenarGAStream(
+  params: ReentrenarParams,
+  signal?: AbortSignal,
+): AsyncGenerator<GAProgresoEvento> {
+  const response = await fetch(`${apiBaseUrl}/ga/reentrenar-stream`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params),
+    signal,
+  });
+
+  if (!response.ok) {
+    let message = `Error ${response.status}`;
+    try {
+      const data = (await response.json()) as { detail?: string };
+      if (typeof data.detail === "string") message = data.detail;
+    } catch { /* keep default */ }
+    throw new Error(message);
+  }
+
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop()!;
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          yield JSON.parse(line.slice(6)) as GAProgresoEvento;
+        }
+      }
+    }
+  } finally {
+    reader.cancel();
+  }
 }
 
 // ── Internal ──────────────────────────────────────────────────────────────────

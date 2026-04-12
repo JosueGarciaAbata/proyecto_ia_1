@@ -1,5 +1,8 @@
+import threading
+
 from src.riesgo_materno.entrenamiento.entrenador import (
     cargar_modelo_optimizado,
+    entrenar_con_progreso,
     obtener_membresias_optimizadas,
     obtener_resultado_entrenamiento,
 )
@@ -9,6 +12,7 @@ from src.riesgo_materno.optimizacion.cromosoma import decodificar_cromosoma
 from src.riesgo_materno.prediccion import predecir_caso
 from src.riesgo_materno.prediccion.predictor import obtener_curvas_membresia, predecir_caso_con_explicacion
 
+_lock_reentrenamiento = threading.Lock()
 
 # ── Prediccion ────────────────────────────────────────────────────────────────
 
@@ -70,8 +74,25 @@ def obtener_comparacion_ga() -> dict:
     }
 
 
-def reentrenar_ga() -> dict:
-    resultado = obtener_resultado_entrenamiento(forzar_reentrenamiento=True)
+def reentrenar_ga_con_progreso(parametros: dict, progress_callback) -> dict:
+    """Entrena el GA emitiendo cada generacion via progress_callback."""
+    with _lock_reentrenamiento:
+        resultado = entrenar_con_progreso(parametros=parametros, progress_callback=progress_callback)
+    mejor = resultado["mejor_individuo"]
+    return {
+        "exito": True,
+        "fitness": float(mejor.fitness),
+        "generaciones": int(len(resultado["historial"]) - 1),
+        "macro_f1_validacion": float(mejor.macro_f1_validacion),
+        "recall_alto_validacion": float(mejor.recall_alto_validacion),
+    }
+
+
+def reentrenar_ga(parametros: dict | None = None) -> dict:
+    resultado = obtener_resultado_entrenamiento(
+        forzar_reentrenamiento=True,
+        parametros=parametros,
+    )
     mejor = resultado["mejor_individuo"]
     return {
         "exito": True,
