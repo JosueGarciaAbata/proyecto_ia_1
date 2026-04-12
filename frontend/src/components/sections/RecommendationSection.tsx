@@ -79,6 +79,9 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
 
   const gaugeOption = {
     backgroundColor: "transparent",
+    animation: false,
+    animationDuration: 0,
+    animationDurationUpdate: 0,
     series: [
       {
         type: "gauge",
@@ -101,7 +104,7 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
         axisLabel: { show: false },
         pointer: { show: false },
         detail: {
-          valueAnimation: true,
+          valueAnimation: false,
           offsetCenter: [0, "0%"],
           formatter: "{value}",
           color: "#0f172a",
@@ -160,7 +163,12 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
               </div>
             </div>
             <div className="mt-6 h-72">
-              <ReactECharts option={gaugeOption} style={{ height: "100%", width: "100%" }} />
+              <ReactECharts
+                notMerge={true}
+                lazyUpdate={false}
+                option={gaugeOption}
+                style={{ height: "100%", width: "100%" }}
+              />
             </div>
           </div>
 
@@ -290,12 +298,12 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
                     {ruleNarrative}
                   </p>
 
-                  <div className="mt-4 overflow-hidden rounded-full bg-sky-100">
-                    <div
-                      className="h-1.5 rounded-full transition-all duration-500"
-                      style={{
-                        backgroundColor: ruleRisk.accent,
-                        width: `${Math.max(4, Math.round(rule.fuerza * 100))}%`,
+                    <div className="mt-4 overflow-hidden rounded-full bg-sky-100">
+                      <div
+                        className="h-1.5 rounded-full"
+                        style={{
+                          backgroundColor: ruleRisk.accent,
+                          width: `${Math.max(4, Math.round(rule.fuerza * 100))}%`,
                       }}
                     />
                   </div>

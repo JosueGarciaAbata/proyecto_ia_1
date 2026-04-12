@@ -176,6 +176,9 @@ function MembershipCurvesPanel({
 
   const chartOption = {
     backgroundColor: "transparent",
+    animation: false,
+    animationDuration: 0,
+    animationDurationUpdate: 0,
     tooltip: {
       trigger: "axis",
       backgroundColor: "rgba(255,255,255,0.96)",

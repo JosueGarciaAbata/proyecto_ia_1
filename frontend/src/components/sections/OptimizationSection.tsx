@@ -167,6 +167,9 @@ function ConvergenceChart({ historial }: { historial: GAHistorialResponse }) {
 
   const option = {
     backgroundColor: "transparent",
+    animation: false,
+    animationDuration: 0,
+    animationDurationUpdate: 0,
     tooltip: {
       trigger: "axis",
       backgroundColor: "rgba(255,255,255,0.96)",
@@ -229,7 +232,12 @@ function ConvergenceChart({ historial }: { historial: GAHistorialResponse }) {
         ))}
       </div>
       <div className="h-[360px]">
-        <ReactECharts option={option} style={{ height: "100%", width: "100%" }} />
+        <ReactECharts
+          notMerge={true}
+          lazyUpdate={false}
+          option={option}
+          style={{ height: "100%", width: "100%" }}
+        />
       </div>
     </ChartPanel>
   );
@@ -242,6 +250,9 @@ function ComparisonChart({ comparacion }: { comparacion: GAComparacionResponse }
 
   const option = {
     backgroundColor: "transparent",
+    animation: false,
+    animationDuration: 0,
+    animationDurationUpdate: 0,
     tooltip: {
       trigger: "axis",
       axisPointer: { type: "shadow" },
@@ -287,10 +298,15 @@ function ComparisonChart({ comparacion }: { comparacion: GAComparacionResponse }
   return (
     <div className="mt-6 grid gap-6 xl:grid-cols-2">
       <ChartPanel title="Comparacion base vs optimizado" subtitle="Metricas en los tres splits.">
-        <div className="h-[340px]">
-          <ReactECharts option={option} style={{ height: "100%", width: "100%" }} />
-        </div>
-      </ChartPanel>
+      <div className="h-[340px]">
+          <ReactECharts
+            notMerge={true}
+            lazyUpdate={false}
+            option={option}
+            style={{ height: "100%", width: "100%" }}
+          />
+      </div>
+    </ChartPanel>
 
       <GlassPanel className="p-5 sm:p-6">
         <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80 mb-4">
