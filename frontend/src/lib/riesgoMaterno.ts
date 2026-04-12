@@ -2,6 +2,8 @@ import type { PatientFormData } from "../data/mockData";
 
 export type RiskTone = "low" | "mid" | "high";
 
+// ── Prediccion ────────────────────────────────────────────────────────────────
+
 export interface PrediccionRequest {
   edad: number;
   presion_sistolica: number;
@@ -39,6 +41,7 @@ export interface ReglaActivada {
 }
 
 export interface ExplicacionResponse {
+  entrada_validada: Record<string, number>;
   pertenencias: Record<string, Record<string, number>>;
   reglas_activadas: ReglaActivada[];
   activaciones: Record<string, number>;
@@ -47,6 +50,80 @@ export interface ExplicacionResponse {
   origen_modelo: string;
   ajustes_entrada: AjusteEntradaResponse[];
 }
+
+// ── Algoritmo genetico ────────────────────────────────────────────────────────
+
+export interface GeneracionHistorial {
+  generacion: number;
+  mejor_fitness: number;
+  fitness_promedio: number;
+  macro_f1_validacion: number;
+  recall_alto_validacion: number;
+}
+
+export interface GAHistorialResponse {
+  disponible: boolean;
+  historial_generaciones: GeneracionHistorial[];
+  mejor_fitness: number;
+  generaciones: number;
+  macro_f1_validacion: number;
+  recall_alto_validacion: number;
+}
+
+export interface ComparacionRow {
+  metrica: string;
+  base: number;
+  optimizado: number;
+  delta: number;
+}
+
+export interface GAComparacionResponse {
+  disponible: boolean;
+  tabla_comparativa: ComparacionRow[];
+  mejor_cromosoma: number[];
+  membresias_decodificadas: Record<string, Record<string, number[]>>;
+}
+
+// ── Logica difusa ─────────────────────────────────────────────────────────────
+
+export interface CategoriaDefinicion {
+  puntos_base: number[];
+  puntos_optimizados: number[];
+}
+
+export interface VariableDefinicion {
+  limites: number[];
+  epsilon: number;
+  categorias: Record<string, CategoriaDefinicion>;
+}
+
+export interface FuzzyDefinicionesResponse {
+  variables: Record<string, VariableDefinicion>;
+  salida: {
+    nombre: string;
+    universo: number[];
+    categorias: Record<string, number[]>;
+  };
+  origen_modelo: string;
+}
+
+export interface AntecedentRegla {
+  variable: string;
+  categoria: string;
+}
+
+export interface ReglaSchema {
+  numero: number;
+  antecedentes: AntecedentRegla[];
+  consecuente: string;
+}
+
+export interface FuzzyReglasResponse {
+  reglas: ReglaSchema[];
+  total: number;
+}
+
+// ── Field specs ───────────────────────────────────────────────────────────────
 
 export const numericFieldSpecs = [
   {
@@ -120,38 +197,25 @@ export const numericFieldSpecs = [
 export type NumericFormField = (typeof numericFieldSpecs)[number]["formKey"];
 type NumericFieldSpec = (typeof numericFieldSpecs)[number];
 
-const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "/api/v1/predicciones").replace(
-  /\/$/,
-  "",
-);
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "/api/v1").replace(/\/$/, "");
 
 const fieldSpecByApiKey = Object.fromEntries(
   numericFieldSpecs.map((spec) => [spec.apiKey, spec]),
 ) as Record<(typeof numericFieldSpecs)[number]["apiKey"], NumericFieldSpec>;
 
 const riskToneConfig = {
-  low: {
-    accent: "#4ade80",
-    label: "Riesgo bajo",
-  },
-  mid: {
-    accent: "#f59e0b",
-    label: "Riesgo medio",
-  },
-  high: {
-    accent: "#fb7185",
-    label: "Riesgo alto",
-  },
+  low: { accent: "#4ade80", label: "Riesgo bajo" },
+  mid: { accent: "#f59e0b", label: "Riesgo medio" },
+  high: { accent: "#fb7185", label: "Riesgo alto" },
 } as const;
 
-const numberFormatter = new Intl.NumberFormat("es-EC", {
-  maximumFractionDigits: 2,
-});
-
+const numberFormatter = new Intl.NumberFormat("es-EC", { maximumFractionDigits: 2 });
 const scoreFormatter = new Intl.NumberFormat("es-EC", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
+
+// ── Builders ──────────────────────────────────────────────────────────────────
 
 export function buildPredictionPayload(formData: PatientFormData): PrediccionRequest {
   return numericFieldSpecs.reduce((payload, spec) => {
@@ -170,34 +234,19 @@ export function getFieldUnit(variable: string) {
 
 export function getFieldRange(formKey: NumericFormField) {
   const spec = numericFieldSpecs.find((item) => item.formKey === formKey);
-
-  if (!spec) {
-    return "";
-  }
-
-  return `${spec.min} - ${spec.max} ${spec.unit}`;
+  return spec ? `${spec.min} - ${spec.max} ${spec.unit}` : "";
 }
 
 export function getRiskTone(value: string): RiskTone {
-  const normalized = value.toLowerCase();
-
-  if (normalized.includes("high") || normalized.includes("alto")) {
-    return "high";
-  }
-
-  if (normalized.includes("mid") || normalized.includes("medio")) {
-    return "mid";
-  }
-
+  const n = value.toLowerCase();
+  if (n.includes("high") || n.includes("alto")) return "high";
+  if (n.includes("mid") || n.includes("medio")) return "mid";
   return "low";
 }
 
 export function getRiskUi(value: string) {
   const tone = getRiskTone(value);
-  return {
-    tone,
-    ...riskToneConfig[tone],
-  };
+  return { tone, ...riskToneConfig[tone] };
 }
 
 export function formatScore(value: number) {
@@ -218,10 +267,8 @@ export function formatAntecedentLabel(antecedent: AntecedentExplicacion) {
 }
 
 export function buildRuleTitle(rule: ReglaActivada) {
-  return `Si ${rule.antecedentes.map((antecedent) => formatAntecedentLabel(antecedent)).join(" y ")}`;
+  return `Si ${rule.antecedentes.map(formatAntecedentLabel).join(" y ")}`;
 }
-
-// ─── Narrativa clínica ────────────────────────────────────────────────────────
 
 const categoryLabels: Record<string, string> = {
   bajo: "bajo",
@@ -231,24 +278,16 @@ const categoryLabels: Record<string, string> = {
   alta: "alta",
   elevado: "elevado",
   elevada: "elevada",
-  muy_alto: "muy alto",
-  muy_alta: "muy alta",
   joven: "joven",
   adulta: "adulta",
-  mayor: "en edad avanzada",
-  lenta: "lenta",
-  rapida: "rápida",
-  muy_rapida: "muy rápida",
-  taquicardia: "con taquicardia",
+  avanzada: "avanzada",
   fiebre: "con fiebre",
-  hipotermia: "con hipotermia",
 };
 
 function getCategoryLabel(categoria: string): string {
   return categoryLabels[categoria] ?? humanize(categoria);
 }
 
-/** Frase legible de los antecedentes de una regla, sin porcentajes técnicos. */
 export function buildRuleNarrative(rule: ReglaActivada): string {
   const parts = rule.antecedentes.map(
     (a) => `la ${getFieldLabel(a.variable).toLowerCase()} está ${getCategoryLabel(a.categoria)}`,
@@ -265,13 +304,11 @@ export interface ClinicalNarrative {
   conclusion: string;
 }
 
-/** Genera tres oraciones que explican la decisión del sistema en lenguaje clínico. */
 export function buildClinicalNarrative(result: ExplicacionResponse): ClinicalNarrative {
   const riskLabel = getRiskUi(result.riesgo).label.toLowerCase();
   const score = Math.round(result.puntaje);
   const intro = `El sistema clasificó este caso como ${riskLabel} con un puntaje de ${score} sobre 100.`;
 
-  // Variables cuyo estado dominante no es "normal"
   const alerts: string[] = [];
   for (const [variable, categories] of Object.entries(result.pertenencias)) {
     const top = Object.entries(categories).sort(([, a], [, b]) => b - a)[0];
@@ -284,8 +321,8 @@ export function buildClinicalNarrative(result: ExplicacionResponse): ClinicalNar
 
   const details =
     alerts.length > 0
-      ? `Los indicadores que más influyeron en esta decisión fueron: ${alerts.join(", ")}.`
-      : "Los indicadores clínicos se encuentran dentro de los rangos esperados para este caso.";
+      ? `Los indicadores que más influyeron: ${alerts.join(", ")}.`
+      : "Los indicadores clínicos se encuentran dentro de los rangos esperados.";
 
   const high = result.activaciones["alto"] ?? 0;
   const mid = result.activaciones["medio"] ?? 0;
@@ -295,94 +332,107 @@ export function buildClinicalNarrative(result: ExplicacionResponse): ClinicalNar
   let conclusion = `Se evaluaron ${rulesCount} regla${rulesCount === 1 ? "" : "s"} del sistema difuso.`;
 
   if (high > 0.5) {
-    conclusion += ` La evidencia acumulada hacia riesgo alto alcanzó el ${Math.round(high * 100)}%, lo que justifica atención médica prioritaria.`;
+    conclusion += ` Evidencia hacia riesgo alto: ${Math.round(high * 100)}%.`;
   } else if (mid > 0.4) {
-    conclusion += ` La evidencia hacia riesgo medio alcanzó el ${Math.round(mid * 100)}%, lo que sugiere seguimiento clínico cercano.`;
+    conclusion += ` Evidencia hacia riesgo medio: ${Math.round(mid * 100)}%.`;
   } else if (low > 0.5) {
-    conclusion += ` La evidencia hacia riesgo bajo alcanzó el ${Math.round(low * 100)}%, sin señales de alerta críticas.`;
+    conclusion += ` Evidencia hacia riesgo bajo: ${Math.round(low * 100)}%.`;
   }
 
   return { intro, details, conclusion };
 }
 
-function capitalize(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
 export function buildResultSummary(result: Pick<ExplicacionResponse, "riesgo" | "puntaje" | "ajustes_entrada">) {
   const risk = getRiskUi(result.riesgo);
-  const adjustmentsCount = result.ajustes_entrada.length;
+  const adj = result.ajustes_entrada.length;
   const adjustmentText =
-    adjustmentsCount > 0
-      ? `El sistema normalizo ${adjustmentsCount} valor${adjustmentsCount === 1 ? "" : "es"} para mantenerlos dentro del rango de analisis.`
-      : "Los valores ingresados estaban dentro del rango de analisis valido.";
+    adj > 0
+      ? `El sistema normalizo ${adj} valor${adj === 1 ? "" : "es"} fuera del rango.`
+      : "Los valores ingresados estaban dentro del rango valido.";
 
   return {
     headline: `El sistema clasifico el caso como ${risk.label.toLowerCase()}.`,
-    description: `Se obtuvo un puntaje de ${formatScore(result.puntaje)} sobre 100. ${adjustmentText}`,
+    description: `Puntaje: ${formatScore(result.puntaje)} / 100. ${adjustmentText}`,
   };
 }
 
-export async function predecirRiesgoMaterno(
-  payload: PrediccionRequest,
-  signal?: AbortSignal,
-) {
-  return apiRequest<PrediccionResponse>("/riesgo-materno", {
+// ── API clients ───────────────────────────────────────────────────────────────
+
+export async function predecirRiesgoMaterno(payload: PrediccionRequest, signal?: AbortSignal) {
+  return apiRequest<PrediccionResponse>("/predicciones/riesgo-materno", {
     body: JSON.stringify(payload),
     method: "POST",
     signal,
   });
 }
 
-export async function explicarPrediccion(
-  payload: PrediccionRequest,
-  signal?: AbortSignal,
-) {
-  return apiRequest<ExplicacionResponse>("/riesgo-materno/explicacion", {
+export async function explicarPrediccion(payload: PrediccionRequest, signal?: AbortSignal) {
+  return apiRequest<ExplicacionResponse>("/predicciones/riesgo-materno/explicacion", {
     body: JSON.stringify(payload),
     method: "POST",
     signal,
   });
 }
+
+export async function obtenerDefinicionesDifusas() {
+  return apiRequest<FuzzyDefinicionesResponse>("/difuso/definiciones", { method: "GET" });
+}
+
+export async function obtenerReglasDifusas() {
+  return apiRequest<FuzzyReglasResponse>("/difuso/reglas", { method: "GET" });
+}
+
+export async function obtenerHistorialGA() {
+  return apiRequest<GAHistorialResponse>("/ga/historial", { method: "GET" });
+}
+
+export async function obtenerComparacionGA() {
+  return apiRequest<GAComparacionResponse>("/ga/comparacion", { method: "GET" });
+}
+
+export async function reentrenarGA() {
+  return apiRequest<{ exito: boolean; fitness: number; generaciones: number; macro_f1_validacion: number; recall_alto_validacion: number }>(
+    "/ga/reentrenar",
+    { method: "POST", body: "{}" },
+  );
+}
+
+// ── Internal ──────────────────────────────────────────────────────────────────
 
 function parseNumericField(value: string, label: string) {
-  const numericValue = Number(value);
-
-  if (!Number.isFinite(numericValue)) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) {
     throw new Error(`Ingrese un valor numerico valido para ${label.toLowerCase()}.`);
   }
-
-  return numericValue;
+  return n;
 }
 
 async function apiRequest<T>(path: string, init: RequestInit): Promise<T> {
   const headers = new Headers(init.headers);
-
   if (init.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${apiBaseUrl}${path}`, {
-    ...init,
-    headers,
-  });
+  const response = await fetch(`${apiBaseUrl}${path}`, { ...init, headers });
 
   if (!response.ok) {
     let message = `No se pudo completar la solicitud (${response.status}).`;
-
     try {
       const data = (await response.json()) as { detail?: string };
       if (typeof data.detail === "string" && data.detail.trim().length > 0) {
         message = data.detail;
       }
     } catch {
-      // Se conserva el mensaje por defecto cuando el backend no devuelve JSON.
+      // keep default
     }
-
     throw new Error(message);
   }
 
   return (await response.json()) as T;
+}
+
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 function humanize(value: string) {

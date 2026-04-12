@@ -1,6 +1,7 @@
 from functools import lru_cache
 import json
 from pathlib import Path
+import threading
 
 import numpy as np
 
@@ -10,12 +11,14 @@ from .datos import cargar_datos, convertir_split_a_diccionario, dividir_datos_es
 from .evaluacion import crear_tabla_comparativa, evaluar_membresias_en_splits
 from .modelo import RUTA_CSV, RUTA_MODELO_OPTIMIZADO
 
+_lock_entrenamiento = threading.Lock()
+
 
 def obtener_resultado_entrenamiento(forzar_reentrenamiento=False):
-    if forzar_reentrenamiento:
-        entrenar_y_guardar.cache_clear()
+    with _lock_entrenamiento:
+        if forzar_reentrenamiento:
+            entrenar_y_guardar.cache_clear()
         return entrenar_y_guardar()
-    return entrenar_y_guardar()
 
 
 def obtener_membresias_optimizadas():
@@ -35,7 +38,6 @@ def entrenar_y_guardar():
         nombre: convertir_split_a_diccionario(tabla)
         for nombre, tabla in splits.items()
     }
-    # Se necesita un punto de comparacion, despues no sabemos si el optimizado realmente mejoró.
     resultados_base = evaluar_membresias_en_splits(MEMBRESIAS_BASE, datos_por_split)
     mejor_individuo, historial = ejecutar_algoritmo_genetico(datos_por_split["validacion"])
     membresias_optimizadas = decodificar_cromosoma(mejor_individuo.cromosoma)
@@ -76,12 +78,36 @@ def cargar_modelo_optimizado():
         "mejor_cromosoma": cromosoma_reparado,
         "fuente_modelo": "disco",
         "ruta_modelo": str(ruta_modelo),
+        "fitness": datos_modelo.get("fitness", 0.0),
+        "macro_f1_validacion": datos_modelo.get("macro_f1_validacion", 0.0),
+        "recall_alto_validacion": datos_modelo.get("recall_alto_validacion", 0.0),
+        "generaciones": datos_modelo.get("generaciones", 0),
+        "historial": datos_modelo.get("historial", []),
+        "tabla_comparativa": datos_modelo.get("tabla_comparativa", []),
     }
 
 
 def guardar_modelo_optimizado(resultado):
     mejor_individuo = resultado["mejor_individuo"]
     historial = resultado["historial"]
+    tabla_comparativa = resultado["tabla_comparativa"]
+
+    def _serializable(v):
+        """Convierte valores numpy a tipos nativos de Python."""
+        if hasattr(v, "item"):
+            return v.item()
+        return v
+
+    historial_lista = [
+        {k: _serializable(v) for k, v in fila.items()}
+        for fila in historial.to_dict(orient="records")
+    ]
+
+    comparativa_lista = [
+        {k: _serializable(v) for k, v in fila.items()}
+        for fila in tabla_comparativa.to_dict(orient="records")
+    ]
+
     contenido = {
         "ruta_csv": str(RUTA_CSV),
         "mejor_cromosoma": [float(valor) for valor in mejor_individuo.cromosoma.tolist()],
@@ -89,6 +115,8 @@ def guardar_modelo_optimizado(resultado):
         "macro_f1_validacion": float(mejor_individuo.macro_f1_validacion),
         "recall_alto_validacion": float(mejor_individuo.recall_alto_validacion),
         "generaciones": int(len(historial) - 1),
+        "historial": historial_lista,
+        "tabla_comparativa": comparativa_lista,
     }
     Path(RUTA_MODELO_OPTIMIZADO).write_text(
         json.dumps(contenido, indent=2),

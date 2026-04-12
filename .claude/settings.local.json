@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from src.app.main import app; print\\('Backend OK:', [r.path for r in app.routes]\\)\")",
+      "Bash(\"../env/Scripts/python\" -c \"from src.app.main import app; print\\('Routes:', [r.path for r in app.routes]\\)\")",
+      "Bash('/c/Users/Joel/Desktop/Universidad/Septimo Semestre/Inteligencia Artificial/Proyecto/proyecto_ia_1/env/Scripts/python.exe' -c \"from src.app.main import app; print\\('Routes:', [r.path for r in app.routes]\\)\")",
+      "Bash(/c/Users/Joel/Desktop/Universidad/Septimo Semestre/Inteligencia Artificial/Proyecto/proyecto_ia_1/env/Scripts/python.exe:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Bash(python:*)"
+    ]
+  }
+}

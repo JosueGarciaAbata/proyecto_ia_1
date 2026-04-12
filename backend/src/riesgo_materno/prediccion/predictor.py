@@ -53,6 +53,7 @@ def predecir_caso_con_explicacion(valores_entrada):
 
     return {
         **resultado,
-        "origen_modelo":  origen_modelo,
+        "entrada_validada": entradas,
+        "origen_modelo": origen_modelo,
         "ajustes_entrada": ajustes,
     }

@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 
 
+# ── Prediccion ────────────────────────────────────────────────────────────────
+
 class PrediccionRequest(BaseModel):
     edad: float
     presion_sistolica: float
@@ -27,30 +29,21 @@ class PrediccionResponse(BaseModel):
 class AntecedentExplicacion(BaseModel):
     variable: str
     categoria: str
-    # Del paciente.
     pertenencia: float
 
 
 class ReglaActivada(BaseModel):
     numero: int
     antecedentes: list[AntecedentExplicacion]
-    # resultado del AND (el mínimo de todas las pertenencias de los antecedentes)
     fuerza: float
-
-    # hacia qué nivel de riesgo apunta esta regla: bajo, medio o alto
     consecuente: str
 
 
 class ExplicacionResponse(BaseModel):
-
-    # Para cada variable, cuanto pertenece el valor del paciente a cada categoria: { "edad": { "joven": 0.8, "adulta": 0.2 }, "presion_sistolica": { ... } }
+    entrada_validada: dict[str, float]
     pertenencias: dict[str, dict[str, float]]
     reglas_activadas: list[ReglaActivada]
-
-    # Fuerza final de cada nivel de riesgo tras acumular todas las reglas con OR: { "bajo": 0.05, "medio": 0.20, "alto": 0.70 }
     activaciones: dict[str, float]
-
-    # Número entre 0 y 100 resultado de la desfusificación (centroide).
     puntaje: float
     riesgo: str
     origen_modelo: str
@@ -61,6 +54,95 @@ class CurvaMembresia(BaseModel):
     puntos_x: list[float]
     puntos_y: list[float]
 
+
 class MembresiasResponse(BaseModel):
     variables: dict[str, dict[str, CurvaMembresia]]
     origen_modelo: str
+
+
+# ── Algoritmo genetico ────────────────────────────────────────────────────────
+
+class GeneracionHistorial(BaseModel):
+    generacion: int
+    mejor_fitness: float
+    fitness_promedio: float
+    macro_f1_validacion: float
+    recall_alto_validacion: float
+
+
+class GAHistorialResponse(BaseModel):
+    disponible: bool
+    historial_generaciones: list[GeneracionHistorial]
+    mejor_fitness: float
+    generaciones: int
+    macro_f1_validacion: float
+    recall_alto_validacion: float
+
+
+class ComparacionRow(BaseModel):
+    metrica: str
+    base: float
+    optimizado: float
+    delta: float
+
+
+class GAComparacionResponse(BaseModel):
+    disponible: bool
+    tabla_comparativa: list[ComparacionRow]
+    mejor_cromosoma: list[float]
+    membresias_decodificadas: dict[str, dict[str, list[float]]]
+
+
+class ReentrenarRequest(BaseModel):
+    tamano_poblacion: int = 50
+    maximo_generaciones: int = 60
+    paciencia: int = 20
+
+
+class ReentrenarResponse(BaseModel):
+    exito: bool
+    fitness: float
+    generaciones: int
+    macro_f1_validacion: float
+    recall_alto_validacion: float
+
+
+# ── Logica difusa ─────────────────────────────────────────────────────────────
+
+class CategoriaDefinicion(BaseModel):
+    puntos_base: list[float]
+    puntos_optimizados: list[float]
+
+
+class VariableDefinicion(BaseModel):
+    limites: list[float]
+    epsilon: float
+    categorias: dict[str, CategoriaDefinicion]
+
+
+class SalidaDifusa(BaseModel):
+    nombre: str
+    universo: list[float]
+    categorias: dict[str, list[float]]
+
+
+class FuzzyDefinicionesResponse(BaseModel):
+    variables: dict[str, VariableDefinicion]
+    salida: SalidaDifusa
+    origen_modelo: str
+
+
+class AntecedentRegla(BaseModel):
+    variable: str
+    categoria: str
+
+
+class ReglaSchema(BaseModel):
+    numero: int
+    antecedentes: list[AntecedentRegla]
+    consecuente: str
+
+
+class FuzzyReglasResponse(BaseModel):
+    reglas: list[ReglaSchema]
+    total: int
