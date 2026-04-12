@@ -160,6 +160,10 @@ function SummaryCards({ historial }: { historial: GAHistorialResponse }) {
 
 function ConvergenceChart({ historial }: { historial: GAHistorialResponse }) {
   const gens = historial.historial_generaciones;
+  const legendItems = [
+    { label: "Azul: Mejor fitness", color: "#38bdf8" },
+    { label: "Morado: Fitness promedio", color: "#818cf8" },
+  ];
 
   const option = {
     backgroundColor: "transparent",
@@ -168,10 +172,6 @@ function ConvergenceChart({ historial }: { historial: GAHistorialResponse }) {
       backgroundColor: "rgba(255,255,255,0.96)",
       borderColor: "rgba(125,211,252,0.65)",
       textStyle: { color: "#0f172a" },
-    },
-    legend: {
-      data: ["Mejor fitness", "Fitness promedio"],
-      textStyle: { color: "rgba(15,23,42,0.82)" },
     },
     grid: { left: 12, right: 18, top: 44, bottom: 12, containLabel: true },
     xAxis: {
@@ -212,8 +212,22 @@ function ConvergenceChart({ historial }: { historial: GAHistorialResponse }) {
     <ChartPanel
       className="mt-6"
       title="Convergencia del fitness por generacion"
-      subtitle="Mejor fitness y fitness promedio de la poblacion."
+      subtitle=""
     >
+      <div className="mb-3 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-600 sm:text-sm">
+        {legendItems.map((item) => (
+          <span
+            key={item.label}
+            className="inline-flex items-center gap-2 rounded-full border border-sky-100 bg-white/75 px-3 py-1.5 shadow-sm"
+          >
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: item.color }}
+            />
+            {item.label}
+          </span>
+        ))}
+      </div>
       <div className="h-[360px]">
         <ReactECharts option={option} style={{ height: "100%", width: "100%" }} />
       </div>
