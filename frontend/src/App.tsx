@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 import { ActivitySquare, AlertTriangle, FlaskConical, Microscope, Stethoscope } from "lucide-react";
 import { DifusoSection } from "./components/sections/DifusoSection";
 import { OptimizationSection } from "./components/sections/OptimizationSection";
@@ -158,7 +159,7 @@ export default function App() {
         </div>
 
         {/* Secciones siempre montadas — se ocultan con CSS para no perder estado */}
-        <div className={activeSection === "prediccion" ? undefined : "hidden"}>
+        <AnimatedSection isActive={activeSection === "prediccion"}>
           <div className="space-y-6">
             <PatientDataSection
               formData={formData}
@@ -166,23 +167,33 @@ export default function App() {
               onAnalyze={handleAnalyze}
               onFieldChange={handleFieldChange}
             />
-            {(isAnalyzing || explanationResult || analysisError) && (
-              <RecommendationSection
-                result={explanationResult}
-                isLoading={isAnalyzing}
-                error={analysisError}
-              />
-            )}
+            <AnimatePresence>
+              {(isAnalyzing || explanationResult || analysisError) && (
+                <motion.div
+                  key="recommendation"
+                  initial={{ opacity: 0, y: 22, scale: 0.99 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.99 }}
+                  transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <RecommendationSection
+                    result={explanationResult}
+                    isLoading={isAnalyzing}
+                    error={analysisError}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </div>
+        </AnimatedSection>
 
-        <div className={activeSection === "difuso" ? undefined : "hidden"}>
+        <AnimatedSection isActive={activeSection === "difuso"}>
           <DifusoSection explanationResult={explanationResult} />
-        </div>
+        </AnimatedSection>
 
-        <div className={activeSection === "ga" ? undefined : "hidden"}>
+        <AnimatedSection isActive={activeSection === "ga"}>
           <OptimizationSection />
-        </div>
+        </AnimatedSection>
       </main>
     </div>
   );
@@ -190,4 +201,36 @@ export default function App() {
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Ocurrio un error inesperado.";
+}
+
+// Envuelve cada sección para animar su entrada sin desmontarla.
+// Usa keyframes en una sola llamada para evitar que un controls.set
+// separado deje la sección atascada en opacity:0 si hay una re-render
+// entre las dos llamadas.
+function AnimatedSection({ isActive, children }: { isActive: boolean; children: React.ReactNode }) {
+  const controls = useAnimationControls();
+  const prevIsActiveRef = useRef(false);
+
+  useEffect(() => {
+    if (isActive && !prevIsActiveRef.current) {
+      // Keyframes [inicio, fin] en una sola llamada — atómico, no se interrumpe
+      void controls.start({
+        opacity: [0, 1],
+        y: [18, 0],
+        scale: [0.99, 1],
+        transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+      });
+    }
+    prevIsActiveRef.current = isActive;
+  // controls es estable; excluirlo evita re-ejecuciones innecesarias
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive]);
+
+  return (
+    // initial opacity:0 asegura que la sección empiece invisible
+    // antes de que la animación la traiga a opacity:1
+    <motion.div initial={{ opacity: 0 }} animate={controls} className={isActive ? undefined : "hidden"}>
+      {children}
+    </motion.div>
+  );
 }

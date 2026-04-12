@@ -1,7 +1,7 @@
 import ReactECharts from "echarts-for-react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { LoaderCircle, RefreshCw, X } from "lucide-react";
+import { Binary, LoaderCircle, RefreshCw, Terminal, X } from "lucide-react";
 import {
   defaultReentrenarParams,
   getFieldLabel,
@@ -13,6 +13,7 @@ import {
   type GeneracionHistorial,
   type ReentrenarParams,
 } from "../../lib/riesgoMaterno";
+import { cn } from "../../lib/utils";
 import { ChartPanel } from "../ui/ChartPanel";
 import { GlassPanel } from "../ui/GlassPanel";
 import { SectionHeader } from "../ui/SectionHeader";
@@ -30,12 +31,31 @@ interface ParamSpec {
 }
 
 const PARAM_SPECS: ParamSpec[] = [
-  { key: "tamano_poblacion",    label: "Tamaño de poblacion",   hint: "Minimo 4",          step: 1,    min: 4,   max: 500,  isFloat: false },
-  { key: "cantidad_hijos",      label: "Cantidad de hijos",     hint: "Minimo 2",          step: 1,    min: 2,   max: 500,  isFloat: false },
-  { key: "maximo_generaciones", label: "Maximo de generaciones",hint: "Minimo 1",          step: 1,    min: 1,   max: 1000, isFloat: false },
-  { key: "probabilidad_cruce",  label: "Probabilidad de cruce", hint: "Entre 0.01 y 1.0",  step: 0.01, min: 0.01,max: 1.0,  isFloat: true  },
-  { key: "probabilidad_mutacion",label:"Probabilidad de mutacion",hint:"Entre 0.001 y 1.0",step: 0.001,min: 0.001,max: 1.0, isFloat: true  },
+  { key: "tamano_poblacion",     label: "Tamaño de poblacion",    hint: "Minimo 4",           step: 1,     min: 4,    max: 500,  isFloat: false },
+  { key: "cantidad_hijos",       label: "Cantidad de hijos",      hint: "Minimo 2",           step: 1,     min: 2,    max: 500,  isFloat: false },
+  { key: "maximo_generaciones",  label: "Maximo de generaciones", hint: "Minimo 1",           step: 1,     min: 1,    max: 1000, isFloat: false },
+  { key: "probabilidad_cruce",   label: "Probabilidad de cruce",  hint: "Entre 0.01 y 1.0",   step: 0.01,  min: 0.01, max: 1.0,  isFloat: true  },
+  { key: "probabilidad_mutacion",label: "Probabilidad de mutacion",hint: "Entre 0.001 y 1.0", step: 0.001, min: 0.001,max: 1.0,  isFloat: true  },
 ];
+
+interface SummaryData {
+  mejor_fitness: number;
+  generaciones: number;
+  macro_f1_validacion: number;
+  recall_alto_validacion: number;
+}
+
+type TabKey = "log" | "cromosoma";
+
+// ── Helper: overlay de actualización ─────────────────────────────────────────
+
+function RefreshOverlay() {
+  return (
+    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[1.75rem] bg-white/60 backdrop-blur-[2px]">
+      <LoaderCircle className="h-5 w-5 animate-spin text-cyan-600" />
+    </div>
+  );
+}
 
 // ── Seccion principal ─────────────────────────────────────────────────────────
 
@@ -47,12 +67,10 @@ export function OptimizationSection() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [logLines, setLogLines] = useState<string[]>([]);
-  // Generaciones acumuladas en vivo para cards y grafica
   const [liveGens, setLiveGens] = useState<GeneracionHistorial[]>([]);
-  // Mejor cromosoma decodificado de la última generacion recibida
   const [liveMembresias, setLiveMembresias] = useState<Record<string, Record<string, number[]>> | null>(null);
+  const [activeTab, setActiveTab] = useState<TabKey>("log");
   const logContainerRef = useRef<HTMLDivElement | null>(null);
-  const logPanelRef = useRef<HTMLDivElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   async function fetchData() {
@@ -76,11 +94,7 @@ export function OptimizationSection() {
     setLiveMembresias(null);
     setRetraining(true);
     setFetchError(null);
-
-    // Desplaza hasta el panel de log sin mover toda la página
-    setTimeout(() => {
-      logPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 60);
+    setActiveTab("log");
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -100,7 +114,6 @@ export function OptimizationSection() {
           };
           setLiveGens((prev) => [...prev, gen]);
           setLiveMembresias(evento.membresias_decodificadas);
-
           const line =
             `Gen ${String(evento.generacion).padStart(3, "0")}  ` +
             `fitness=${evento.mejor_fitness.toFixed(4)}  ` +
@@ -127,56 +140,42 @@ export function OptimizationSection() {
     }
   }
 
-  // Scroll interno del contenedor del log (no mueve la pagina)
+  // Scroll interno del log sin mover la página
   useEffect(() => {
-    const container = logContainerRef.current;
-    if (container) container.scrollTop = container.scrollHeight;
+    const c = logContainerRef.current;
+    if (c) c.scrollTop = c.scrollHeight;
   }, [logLines]);
 
-  useEffect(() => {
-    return () => { abortRef.current?.abort(); };
-  }, []);
+  useEffect(() => { return () => { abortRef.current?.abort(); }; }, []);
+  useEffect(() => { fetchData(); }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // ── Derivados ─────────────────────────────────────────────────────────────
 
   const noData = !loading && !retraining && historial && !historial.disponible;
-
-  // ── Qué mostrar en cards y gráfica ───────────────────────────────────────────
-  // Prioridad: datos en vivo → datos del historial ya cargado → nada
   const lastLive = liveGens.length > 0 ? liveGens[liveGens.length - 1] : null;
+  const isLive = retraining && liveGens.length > 0;
+  const isRefreshing = !retraining && loading && liveGens.length > 0;
 
   const cardData: SummaryData | null = lastLive
-    ? {
-        mejor_fitness: lastLive.mejor_fitness,
-        generaciones: lastLive.generacion,
-        macro_f1_validacion: lastLive.macro_f1_validacion,
-        recall_alto_validacion: lastLive.recall_alto_validacion,
-      }
+    ? { mejor_fitness: lastLive.mejor_fitness, generaciones: lastLive.generacion, macro_f1_validacion: lastLive.macro_f1_validacion, recall_alto_validacion: lastLive.recall_alto_validacion }
     : historial?.disponible
-    ? {
-        mejor_fitness: historial.mejor_fitness,
-        generaciones: historial.generaciones,
-        macro_f1_validacion: historial.macro_f1_validacion,
-        recall_alto_validacion: historial.recall_alto_validacion,
-      }
+    ? { mejor_fitness: historial.mejor_fitness, generaciones: historial.generaciones, macro_f1_validacion: historial.macro_f1_validacion, recall_alto_validacion: historial.recall_alto_validacion }
     : null;
 
   const chartGens: GeneracionHistorial[] | null =
-    liveGens.length > 0
-      ? liveGens
-      : historial?.disponible
-      ? historial.historial_generaciones
-      : null;
+    liveGens.length > 0 ? liveGens : historial?.disponible ? historial.historial_generaciones : null;
 
-  // Estamos en vivo si hay generaciones llegando en este momento
-  const isLive = retraining && liveGens.length > 0;
-  // Acaba de terminar y está actualizando desde el servidor
-  const isRefreshing = !retraining && loading && liveGens.length > 0;
+  const comparacionDisponible = comparacion?.disponible && comparacion.tabla_comparativa.length > 0;
+  const membresiasActivas = liveMembresias ?? (comparacion?.disponible ? comparacion.membresias_decodificadas : null);
+
+  const showLogTab = logLines.length > 0 || retraining;
+  const showCromoTab = membresiasActivas !== null;
+  const showTabs = showLogTab || showCromoTab;
 
   return (
     <section className="section-anchor pt-10" id="optimization">
+
+      {/* ── 1. Cabecera ─────────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4">
         <SectionHeader
           eyebrow="Optimizacion"
@@ -190,120 +189,167 @@ export function OptimizationSection() {
           type="button"
         >
           {retraining ? (
-            <>
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-              {noData ? "Entrenando..." : "Reentrenando..."}
-            </>
+            <><LoaderCircle className="h-4 w-4 animate-spin" />{noData ? "Entrenando..." : "Reentrenando..."}</>
           ) : (
-            <>
-              <RefreshCw className="h-4 w-4" />
-              {noData ? "Entrenar GA" : "Reentrenar GA"}
-            </>
+            <><RefreshCw className="h-4 w-4" />{noData ? "Entrenar GA" : "Reentrenar GA"}</>
           )}
         </button>
       </div>
 
-      {/* Log de progreso en vivo */}
-      {(retraining || logLines.length > 0) && (
-        <div ref={logPanelRef}>
-          <GlassPanel className="mt-4 overflow-hidden p-0">
-            <div className="flex items-center gap-2 border-b border-sky-100 px-4 py-2.5">
-              {retraining && <LoaderCircle className="h-3.5 w-3.5 animate-spin text-cyan-600" />}
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700/80">
-                {retraining ? "Entrenamiento en progreso..." : "Log de entrenamiento"}
+      {/* ── 2. Barra de estado compacta (solo durante entrenamiento) ────────── */}
+      {retraining && (
+        <div className="mt-3 flex items-center gap-2.5 rounded-2xl border border-cyan-200 bg-cyan-50/70 px-4 py-2.5">
+          <LoaderCircle className="h-3.5 w-3.5 shrink-0 animate-spin text-cyan-600" />
+          {lastLive ? (
+            <span className="font-mono text-xs text-slate-700">
+              <span className="font-semibold text-cyan-700">
+                Gen {String(lastLive.generacion).padStart(3, "0")}
               </span>
-            </div>
-            <div
-              ref={logContainerRef}
-              className="max-h-64 overflow-y-auto bg-slate-950/95 px-4 py-3 font-mono text-xs leading-6"
-            >
-              {logLines.map((line, i) => (
-                <div
-                  key={i}
-                  className={
-                    line.startsWith("───")
-                      ? "text-cyan-400 font-semibold mt-1"
-                      : "text-slate-300"
-                  }
-                >
-                  {line}
-                </div>
-              ))}
-            </div>
-          </GlassPanel>
+              <span className="mx-2 text-slate-300">|</span>
+              fitness <span className="font-semibold">{lastLive.mejor_fitness.toFixed(4)}</span>
+              <span className="mx-2 text-slate-300">|</span>
+              macro_f1 <span className="font-semibold">{lastLive.macro_f1_validacion.toFixed(4)}</span>
+              <span className="mx-2 text-slate-300">|</span>
+              recall_alto <span className="font-semibold">{lastLive.recall_alto_validacion.toFixed(4)}</span>
+            </span>
+          ) : (
+            <span className="text-xs text-cyan-700">Iniciando algoritmo genetico...</span>
+          )}
         </div>
       )}
 
-      {/* Carga inicial sin datos previos */}
+      {/* ── 3. Estados iniciales ─────────────────────────────────────────────── */}
       {loading && !retraining && liveGens.length === 0 && (
-        <GlassPanel className="flex min-h-48 items-center justify-center gap-3 p-8 text-slate-600">
+        <GlassPanel className="mt-6 flex min-h-48 items-center justify-center gap-3 p-8 text-slate-600">
           <LoaderCircle className="h-5 w-5 animate-spin text-cyan-600" />
           <span className="text-sm">Cargando datos del algoritmo genetico...</span>
         </GlassPanel>
       )}
-
       {fetchError && !retraining && (
-        <GlassPanel className="mt-4 p-6 text-sm text-rose-700">{fetchError}</GlassPanel>
+        <GlassPanel className="mt-4 p-5 text-sm text-rose-700">{fetchError}</GlassPanel>
       )}
-
       {noData && (
-        <GlassPanel className="mb-4 p-4 text-sm text-amber-700 border-amber-200 bg-amber-50">
-          El modelo genetico aun no ha sido entrenado.
-          Presione <strong>Entrenar GA</strong> para ejecutar el algoritmo y generar los datos de convergencia y comparacion.
+        <GlassPanel className="mt-6 p-4 text-sm text-amber-700 border-amber-200 bg-amber-50">
+          El modelo genetico aun no ha sido entrenado. Presione{" "}
+          <strong>Entrenar GA</strong> para ejecutar el algoritmo.
         </GlassPanel>
       )}
 
-      {/* Cards: siempre visibles si hay datos (vivos o del historial) */}
+      {/* ── 4. Cards de métricas clave ───────────────────────────────────────── */}
       {cardData && (
-        <div className="relative">
+        <div className="relative mt-5">
           <SummaryCards data={cardData} isLive={isLive} />
-          {/* Indicador sutil de actualización final */}
-          {isRefreshing && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-[2px]">
-              <LoaderCircle className="h-5 w-5 animate-spin text-cyan-600" />
+          {isRefreshing && <RefreshOverlay />}
+        </div>
+      )}
+
+      {/* ── 5. Gráficas: convergencia (izq) + comparación (der) ─────────────── */}
+      {(chartGens || comparacionDisponible) && (
+        <div className="relative mt-6 grid gap-6 xl:grid-cols-5">
+          {/* Convergencia */}
+          {chartGens && (
+            <div className="relative xl:col-span-3">
+              <ConvergenceChart gens={chartGens} isLive={isLive} />
+              {isRefreshing && <RefreshOverlay />}
+            </div>
+          )}
+          {/* Comparación base vs optimizado — apilada en columna derecha */}
+          {comparacionDisponible && (
+            <div className="relative xl:col-span-2">
+              <ComparisonPanel comparacion={comparacion!} />
+              {isRefreshing && <RefreshOverlay />}
             </div>
           )}
         </div>
       )}
 
-      {/* Gráfica de convergencia: siempre visible si hay datos */}
-      {chartGens && (
-        <div className="relative">
-          <ConvergenceChart gens={chartGens} isLive={isLive} />
-          {isRefreshing && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-[2px]">
-              <LoaderCircle className="h-5 w-5 animate-spin text-cyan-600" />
-            </div>
-          )}
-        </div>
+      {/* ── 6. Contenido secundario: tabs Log / Cromosoma ────────────────────── */}
+      {showTabs && (
+        <motion.div
+          className="mt-8 overflow-hidden"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {/* Barra de tabs */}
+          <div className="flex border-b border-sky-100">
+            {showLogTab && (
+              <TabButton
+                active={activeTab === "log"}
+                onClick={() => setActiveTab("log")}
+                icon={<Terminal className="h-3.5 w-3.5" />}
+                label="Log de entrenamiento"
+                badge={!retraining && logLines.length > 0 ? String(logLines.length) : undefined}
+                spinner={retraining}
+              />
+            )}
+            {showCromoTab && (
+              <TabButton
+                active={activeTab === "cromosoma"}
+                onClick={() => setActiveTab("cromosoma")}
+                icon={<Binary className="h-3.5 w-3.5" />}
+                label="Cromosoma decodificado"
+                live={isLive}
+              />
+            )}
+          </div>
+
+          {/* Contenido del tab activo — crossfade al cambiar */}
+          <AnimatePresence mode="wait">
+            {activeTab === "log" && showLogTab && (
+              <motion.div
+                key="log"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              >
+                <GlassPanel className="overflow-hidden rounded-tl-none p-0">
+                  <div
+                    ref={logContainerRef}
+                    className="max-h-56 overflow-y-auto bg-slate-950 px-4 py-3 font-mono text-xs leading-6"
+                  >
+                    {logLines.length === 0 && retraining && (
+                      <span className="text-slate-500">Esperando primera generacion...</span>
+                    )}
+                    {logLines.map((line, i) => (
+                      <div
+                        key={i}
+                        className={
+                          line.startsWith("───")
+                            ? "mt-1 font-semibold text-cyan-400"
+                            : "text-slate-300"
+                        }
+                      >
+                        {line}
+                      </div>
+                    ))}
+                  </div>
+                </GlassPanel>
+              </motion.div>
+            )}
+
+            {activeTab === "cromosoma" && showCromoTab && (
+              <motion.div
+                key="cromosoma"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="relative"
+              >
+                <ChromosomeTable
+                  membresias={membresiasActivas!}
+                  isLive={isLive && liveMembresias !== null}
+                />
+                {isRefreshing && <RefreshOverlay />}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       )}
 
-      {/* Comparación y cromosoma: visibles siempre que existan (no se reemplazan durante entrenamiento) */}
-      {comparacion && comparacion.disponible && comparacion.tabla_comparativa.length > 0 && (
-        <div className="relative">
-          <ComparisonChart comparacion={comparacion} />
-          {isRefreshing && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-[2px]">
-              <LoaderCircle className="h-5 w-5 animate-spin text-cyan-600" />
-            </div>
-          )}
-        </div>
-      )}
-      {(liveMembresias || (comparacion && comparacion.disponible)) && (
-        <div className="relative">
-          <ChromosomeTable
-            membresias={liveMembresias ?? comparacion!.membresias_decodificadas}
-            isLive={isLive && liveMembresias !== null}
-          />
-          {isRefreshing && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-[2px]">
-              <LoaderCircle className="h-5 w-5 animate-spin text-cyan-600" />
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Modal de parametros */}
+      {/* Modal de parámetros */}
       {showModal && (
         <ReentrenarModal
           onConfirm={handleStartTraining}
@@ -314,7 +360,44 @@ export function OptimizationSection() {
   );
 }
 
-// ── Modal de parametros ───────────────────────────────────────────────────────
+// ── Botón de tab ──────────────────────────────────────────────────────────────
+
+function TabButton({
+  active, onClick, icon, label, badge, spinner, live,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  badge?: string;
+  spinner?: boolean;
+  live?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      type="button"
+      className={cn(
+        "-mb-px flex items-center gap-2 border-b-2 px-5 py-2.5 text-sm font-medium transition",
+        active
+          ? "border-cyan-500 text-cyan-800"
+          : "border-transparent text-slate-500 hover:text-slate-700",
+      )}
+    >
+      {icon}
+      {label}
+      {spinner && <LoaderCircle className="h-3 w-3 animate-spin" />}
+      {badge && (
+        <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-xs font-normal text-slate-500">
+          {badge}
+        </span>
+      )}
+      {live && <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />}
+    </button>
+  );
+}
+
+// ── Modal de parámetros ───────────────────────────────────────────────────────
 
 function ReentrenarModal({
   onConfirm,
@@ -333,54 +416,36 @@ function ReentrenarModal({
   }
 
   function validate(): boolean {
-    const newErrors: Partial<Record<keyof ReentrenarParams, string>> = {};
-    if (params.tamano_poblacion < 4)     newErrors.tamano_poblacion    = "Minimo 4";
-    if (params.cantidad_hijos < 2)       newErrors.cantidad_hijos      = "Minimo 2";
-    if (params.maximo_generaciones < 1)  newErrors.maximo_generaciones = "Minimo 1";
+    const e: Partial<Record<keyof ReentrenarParams, string>> = {};
+    if (params.tamano_poblacion < 4)    e.tamano_poblacion    = "Minimo 4";
+    if (params.cantidad_hijos < 2)      e.cantidad_hijos      = "Minimo 2";
+    if (params.maximo_generaciones < 1) e.maximo_generaciones = "Minimo 1";
     if (params.probabilidad_cruce <= 0 || params.probabilidad_cruce > 1)
-      newErrors.probabilidad_cruce   = "Debe estar entre 0.01 y 1.0";
+      e.probabilidad_cruce   = "Debe estar entre 0.01 y 1.0";
     if (params.probabilidad_mutacion <= 0 || params.probabilidad_mutacion > 1)
-      newErrors.probabilidad_mutacion = "Debe estar entre 0.001 y 1.0";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }
-
-  function handleSubmit() {
-    if (validate()) onConfirm(params);
+      e.probabilidad_mutacion = "Debe estar entre 0.001 y 1.0";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-        onClick={onCancel}
-      />
-
-      {/* Panel */}
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onCancel} />
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 10 }}
         transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
         className="relative w-full max-w-md rounded-3xl border border-sky-100 bg-white/95 shadow-2xl backdrop-blur-xl"
       >
-        {/* Cabecera */}
         <div className="flex items-center justify-between border-b border-sky-100 px-6 py-4">
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-cyan-700/80">Configuracion</div>
             <div className="mt-0.5 text-base font-semibold text-slate-900">Parametros del algoritmo genetico</div>
           </div>
-          <button
-            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
-            onClick={onCancel}
-            type="button"
-          >
+          <button className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 transition" onClick={onCancel} type="button">
             <X className="h-4 w-4" />
           </button>
         </div>
-
-        {/* Campos */}
         <div className="space-y-4 px-6 py-5">
           {PARAM_SPECS.map((spec) => (
             <div key={spec.key}>
@@ -395,33 +460,22 @@ function ReentrenarModal({
                 max={spec.max}
                 value={params[spec.key]}
                 onChange={(e) => handleChange(spec.key, e.target.value, spec.isFloat)}
-                className={`w-full rounded-xl border px-3 py-2 text-sm text-slate-900 outline-none transition focus:ring-2 focus:ring-cyan-300 ${
+                className={cn(
+                  "w-full rounded-xl border px-3 py-2 text-sm text-slate-900 outline-none transition focus:ring-2 focus:ring-cyan-300",
                   errors[spec.key]
                     ? "border-rose-300 bg-rose-50 focus:ring-rose-200"
-                    : "border-sky-200 bg-white hover:border-cyan-300"
-                }`}
+                    : "border-sky-200 bg-white hover:border-cyan-300",
+                )}
               />
-              {errors[spec.key] && (
-                <p className="mt-1 text-xs text-rose-600">{errors[spec.key]}</p>
-              )}
+              {errors[spec.key] && <p className="mt-1 text-xs text-rose-600">{errors[spec.key]}</p>}
             </div>
           ))}
         </div>
-
-        {/* Acciones */}
         <div className="flex justify-end gap-3 border-t border-sky-100 px-6 py-4">
-          <button
-            className="rounded-full border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
-            onClick={onCancel}
-            type="button"
-          >
+          <button className="rounded-full border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition" onClick={onCancel} type="button">
             Cancelar
           </button>
-          <button
-            className="rounded-full bg-cyan-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700 active:scale-[0.97]"
-            onClick={handleSubmit}
-            type="button"
-          >
+          <button className="rounded-full bg-cyan-600 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-700 active:scale-[0.97] transition" onClick={() => { if (validate()) onConfirm(params); }} type="button">
             Iniciar entrenamiento
           </button>
         </div>
@@ -430,43 +484,18 @@ function ReentrenarModal({
   );
 }
 
-// ── Tarjetas resumen ──────────────────────────────────────────────────────────
-
-interface SummaryData {
-  mejor_fitness: number;
-  generaciones: number;
-  macro_f1_validacion: number;
-  recall_alto_validacion: number;
-}
+// ── Cards de métricas ─────────────────────────────────────────────────────────
 
 function SummaryCards({ data, isLive }: { data: SummaryData; isLive?: boolean }) {
   const cards = [
-    {
-      label: "Mejor fitness",
-      value: data.mejor_fitness.toFixed(4),
-      detail: "Fitness maximo sobre datos de validacion.",
-    },
-    {
-      label: "Generaciones",
-      value: data.generaciones.toString(),
-      detail: isLive
-        ? "Generacion actual en curso."
-        : "Generaciones hasta la convergencia por paciencia.",
-    },
-    {
-      label: "Macro F1",
-      value: (data.macro_f1_validacion * 100).toFixed(1) + "%",
-      detail: "F1 macro ponderado en validacion.",
-    },
-    {
-      label: "Recall alto riesgo",
-      value: (data.recall_alto_validacion * 100).toFixed(1) + "%",
-      detail: "Recall de la clase de riesgo alto.",
-    },
+    { label: "Mejor fitness",     value: data.mejor_fitness.toFixed(4),                         detail: "Fitness maximo en validacion." },
+    { label: "Generaciones",      value: data.generaciones.toString(),                           detail: isLive ? "Generacion actual en curso." : "Generaciones hasta convergencia." },
+    { label: "Macro F1",          value: (data.macro_f1_validacion * 100).toFixed(1) + "%",      detail: "F1 macro ponderado en validacion." },
+    { label: "Recall alto riesgo",value: (data.recall_alto_validacion * 100).toFixed(1) + "%",   detail: "Recall de la clase de riesgo alto." },
   ];
 
   return (
-    <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       {cards.map((card, i) => (
         <motion.div
           key={card.label}
@@ -475,12 +504,10 @@ function SummaryCards({ data, isLive }: { data: SummaryData; isLive?: boolean })
           viewport={{ once: true }}
           transition={{ duration: 0.35, delay: i * 0.06 }}
         >
-          <GlassPanel className={`h-full p-5 ${isLive ? "border-cyan-200" : ""}`}>
+          <GlassPanel className={cn("h-full p-5", isLive && "border-cyan-200")}>
             <div className="flex items-center gap-2">
               <div className="text-xs uppercase tracking-[0.22em] text-slate-500">{card.label}</div>
-              {isLive && (
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
-              )}
+              {isLive && <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />}
             </div>
             <div className="mt-3 font-mono text-3xl font-semibold text-slate-900">{card.value}</div>
             <p className="mt-2 text-xs leading-5 text-slate-500">{card.detail}</p>
@@ -491,14 +518,9 @@ function SummaryCards({ data, isLive }: { data: SummaryData; isLive?: boolean })
   );
 }
 
-// ── Convergencia ──────────────────────────────────────────────────────────────
+// ── Gráfica de convergencia ───────────────────────────────────────────────────
 
 function ConvergenceChart({ gens, isLive }: { gens: GeneracionHistorial[]; isLive?: boolean }) {
-  const legendItems = [
-    { label: "Azul: Mejor fitness", color: "#38bdf8" },
-    { label: "Morado: Fitness promedio", color: "#818cf8" },
-  ];
-
   const option = {
     backgroundColor: "transparent",
     animation: false,
@@ -547,39 +569,30 @@ function ConvergenceChart({ gens, isLive }: { gens: GeneracionHistorial[]; isLiv
 
   return (
     <ChartPanel
-      className="mt-6"
       title={isLive ? "Convergencia del fitness — en curso" : "Convergencia del fitness por generacion"}
       subtitle=""
     >
-      <div className="mb-3 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-600 sm:text-sm">
-        {legendItems.map((item) => (
-          <span
-            key={item.label}
-            className="inline-flex items-center gap-2 rounded-full border border-sky-100 bg-white/75 px-3 py-1.5 shadow-sm"
-          >
-            <span
-              className="h-2.5 w-2.5 rounded-full"
-              style={{ backgroundColor: item.color }}
-            />
+      <div className="mb-3 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-600">
+        {[
+          { label: "Mejor fitness", color: "#38bdf8" },
+          { label: "Fitness promedio", color: "#818cf8" },
+        ].map((item) => (
+          <span key={item.label} className="inline-flex items-center gap-2 rounded-full border border-sky-100 bg-white/75 px-3 py-1.5 shadow-sm">
+            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
             {item.label}
           </span>
         ))}
       </div>
-      <div className="h-[360px]">
-        <ReactECharts
-          notMerge={true}
-          lazyUpdate={false}
-          option={option}
-          style={{ height: "100%", width: "100%" }}
-        />
+      <div className="h-[320px]">
+        <ReactECharts notMerge={true} lazyUpdate={false} option={option} style={{ height: "100%", width: "100%" }} />
       </div>
     </ChartPanel>
   );
 }
 
-// ── Comparacion base vs optimizado ────────────────────────────────────────────
+// ── Panel de comparación (apilado para columna derecha) ───────────────────────
 
-function ComparisonChart({ comparacion }: { comparacion: GAComparacionResponse }) {
+function ComparisonPanel({ comparacion }: { comparacion: GAComparacionResponse }) {
   const rows = comparacion.tabla_comparativa;
 
   const option = {
@@ -597,80 +610,69 @@ function ComparisonChart({ comparacion }: { comparacion: GAComparacionResponse }
     legend: {
       data: ["Base", "Optimizado"],
       textStyle: { color: "rgba(15,23,42,0.82)" },
+      top: 4,
     },
-    grid: { left: 12, right: 12, top: 44, bottom: 12, containLabel: true },
+    grid: { left: 8, right: 8, top: 40, bottom: 8, containLabel: true },
     xAxis: {
       type: "category",
       data: rows.map((r) => r.metrica),
-      axisLabel: { color: "rgba(30,41,59,0.82)", rotate: 16, fontSize: 11 },
+      axisLabel: { color: "rgba(30,41,59,0.82)", rotate: 18, fontSize: 10 },
       axisLine: { lineStyle: { color: "rgba(148,163,184,0.35)" } },
     },
     yAxis: {
       type: "value",
       max: 1,
-      axisLabel: { color: "rgba(30,41,59,0.82)" },
+      axisLabel: { color: "rgba(30,41,59,0.82)", fontSize: 10 },
       splitLine: { lineStyle: { color: "rgba(148,163,184,0.16)" } },
     },
     series: [
       {
         name: "Base",
         type: "bar",
-        barMaxWidth: 28,
-        itemStyle: { color: "rgba(148,163,184,0.55)", borderRadius: [6, 6, 0, 0] },
+        barMaxWidth: 22,
+        itemStyle: { color: "rgba(148,163,184,0.55)", borderRadius: [5, 5, 0, 0] },
         data: rows.map((r) => Number(r.base.toFixed(4))),
       },
       {
         name: "Optimizado",
         type: "bar",
-        barMaxWidth: 28,
-        itemStyle: { color: "#38bdf8", borderRadius: [6, 6, 0, 0] },
+        barMaxWidth: 22,
+        itemStyle: { color: "#38bdf8", borderRadius: [5, 5, 0, 0] },
         data: rows.map((r) => Number(r.optimizado.toFixed(4))),
       },
     ],
   };
 
   return (
-    <div className="mt-6 grid gap-6 xl:grid-cols-2">
-      <ChartPanel title="Comparacion base vs optimizado" subtitle="Metricas en los tres splits.">
-      <div className="h-[340px]">
-          <ReactECharts
-            notMerge={true}
-            lazyUpdate={false}
-            option={option}
-            style={{ height: "100%", width: "100%" }}
-          />
-      </div>
-    </ChartPanel>
-
-      <GlassPanel className="p-5 sm:p-6">
-        <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80 mb-4">
-          Tabla comparativa
+    <div className="flex h-full flex-col gap-4">
+      {/* Gráfica de barras compacta */}
+      <ChartPanel title="Base vs optimizado" subtitle="Metricas en los tres splits.">
+        <div className="h-[210px]">
+          <ReactECharts notMerge={true} lazyUpdate={false} option={option} style={{ height: "100%", width: "100%" }} />
         </div>
+      </ChartPanel>
+
+      {/* Tabla de métricas */}
+      <GlassPanel className="p-4 sm:p-5">
+        <div className="mb-3 text-xs uppercase tracking-[0.22em] text-cyan-700/80">Tabla comparativa</div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-sky-100 text-xs uppercase tracking-[0.14em] text-slate-500">
-                <th className="py-2 pr-3 text-left">Metrica</th>
-                <th className="py-2 px-3 text-right">Base</th>
-                <th className="py-2 px-3 text-right">Opt.</th>
-                <th className="py-2 pl-3 text-right">Delta</th>
+              <tr className="border-b border-sky-100 uppercase tracking-[0.12em] text-slate-400">
+                <th className="py-1.5 pr-3 text-left font-medium">Metrica</th>
+                <th className="py-1.5 px-2 text-right font-medium">Base</th>
+                <th className="py-1.5 px-2 text-right font-medium">Opt.</th>
+                <th className="py-1.5 pl-2 text-right font-medium">Δ</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
                 <tr key={row.metrica} className="border-b border-sky-50">
-                  <td className="py-2 pr-3 text-slate-700">{row.metrica}</td>
-                  <td className="py-2 px-3 text-right font-mono text-slate-500">
-                    {row.base.toFixed(3)}
-                  </td>
-                  <td className="py-2 px-3 text-right font-mono font-semibold text-cyan-700">
-                    {row.optimizado.toFixed(3)}
-                  </td>
-                  <td
-                    className={`py-2 pl-3 text-right font-mono text-xs ${row.delta >= 0 ? "text-emerald-600" : "text-rose-600"}`}
-                  >
-                    {row.delta >= 0 ? "+" : ""}
-                    {row.delta.toFixed(3)}
+                  <td className="py-1.5 pr-3 text-slate-700">{row.metrica}</td>
+                  <td className="py-1.5 px-2 text-right font-mono text-slate-400">{row.base.toFixed(3)}</td>
+                  <td className="py-1.5 px-2 text-right font-mono font-semibold text-cyan-700">{row.optimizado.toFixed(3)}</td>
+                  <td className={cn("py-1.5 pl-2 text-right font-mono", row.delta >= 0 ? "text-emerald-600" : "text-rose-600")}>
+                    {row.delta >= 0 ? "+" : ""}{row.delta.toFixed(3)}
                   </td>
                 </tr>
               ))}
@@ -692,14 +694,12 @@ function ChromosomeTable({
   isLive?: boolean;
 }) {
   return (
-    <GlassPanel className={`mt-6 p-6 sm:p-7 ${isLive ? "border-cyan-200" : ""}`}>
-      <div className="flex items-center gap-2 mb-4">
-        <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
+    <GlassPanel className={cn("rounded-tl-none p-5 sm:p-6", isLive && "border-cyan-200")}>
+      <div className="mb-3 flex items-center gap-2">
+        <span className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
           Mejor cromosoma — membresías decodificadas [a, b, c, d]
-        </div>
-        {isLive && (
-          <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
-        )}
+        </span>
+        {isLive && <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />}
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -716,23 +716,15 @@ function ChromosomeTable({
           <tbody>
             {Object.entries(membresias).flatMap(([variable, cats]) =>
               Object.entries(cats).map(([cat, pts], catIdx) => (
-                <tr
-                  key={`${variable}-${cat}`}
-                  className="border-b border-sky-50 hover:bg-sky-50/40"
-                >
+                <tr key={`${variable}-${cat}`} className="border-b border-sky-50 hover:bg-sky-50/40">
                   {catIdx === 0 ? (
-                    <td
-                      className="py-2.5 pr-4 font-semibold text-slate-800"
-                      rowSpan={Object.keys(cats).length}
-                    >
+                    <td className="py-2.5 pr-4 font-semibold text-slate-800" rowSpan={Object.keys(cats).length}>
                       {getFieldLabel(variable)}
                     </td>
                   ) : null}
                   <td className="py-2.5 pr-4 text-slate-600">{cat}</td>
                   {pts.map((v, i) => (
-                    <td key={i} className="py-2.5 pr-3 font-mono text-xs text-slate-700">
-                      {v.toFixed(2)}
-                    </td>
+                    <td key={i} className="py-2.5 pr-3 font-mono text-xs text-slate-700">{v.toFixed(2)}</td>
                   ))}
                 </tr>
               )),

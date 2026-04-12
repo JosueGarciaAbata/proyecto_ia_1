@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import ReactECharts from "echarts-for-react";
 import { AlertTriangle, BookOpen, CheckCircle2, LoaderCircle, ShieldAlert } from "lucide-react";
 import {
@@ -41,31 +41,53 @@ export function RecommendationSection({ result, isLoading, error }: Recommendati
         description="Puntaje, clasificacion y razonamiento del caso analizado."
       />
 
-      {isLoading ? (
-        <GlassPanel className="flex min-h-64 flex-col items-center justify-center gap-4 p-8 text-center">
-          <LoaderCircle className="h-8 w-8 animate-spin text-cyan-600" />
-          <div>
-            <div className="text-lg font-semibold text-slate-900">Analizando el caso...</div>
-            <p className="mt-2 max-w-xl text-sm leading-7 text-slate-600">
-              El sistema esta evaluando los indicadores clinicos del paciente.
-            </p>
-          </div>
-        </GlassPanel>
-      ) : null}
-
-      {!isLoading && error ? (
-        <GlassPanel className="flex items-start gap-3 p-6 text-rose-700">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
-          <div>
-            <div className="font-semibold">No se pudo ejecutar el analisis.</div>
-            <p className="mt-2 text-sm leading-7">{error}</p>
-          </div>
-        </GlassPanel>
-      ) : null}
-
-      {!isLoading && !error && result ? (
-        <ResultContent result={result} />
-      ) : null}
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+          >
+            <GlassPanel className="flex min-h-64 flex-col items-center justify-center gap-4 p-8 text-center">
+              <LoaderCircle className="h-8 w-8 animate-spin text-cyan-600" />
+              <div>
+                <div className="text-lg font-semibold text-slate-900">Analizando el caso...</div>
+                <p className="mt-2 max-w-xl text-sm leading-7 text-slate-600">
+                  El sistema esta evaluando los indicadores clinicos del paciente.
+                </p>
+              </div>
+            </GlassPanel>
+          </motion.div>
+        ) : error ? (
+          <motion.div
+            key="error"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+          >
+            <GlassPanel className="flex items-start gap-3 p-6 text-rose-700">
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+              <div>
+                <div className="font-semibold">No se pudo ejecutar el analisis.</div>
+                <p className="mt-2 text-sm leading-7">{error}</p>
+              </div>
+            </GlassPanel>
+          </motion.div>
+        ) : result ? (
+          <motion.div
+            key="result"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <ResultContent result={result} />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }
@@ -122,12 +144,8 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
   };
 
   return (
-    <motion.div
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="space-y-6"
-    >
-      {/* Gauge + resumen */}
+    <div className="space-y-6">
+      {/* ── Gauge + resumen ─────────────────────────────────────────────────── */}
       <GlassPanel className="overflow-hidden p-6 sm:p-8">
         <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-[2rem] border border-sky-100 bg-white/82 p-6 shadow-sm">
@@ -313,6 +331,6 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
           })}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
