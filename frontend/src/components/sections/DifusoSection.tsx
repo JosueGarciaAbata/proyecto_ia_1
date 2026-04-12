@@ -267,7 +267,13 @@ function MembershipCurvesPanel({
         subtitle="Linea discontinua = base / Linea solida = optimizado"
       >
         <div className="h-[420px]">
-          <ReactECharts option={chartOption} style={{ height: "100%", width: "100%" }} />
+          <ReactECharts
+            key={selectedVariable}
+            notMerge={true}
+            lazyUpdate={false}
+            option={chartOption}
+            style={{ height: "100%", width: "100%" }}
+          />
         </div>
       </ChartPanel>
     </div>
