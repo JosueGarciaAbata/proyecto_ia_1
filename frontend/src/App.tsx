@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { motion, useAnimationControls } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 import { ActivitySquare, AlertTriangle, FlaskConical, Microscope, Stethoscope } from "lucide-react";
 import { DifusoSection } from "./components/sections/DifusoSection";
 import { OptimizationSection } from "./components/sections/OptimizationSection";
 import { PatientDataSection } from "./components/sections/PatientDataSection";
 import { RecommendationSection } from "./components/sections/RecommendationSection";
-import { GlassPanel } from "./components/ui/GlassPanel";
 import { initialPatientForm, type PatientFormData } from "./data/mockData";
 import {
   buildPredictionPayload,
@@ -32,7 +31,9 @@ export default function App() {
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    return () => { abortRef.current?.abort(); };
+    return () => {
+      abortRef.current?.abort();
+    };
   }, []);
 
   function handleFieldChange(
@@ -98,15 +99,15 @@ export default function App() {
       <header className="sticky top-0 z-40 border-b border-sky-100/90 bg-white/78 backdrop-blur-xl">
         <div className="mx-auto max-w-[1480px] px-4 py-4 sm:px-6 xl:px-8">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex items-center gap-3.5">
-              <div className="rounded-2xl border border-cyan-300/30 bg-cyan-50 p-2.5 text-cyan-700">
-                <ActivitySquare className="h-5 w-5" />
+            <div className="flex items-center gap-4">
+              <div className="rounded-2xl border border-cyan-300/30 bg-cyan-50 p-3 text-cyan-700">
+                <ActivitySquare className="h-6 w-6" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-slate-900 leading-tight">
+                <div className="text-base font-semibold leading-tight text-slate-900">
                   Riesgo materno
                 </div>
-                <div className="text-[11px] uppercase tracking-[0.18em] text-slate-400 mt-0.5">
+                <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
                   Logica difusa Mamdani + AG
                 </div>
               </div>
@@ -148,53 +149,32 @@ export default function App() {
           </div>
         ) : null}
 
-        <div className="mt-4 flex items-center gap-2">
-          <span className="rounded-full border border-cyan-300/35 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-800">
-            {activeSectionLabel}
-          </span>
-          {explanationResult && activeSection !== "prediccion" && (
-            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-              Caso analizado disponible
-            </span>
-          )}
-        </div>
 
-        {/* Secciones siempre montadas — se ocultan con CSS para no perder estado */}
         <AnimatedSection isActive={activeSection === "prediccion"}>
-          <div className="space-y-6 pt-6">
-            <GlassPanel className="overflow-hidden p-5 sm:p-6">
-              <div className="max-w-3xl">
-                  <div className="inline-flex items-center rounded-full border border-cyan-300/35 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-800">
-                    Flujo clinico
-                  </div>
-                  <h1 className="mt-3 text-3xl font-semibold text-slate-950 sm:text-[2.5rem]">
-                    Ingrese variables y revise la inferencia sin perder contexto.
-                  </h1>
-                  <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                    Complete los indicadores clinicos y consulte el resultado en la misma vista.
-                  </p>
-              </div>
-            </GlassPanel>
-
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.88fr)] xl:items-start">
-              <div className="min-w-0">
-                <PatientDataSection
-                  compact
-                  formData={formData}
-                  isAnalyzing={isAnalyzing}
-                  onAnalyze={handleAnalyze}
-                  onFieldChange={handleFieldChange}
-                />
-              </div>
-              <div className="min-w-0 xl:sticky xl:top-28">
-                <RecommendationSection
-                  compact
-                  result={explanationResult}
-                  isLoading={isAnalyzing}
-                  error={analysisError}
-                />
-              </div>
-            </div>
+          <div className="space-y-6">
+            <PatientDataSection
+              formData={formData}
+              isAnalyzing={isAnalyzing}
+              onAnalyze={handleAnalyze}
+              onFieldChange={handleFieldChange}
+            />
+            <AnimatePresence>
+              {(isAnalyzing || explanationResult || analysisError) && (
+                <motion.div
+                  key="recommendation"
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.99 }}
+                  initial={{ opacity: 0, y: 22, scale: 0.99 }}
+                  transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <RecommendationSection
+                    error={analysisError}
+                    isLoading={isAnalyzing}
+                    result={explanationResult}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </AnimatedSection>
 
@@ -214,17 +194,12 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Ocurrio un error inesperado.";
 }
 
-// Envuelve cada sección para animar su entrada sin desmontarla.
-// Sección activa al montar empieza visible (opacity:1) — evita el flash
-// en F5/carga inicial. Solo anima cuando el usuario cambia de sección.
 function AnimatedSection({ isActive, children }: { isActive: boolean; children: React.ReactNode }) {
   const controls = useAnimationControls();
-  // Inicializar con el valor real — si ya es activa, prev = true → no anima al montar
   const prevIsActiveRef = useRef(isActive);
 
   useEffect(() => {
     if (isActive && !prevIsActiveRef.current) {
-      // Sección recién activada por el usuario → animar entrada
       void controls.start({
         opacity: [0, 1],
         y: [18, 0],
@@ -233,17 +208,13 @@ function AnimatedSection({ isActive, children }: { isActive: boolean; children: 
       });
     }
     prevIsActiveRef.current = isActive;
-  // controls es estable; excluirlo evita re-ejecuciones innecesarias
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive]);
+  }, [controls, isActive]);
 
   return (
-    // Sección activa al montar: opacity:1 visible de inmediato.
-    // Sección inactiva al montar: opacity:0 para poder animar entrada luego.
     <motion.div
-      initial={{ opacity: isActive ? 1 : 0, y: 0, scale: 1 }}
       animate={controls}
       className={isActive ? undefined : "hidden"}
+      initial={{ opacity: isActive ? 1 : 0, y: 0, scale: 1 }}
     >
       {children}
     </motion.div>

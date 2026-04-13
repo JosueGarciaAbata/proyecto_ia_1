@@ -12,6 +12,7 @@ from ..schemas.prediccion import (
     ReentrenarResponse,
 )
 from ..services.riesgo_materno_service import (
+    esta_entrenando,
     obtener_comparacion_ga,
     obtener_historial_ga,
     reentrenar_ga,
@@ -19,6 +20,12 @@ from ..services.riesgo_materno_service import (
 )
 
 router = APIRouter(prefix="/api/v1/ga", tags=["Algoritmo genetico"])
+
+
+@router.get("/estado")
+def estado_ga():
+    """Indica si hay un entrenamiento en curso en el servidor."""
+    return {"en_entrenamiento": esta_entrenando()}
 
 
 @router.get("/historial", response_model=GAHistorialResponse)

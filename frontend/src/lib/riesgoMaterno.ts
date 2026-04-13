@@ -254,7 +254,9 @@ export function formatScore(value: number) {
 }
 
 export function formatPercentage(value: number) {
-  return `${Math.round(value * 100)}%`;
+  const rounded = Math.round(value * 100);
+  if (rounded === 0 && value > 0) return "<1%";
+  return `${rounded}%`;
 }
 
 export function formatValue(variable: string, value: number) {
@@ -382,6 +384,10 @@ export async function obtenerDefinicionesDifusas() {
 
 export async function obtenerReglasDifusas() {
   return apiRequest<FuzzyReglasResponse>("/difuso/reglas", { method: "GET" });
+}
+
+export async function obtenerEstadoGA() {
+  return apiRequest<{ en_entrenamiento: boolean }>("/ga/estado", { method: "GET" });
 }
 
 export async function obtenerHistorialGA() {
