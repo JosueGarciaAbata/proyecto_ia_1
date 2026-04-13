@@ -5,7 +5,9 @@ from pathlib import Path
 RUTA_PAQUETE = Path(__file__).resolve().parents[1]
 RUTA_CSV = RUTA_PAQUETE / "datos" / "Maternal Health Risk Data Set.csv"
 COLUMNA_RIESGO_CSV = "RiskLevel"
-RUTA_MODELO_OPTIMIZADO = RUTA_PAQUETE / "modelos" / "modelo_optimizado.json"
+RUTA_MODELO_OPTIMIZADO  = RUTA_PAQUETE / "modelos" / "modelo_optimizado.json"
+RUTA_REGLAS_APRENDIDAS  = RUTA_PAQUETE / "modelos" / "reglas_aprendidas.json"
+RUTA_REGLAS_MANUALES    = RUTA_PAQUETE / "modelos" / "reglas_manuales.json"
 
 MAPA_COLUMNAS_CSV = OrderedDict(
     [
@@ -26,7 +28,7 @@ PARAMETROS_AG = {
     "probabilidad_mutacion": 0.04,
     "elitismo": 3,
     "tamano_torneo": 3,
-    "paciencia": 20,
+    "paciencia": 50,
 }
 
 PESOS_FITNESS = {
