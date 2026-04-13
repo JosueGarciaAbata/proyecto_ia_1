@@ -13,6 +13,7 @@
 \usepackage{amssymb}
 \usepackage{fancyhdr}
 \usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage{array}
 \usepackage{longtable}
 \usepackage{xcolor}
@@ -112,9 +113,7 @@ Adicionalmente, la l\'ogica difusa maneja de forma natural la incertidumbre inhe
 
 \subsubsection{Por qué un Algoritmo Genético}
 
-Las funciones de membres\'ia que definen los conjuntos difusos ---es decir, los par\'ametros que determinan d\'onde empieza y termina cada categor\'ia ling\"u\'istica--- son cr\'iticas para la precisi\'on del sistema. Si bien la literatura m\'edica proporciona rangos cl\'inicos de referencia, el dataset espec\'ifico de riesgo materno puede tener distribuciones particulares que justifiquen ajustes finos a esos par\'ametros.
-
-Este problema de ajuste es un problema de optimizaci\'on en un espacio continuo de alta dimensionalidad (68 par\'ametros en este caso), donde la funci\'on objetivo ---la precisi\'on del clasificador--- no es diferenciable. Los algoritmos gen\'eticos \cite{holland1975} son especialmente adecuados para este tipo de problemas: no requieren el c\'alculo de gradientes, son robustos frente a m\'aximos locales y permiten incorporar m\'ultiples objetivos simult\'aneos (precisi\'on global, sensibilidad en casos de alto riesgo e interpretabilidad de las funciones resultantes).
+Los par\'ametros de las funciones de membres\'ia deben ajustarse al dataset espec\'ifico de riesgo materno. Este es un problema de optimizaci\'on en espacio continuo de alta dimensi\'on con funci\'on objetivo no diferenciable, para el cual los algoritmos gen\'eticos \cite{holland1975} son la herramienta adecuada. La justificaci\'on t\'ecnica detallada se presenta en la Secci\'on~\ref{sec:ag_motivacion}.
 
 \subsubsection{Objetivo General}
 
@@ -231,9 +230,17 @@ La definici\'on de las categor\'ias ling\"u\'isticas y de los rangos de las func
     \item Elsevier / ScienceDirect (\texttt{elsevier.com})
 \end{itemize}
 
-La b\'usqueda cubri\'o m\'as de 225 fuentes y se orient\'o a responder dos preguntas concretas: (1) \textit{¿Cu\'ales son los rangos cl\'inicamente aceptados como normales, elevados y patol\'ogicos para cada una de las seis variables en mujeres embarazadas?} y (2) \textit{¿Qu\'e combinaciones de variables constituyen indicadores de riesgo en obstetricia seg\'un la evidencia publicada?}
+La b\'usqueda cubri\'o m\'as de 205 fuentes y se orient\'o a responder dos preguntas concretas: (1) \textit{¿Cu\'ales son los rangos cl\'inicamente aceptados como normales, elevados y patol\'ogicos para cada una de las seis variables en mujeres embarazadas?} y (2) \textit{¿Qu\'e combinaciones de variables constituyen indicadores de riesgo en obstetricia seg\'un la evidencia publicada?}
 
-Esta b\'usqueda permiti\'o definir tanto las categor\'ias ling\"u\'isticas (por ejemplo, determinar que la presi\'on diast\'olica se puede clasificar en ``normal'', ``elevada'' y ``alta'') como los puntos de inicio y fin de cada trapezoide a partir de los umbrales cl\'inicos reportados en la literatura. Las reglas del sistema fueron posteriormente dise\~nadas tomando como base el conocimiento extraído y refinadas iterativamente para resolver los problemas de clasificaci\'on detectados durante las pruebas.
+Esta b\'usqueda permiti\'o definir tanto las categor\'ias ling\"u\'isticas (por ejemplo, determinar que la presi\'on diast\'olica se puede clasificar en ``normal'', ``elevada'' y ``alta'') como los puntos de inicio y fin de cada trapezoide a partir de los umbrales cl\'inicos reportados en la literatura. Las reglas del sistema fueron posteriormente dise\~nadas tomando como base el conocimiento extra\'ido y refinadas iterativamente para resolver los problemas de clasificaci\'on detectados durante las pruebas. El Cuadro~\ref{tab:universos_variables} resume los universos y umbrales cl\'inicos adoptados para cada variable, cuya justificaci\'on detallada se presenta en la Secci\'on~\ref{sec:variables_entrada}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.15]{picture/investigacion.jpg}
+\caption{Evidencia de la b\'usqueda bibliogr\'afica sistem\'atica (m\'as de 205 fuentes consultadas)}
+\label{fig:investigacion}
+\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+\end{figure}
 
 \subsubsection{Trabajos Relacionados}
 
@@ -301,6 +308,28 @@ La funci\'on trapezoidal fue elegida porque permite representar de forma natural
 \end{figure}
 
 \subsubsection{Variables de Entrada: Categorías y Parámetros}
+\label{sec:variables_entrada}
+
+El siguiente cuadro resume los universos de discurso y umbrales cl\'inicos clave que sirvieron como punto de partida para definir las funciones de membres\'ia de cada variable.
+
+\begin{table}[H]
+\centering
+\caption{Universos de las variables difusas: rango del dataset y referencia clínica}
+\label{tab:universos_variables}
+\begin{tabularx}{\textwidth}{l l l X}
+\toprule
+\textbf{Variable} & \textbf{Universo adoptado} & \textbf{Rango en dataset} & \textbf{Umbral clínico clave} \\
+\midrule
+Edad                    & {[}10, 70{]} a\~nos     & {[}10, 70{]}      & Riesgo adolescente $<$20 a; AMA $\geq$35 a \cite{who2021adolescent,acog2020} \\
+Presi\'on sist\'olica   & {[}70, 160{]} mmHg      & {[}70, 160{]}     & HTA gestacional: $\geq$140 mmHg \cite{acog2020,whelton2018} \\
+Presi\'on diast\'olica  & {[}49, 100{]} mmHg      & {[}49, 100{]}     & HTA gestacional: $\geq$90 mmHg \cite{acog2020,whelton2018} \\
+Az\'ucar en sangre      & {[}6.0, 19.0{]} mmol/L  & {[}6.0, 19.0{]}   & DMG: $\geq$8.5 mmol/L posprandial \cite{iadpsg2010} \\
+Temperatura corporal    & {[}97, 103{]} \textdegree F & {[}97, 103{]}  & Fiebre: $\geq$100.4 \textdegree F (38 \textdegree C) \cite{mackowiak1992} \\
+Frecuencia card\'iaca   & {[}60, 90{]} lpm        & {[}60, 90{]}      & Taquicardia: $>$100 lpm \cite{monga1995} \\
+\bottomrule
+\end{tabularx}
+\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia con base en las referencias cl\'inicas indicadas.}
+\end{table}
 
 Cada variable de entrada cuenta con 2 o 3 categor\'ias ling\"u\'isticas. Los puntos de cada trapezoide fueron inicialmente definidos con base en los umbrales cl\'inicos de la literatura y posteriormente refinados por el algoritmo gen\'etico.
 
@@ -321,7 +350,7 @@ avanzada & 34 & 40 & 70 & 70 \\
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-Justificaci\'on: La literatura obst\'etrica considera ``edad materna avanzada'' a partir de los 35 a\~nos como factor de riesgo independiente para hipertensi\'on gestacional, diabetes gestacional y complicaciones del parto. La categor\'ia ``joven'' (menor de 20 a\~nos) tambi\'en representa riesgo por inmadurez biol\'ogica y socioecon\'omica.
+Justificaci\'on: El rango del dataset [10, 70] a\~nos \cite{ahmed2020} cubre el espectro completo de edad reproductiva documentado. La Organizaci\'on Mundial de la Salud define el embarazo adolescente (menores de 20 a\~nos) como situaci\'on de alto riesgo obst\'etrico por inmadurez biol\'ogica del canal del parto, mayor prevalencia de desnutrici\'on materna y acceso limitado a atenci\'on prenatal \cite{who2021adolescent}. En el extremo opuesto, la ``edad materna avanzada'' (AMA), definida convencionalmente como $\geq 35$ a\~nos por el ACOG, se asocia de forma independiente con mayor riesgo de hipertensi\'on gestacional, diabetes gestacional, parto prematuro y anomal\'ias cromosómicas \cite{acog2020}. Estudios epidemiol\'ogicos de gran escala confirman que la morbilidad materna perinatal es m\'inima entre los 20 y 34 a\~nos, ventana que abarca la categor\'ia ``adulta'' del sistema \cite{cavazos2014,yogev2010}. Los puntos del trapezoide ``avanzada'' comienzan en 34 a\~nos para capturar el riesgo creciente en los a\~nos previos al umbral oficial de AMA, cuya relevancia cl\'inica est\'a bien documentada \cite{acog2020}.
 
 \paragraph{Variable 2: Presión Sistólica (mmHg)}
 
@@ -340,7 +369,7 @@ alta    & 140 & 148 & 160 & 160 \\
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-Justificaci\'on: El criterio cl\'inico de hipertensi\'on gestacional establece presi\'on sist\'olica $\geq 140$ mmHg como umbral de alerta. La zona ``elevada'' (120--145 mmHg) corresponde a la hipertensi\'on estadio 1 seg\'un las gu\'ias de la Asociaci\'on Americana del Coraz\'on (AHA).
+Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on sist\'olica en: normal ($<$120 mmHg), elevada (120--129 mmHg), estadio~1 (130--139 mmHg) y estadio~2 ($\geq$140 mmHg) \cite{whelton2018}. En obstetricia, el ACOG y la OMS establecen $\geq$140 mmHg como umbral diagn\'ostico de hipertensi\'on gestacional y criterio de sospecha de preeclampsia \cite{acog2020,who2011hypertension}; a partir de $\geq$160 mmHg se considera hipertensi\'on gestacional grave que exige tratamiento farmacol\'ogico inmediato \cite{acog2020}. La categor\'ia ``alta'' del sistema arranca en 140 mmHg (plena certeza desde 148 mmHg) para replicar estos umbrales; la ``elevada'' (120--145 mmHg) cubre el estadio~1 de la AHA, zona de vigilancia intensificada; y la ``normal'' con n\'ucleo hasta 110 mmHg refleja que por debajo de ese valor la presi\'on sist\'olica aislada no constituye factor de riesgo gestacional \cite{whelton2018}.
 
 \paragraph{Variable 3: Presión Diastólica (mmHg)}
 
@@ -359,6 +388,8 @@ alta    & 90 & 95 & 100 & 100 \\
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
+Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on diast\'olica en: normal ($<$80 mmHg), estadio~1 (80--89 mmHg) y estadio~2 ($\geq$90 mmHg) \cite{whelton2018}. El ACOG y la OMS definen hipertensi\'on gestacional cuando la diast\'olica alcanza $\geq$90 mmHg en dos lecturas separadas \cite{acog2020,who2011hypertension}; este umbral fija el l\'imite inferior de la categor\'ia ``alta'' del sistema. La categor\'ia ``elevada'' (76--95 mmHg) cubre el estadio~1 de la AHA y la zona de prehipertensi\'on gestacional donde las gu\'ias recomiendan vigilancia intensificada \cite{whelton2018}. El l\'imite inferior del universo (49 mmHg) reproduce el m\'inimo del dataset \cite{ahmed2020}, consistente con la vasodilataci\'on fisiol\'ogica del segundo trimestre que puede reducir transitoriamente la presi\'on diast\'olica \cite{monga1995}.
+
 \paragraph{Variable 4: Azúcar en Sangre (mmol/L)}
 
 \begin{table}[H]
@@ -376,7 +407,7 @@ alta    & 12.0 & 14.0 & 19.0 & 19.0 \\
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-Justificaci\'on: El criterio diagn\'ostico de diabetes gestacional (IADPSG) establece que la glucemia en ayunas $\geq 5.1$ mmol/L (92 mg/dL) y la glucemia postprandial $\geq 8.5$ mmol/L (153 mg/dL) indican diabetes gestacional. El nivel ``alto'' ($\geq 14$ mmol/L) corresponde a hiperglucemia severa asociada con riesgo de cetoacidosis.
+Justificaci\'on: Los valores del dataset [6.0--19.0] mmol/L corresponden a mediciones de glucemia aleatoria (no en ayunas) \cite{ahmed2020}. El grupo IADPSG establece como criterios diagn\'osticos de diabetes mellitus gestacional (DMG): glucemia en ayunas $\geq$5.1 mmol/L, a la hora $\geq$10.0 mmol/L y a las dos horas $\geq$8.5 mmol/L en la prueba de tolerancia oral a la glucosa \cite{iadpsg2010}. La Asociaci\'on Americana de Diabetes (ADA) define glucemia aleatoria $\geq$11.1 mmol/L (200 mg/dL) como criterio diagn\'ostico de diabetes en presencia de s\'intomas, y glucemia en ayunas $\geq$7.0 mmol/L como umbral de confirmaci\'on \cite{ada2024}. Con base en estos criterios: la categor\'ia ``normal'' [6.0--8.5] mmol/L abarca el rango por debajo del umbral postprandial IADPSG; la ``elevada'' [8.0--14.0] mmol/L cubre desde la zona de riesgo de DMG hasta hiperglucemia notable; y la ``alta'' [$\geq$12 mmol/L, certeza plena desde 14 mmol/L] representa hiperglucemia severa ($>$200 mg/dL) asociada con riesgo de cetoacidosis diab\'etica y complicaciones perinatales graves \cite{ada2024}.
 
 \paragraph{Variable 5: Temperatura Corporal (\textdegree F)}
 
@@ -395,7 +426,7 @@ fiebre  & 101.0 & 101.5 & 103.0 & 103.0 \\
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-Justificaci\'on: La temperatura normal en el embarazo oscila entre 97.0 y 99.0 \textdegree F. La fiebre ($\geq 100.4$ \textdegree F $= 38$ \textdegree C) durante el embarazo es indicativa de infecci\'on o sepsis, condici\'on potencialmente letal para la madre y el feto.
+Justificaci\'on: Un estudio de referencia cl\'asico de Mackowiak et al.\ estableci\'o que la temperatura corporal normal en adultos oscila entre 36.1 y 37.2 \textdegree C (97.0--99.0 \textdegree F), con media de 36.8 \textdegree C \cite{mackowiak1992}. El umbral de fiebre cl\'inica universalmente aceptado es $\geq$38.0 \textdegree C ($\geq$100.4 \textdegree F) \cite{mackowiak1992}. En obstetricia, la fiebre es un signo de alarma de primer orden: puede indicar corioamnionitis, infecci\'on del tracto urinario ascendente o sepsis puerperal, condiciones asociadas con mortalidad materna y neonatal elevada \cite{soper2009}. La categor\'ia ``fiebre'' del sistema parte desde 101 \textdegree F con soporte desde 100.4 \textdegree F, garantizando que ning\'un caso febril quede sin clasificar. La categor\'ia ``elevada'' (99.0--101.5 \textdegree F) corresponde al rango subfebril (37.2--38.6 \textdegree C), zona de alerta incipiente con vigilancia estrecha recomendada en gestantes. El universo [97, 103] \textdegree F reproduce exactamente el rango del dataset \cite{ahmed2020}.
 
 \paragraph{Variable 6: Frecuencia Cardíaca (lpm)}
 
@@ -412,6 +443,8 @@ elevada & 76 & 82 & 90 & 90 \\
 \end{tabular}
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
+
+Justificaci\'on: La frecuencia card\'iaca en reposo normal para adultos es de 60--100 lpm \cite{monga1995}. Durante el embarazo se produce un incremento fisiol\'ogico de 10--20 lpm respecto al valor basal, con valores medios de 80--90 lpm en el tercer trimestre \cite{monga1995,sanghavi2014}. El dataset presenta valores exclusivamente en el rango [60--90] lpm \cite{ahmed2020}, lo que refleja mediciones tomadas en condiciones de reposo relativo y la ausencia de casos de taquicardia franca ($>$100 lpm) en la poblaci\'on estudiada. Por ello el universo se acota al rango observado sin extrapolaci\'on. La categor\'ia ``normal'' [60--80] lpm abarca los valores de reposo habituales en el embarazo; la ``elevada'' [76--90] lpm corresponde a frecuencia alta pero fisiol\'ogicamente posible en gestantes (asociada con anemia, deshidrataci\'on o estr\'es) sin llegar a taquicardia patol\'ogica \cite{sanghavi2014}. Esta variable tiene menor poder discriminativo en el dataset, lo que justifica sus solo dos categor\'ias y la ausencia de reglas de alto riesgo aut\'onomas para ella.
 
 \begin{figure}[H]
 \centering
@@ -453,11 +486,23 @@ El puntaje num\'erico resultante de la defuzzificaci\'on se convierte a etiqueta
 \end{cases}
 \end{equation}
 
+\subsubsection{M\'etodo de Inducci\'on de Reglas: PRISM y RIPPER}
+
+La construcci\'on del conjunto de reglas no fue exclusivamente manual: se siguió una metodolog\'ia en dos etapas fundamentada en algoritmos de inducci\'on de reglas simb\'olicas, partiendo del algoritmo \textbf{PRISM} propuesto por Cendrowska \cite{cendrowska1987}.
+
+\paragraph{Principio del Algoritmo PRISM}
+
+PRISM (\textit{Programmed Rule Induction Systematically in Modules}) es un algoritmo de aprendizaje autom\'atico que genera reglas SI\ldots ENTONCES trabajando clase por clase \cite{cendrowska1987}. Para cada clase objetivo~$C$: (1) calcula $P(\text{clase}=C \mid \text{atributo}=\text{valor})$ para cada par atributo-valor; (2) selecciona el par de mayor probabilidad y lo a\~nade como antecedente; (3) restringe el subconjunto a los ejemplos que satisfacen los antecedentes acumulados y repite hasta cubrir s\'olo instancias de~$C$; (4) elimina los ejemplos cubiertos y reinicia hasta cubrir toda la clase. A diferencia de los \'arboles de decisi\'on (estructuras jer\'arquicas globales), PRISM genera reglas \textbf{modulares}, donde cada regla tiene justificaci\'on independiente, propiedad esencial en sistemas m\'edicos interpretables \cite{cendrowska1987}.
+
+\paragraph{Primera Etapa: Aplicaci\'on Manual de PRISM}
+
+En una primera fase se aplic\'o la l\'ogica de PRISM de forma manual sobre el dataset discretizado, usando los umbrales cl\'inicos como puntos de corte. Se obtuvieron conjuntos de 25--30 reglas, la mayor\'ia con tres o cuatro antecedentes. Al evaluar el sistema difuso con estas reglas sobre el conjunto de validaci\'on, el MacroF1 fue \textbf{inferior a 0.50}, umbral inaceptable para un sistema de apoyo cl\'inico. Las reglas eran demasiado espec\'ificas: la coincidencia simult\'anea de tres o cuatro condiciones ocurr\'ia en muy pocos casos reales, dejando muchas instancias sin consecuente activado con fuerza suficiente.
+
+\paragraph{Segunda Etapa: Inducci\'on Asistida con RIPPER}
+
+En la segunda fase se emple\'o la biblioteca Python \texttt{wittgenstein}, que implementa el algoritmo \textbf{RIPPER} (\textit{Repeated Incremental Pruning to Produce Error Reduction}) de Cohen \cite{cohen1995}. RIPPER extiende PRISM con una fase de \textbf{poda} que elimina condiciones redundantes y reduce el sobreajuste: (1)~\textit{Fase de crecimiento:} igual que PRISM, construye una regla a\~nadiendo condiciones que maximizan la cobertura. (2)~\textit{Fase de poda:} evalúa qu\'e condiciones pueden eliminarse sin degradar el error en un conjunto de validaci\'on interno, produciendo reglas m\'as cortas y generalizables. (3)~\textit{Iteraci\'on:} repite construcci\'on-poda hasta que no se obtengan mejoras. La aplicaci\'on de RIPPER produjo reglas con mayor cobertura y menor especificidad, que fueron revisadas cl\'inicamente para verificar coherencia m\'edica y depuradas para eliminar las sin justificaci\'on independiente. El resultado son las \textbf{15 reglas} finales.
+
 \subsubsection{Las 15 Reglas Difusas}
-
-Se dise\~naron \textbf{15 reglas} tras un proceso de refinamiento que parti\'o de un conjunto inicial de 30 reglas con m\'ultiples antecedentes. El conjunto original produc\'ia problemas de clasificaci\'on porque muchas reglas eran demasiado espec\'ificas para activarse con los datos reales del dataset, generando casos donde ning\'un consecuente era activado con suficiente fuerza.
-
-La simplificaci\'on a 15 reglas no redundantes mejor\'o significativamente la cobertura y elimin\'o ambig\"uedades. El criterio fue que cada regla fuera cl\'inicamente justificable de forma independiente.
 
 \begin{longtable}{cp{4.5cm}p{5cm}c}
 \caption{Reglas del sistema difuso Mamdani} \label{tab:reglas} \\
@@ -603,6 +648,7 @@ def inferir_lote(self, entradas):
 % -----------------------------------------------------------
 
 \subsubsection{Motivación: Por qué Optimizar con un Algoritmo Genético}
+\label{sec:ag_motivacion}
 
 Las funciones de membres\'ia base definidas por la literatura m\'edica representan el mejor conocimiento previo disponible sobre los rangos cl\'inicos de las variables. Sin embargo, el dataset espec\'ifico de riesgo materno tiene distribuciones particulares que pueden requerir ajustes en esos par\'ametros para maximizar la precisi\'on del clasificador.
 
@@ -681,13 +727,26 @@ A continuaci\'on se justifica cada t\'ermino:
 
 \paragraph{MacroF1 (peso 0.75)}
 
-El \textbf{F1-Score Macro} es el promedio no ponderado del F1-Score calculado por clase:
+Para cada clase $c$, se definen primero \textbf{Precisi\'on} y \textbf{Recall} a partir de la matriz de confusi\'on:
 
 \begin{equation}
-F_1^{macro} = \frac{1}{3}\sum_{c \in \{bajo, medio, alto\}} \frac{2 \cdot \text{Precision}_c \cdot \text{Recall}_c}{\text{Precision}_c + \text{Recall}_c}
+\text{Precision}_c = \frac{TP_c}{TP_c + FP_c}, \qquad \text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
 \end{equation}
 
-Se utiliza MacroF1 en lugar de la exactitud (\textit{accuracy}) por una raz\'on fundamental: el dataset est\'a \textbf{desbalanceado} (40\% bajo, 33\% medio, 27\% alto). Un clasificador que prediga siempre ``bajo riesgo'' obtendr\'ia 40\% de exactitud sin aprender nada. El MacroF1 trata todas las clases por igual sin importar su frecuencia, forzando al sistema a clasificar bien incluso la clase minoritaria. Se le asigna el peso m\'as alto (0.75) porque es la m\'etrica m\'as completa del rendimiento general del clasificador.
+donde $TP_c$ son los verdaderos positivos (casos de clase~$c$ correctamente clasificados), $FP_c$ los falsos positivos (otras clases predichas como~$c$) y $FN_c$ los falsos negativos (casos de clase~$c$ predichos como otra). El \textbf{F1-Score por clase} es la media arm\'onica de ambas m\'etricas, que penaliza severamente cuando cualquiera de las dos es baja:
+
+\begin{equation}
+F_1^{(c)} = \frac{2 \cdot \text{Precision}_c \cdot \text{Recall}_c}{\text{Precision}_c + \text{Recall}_c} = \frac{2\,TP_c}{2\,TP_c + FP_c + FN_c}
+\end{equation}
+
+El \textbf{F1-Score Macro} promedia el F1 de las tres clases con igual peso:
+
+\begin{equation}
+F_1^{macro} = \frac{1}{3}\sum_{c \in \{\text{bajo, medio, alto}\}} F_1^{(c)}
+\label{eq:macrof1}
+\end{equation}
+
+Se eligió el promedio \textbf{macro} (en lugar de ponderado o micro) porque las tres clases reciben igual importancia sin importar su frecuencia. Con promedio ponderado, las mejoras en la clase mayoritaria dominar\'ian la m\'etrica; con macro, el sistema \textbf{debe clasificar bien las tres clases simult\'aneamente}. Se usa MacroF1 en lugar de \textit{accuracy} porque en el dataset desbalanceado (40\% bajo, 33\% medio, 27\% alto) un clasificador que prediga siempre ``bajo riesgo'' obtendr\'ia 40\% de exactitud, pero $F_1^{(c)} = 0$ para las clases medio y alto, resultando en $F_1^{macro} \approx 0.13$. Esto lo convierte en la m\'etrica m\'as exigente e informativa, por lo que recibe el peso dominante de 0.75 en la funci\'on de fitness.
 
 \paragraph{Recall de Alto Riesgo (peso 0.25)}
 
@@ -1061,6 +1120,48 @@ J. Alcal\'a-Fdez, R. Alcal\'a, and F. Herrera, ``A Fuzzy Association Rule-Based 
 
 \bibitem{mamdani1975}
 E. H. Mamdani and S. Assilian, ``An Experiment in Linguistic Synthesis with a Fuzzy Logic Controller,'' \textit{Int. J. Man-Mach. Stud.}, vol. 7, no. 1, pp. 1--13, 1975.
+
+\bibitem{whelton2018}
+P. K. Whelton et al., ``2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults,'' \textit{J. Am. Coll. Cardiol.}, vol. 71, no. 19, pp. e127--e248, 2018. DOI: 10.1016/j.jacc.2017.11.006.
+
+\bibitem{acog2020}
+American College of Obstetricians and Gynecologists, ``Gestational Hypertension and Preeclampsia: ACOG Practice Bulletin, Number 222,'' \textit{Obstet. Gynecol.}, vol. 135, no. 6, pp. e237--e260, 2020. DOI: 10.1097/AOG.0000000000003891.
+
+\bibitem{who2011hypertension}
+World Health Organization, \textit{WHO Recommendations for Prevention and Treatment of Pre-Eclampsia and Eclampsia}. Geneva: WHO Press, 2011. ISBN: 978-92-4-154833-5.
+
+\bibitem{who2021adolescent}
+World Health Organization, ``Adolescent Pregnancy,'' WHO Fact Sheet, 2023. [Online]. Available: \url{https://www.who.int/news-room/fact-sheets/detail/adolescent-pregnancy}.
+
+\bibitem{iadpsg2010}
+International Association of Diabetes and Pregnancy Study Groups Consensus Panel, ``Recommendations on the Diagnosis and Classification of Hyperglycemia in Pregnancy,'' \textit{Diabetes Care}, vol. 33, no. 3, pp. 676--682, 2010. DOI: 10.2337/dc09-1848.
+
+\bibitem{ada2024}
+American Diabetes Association Professional Practice Committee, ``Standards of Medical Care in Diabetes---2024,'' \textit{Diabetes Care}, vol. 47, suppl. 1, pp. S1--S321, 2024. DOI: 10.2337/dc24-SINT.
+
+\bibitem{mackowiak1992}
+P. A. Mackowiak, S. S. Wasserman, and M. M. Levine, ``A Critical Appraisal of 98.6\textdegree F, the Upper Limit of the Normal Body Temperature, and Other Legacies of Carl Reinhold August Wunderlich,'' \textit{JAMA}, vol. 268, no. 12, pp. 1578--1580, 1992. DOI: 10.1001/jama.1992.03490120092034.
+
+\bibitem{soper2009}
+D. E. Soper, ``Fever in the Obstetric Patient,'' \textit{Obstet. Gynecol. Clin. North Am.}, vol. 36, no. 4, pp. 685--696, 2009. DOI: 10.1016/j.ogc.2009.10.002.
+
+\bibitem{monga1995}
+M. Monga and B. M. Creasy, ``Cardiovascular and Renal Adaptation to Pregnancy,'' in \textit{Maternal-Fetal Medicine: Principles and Practice}, 4th ed., R. K. Creasy and R. Resnik, Eds. Philadelphia, PA: W. B. Saunders, 1994, pp. 789--799.
+
+\bibitem{sanghavi2014}
+M. Sanghavi and J. D. Rutherford, ``Cardiovascular Physiology of Pregnancy,'' \textit{Circulation}, vol. 130, no. 12, pp. 1003--1008, 2014. DOI: 10.1161/CIRCULATIONAHA.114.009029.
+
+\bibitem{yogev2010}
+Y. Yogev et al., ``Maternal Age and Adverse Perinatal Outcomes in Patients with Gestational Diabetes Mellitus,'' \textit{J. Matern. Fetal Neonatal Med.}, vol. 23, no. 4, pp. 255--261, 2010. DOI: 10.3109/14767050903163018.
+
+\bibitem{cavazos2014}
+P. A. Cavazos-Rehg et al., ``Maternal Age and Risk of Labor and Delivery Complications,'' \textit{Matern. Child Health J.}, vol. 19, no. 6, pp. 1202--1211, 2015. DOI: 10.1007/s10995-014-1624-7.
+
+\bibitem{cendrowska1987}
+J. Cendrowska, ``PRISM: An Algorithm for Inducing Modular Rules,'' \textit{Int. J. Man-Mach. Stud.}, vol. 27, no. 4, pp. 349--370, 1987. DOI: 10.1016/S0020-7373(87)80003-2.
+
+\bibitem{cohen1995}
+W. W. Cohen, ``Fast Effective Rule Induction,'' in \textit{Proc. 12th Int. Conf. Mach. Learn. (ICML 1995)}, Tahoe City, CA, USA, Jul. 1995, pp. 115--123.
 
 \end{thebibliography}
 }
