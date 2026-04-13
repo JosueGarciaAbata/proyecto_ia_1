@@ -342,17 +342,19 @@ export function buildClinicalNarrative(result: ExplicacionResponse): ClinicalNar
   return { intro, details, conclusion };
 }
 
-export function buildResultSummary(result: Pick<ExplicacionResponse, "riesgo" | "puntaje" | "ajustes_entrada">) {
-  const risk = getRiskUi(result.riesgo);
+export function buildResultSummary(
+  result: Pick<ExplicacionResponse, "reglas_activadas" | "ajustes_entrada">,
+) {
   const adj = result.ajustes_entrada.length;
+  const rulesCount = result.reglas_activadas.length;
   const adjustmentText =
     adj > 0
-      ? `El sistema normalizo ${adj} valor${adj === 1 ? "" : "es"} fuera del rango.`
-      : "Los valores ingresados estaban dentro del rango valido.";
+      ? `Se normalizaron ${adj} valor${adj === 1 ? "" : "es"} antes del analisis para mantener la entrada dentro del rango esperado.`
+      : "La entrada se evaluo sin ajustes previos.";
 
   return {
-    headline: `El sistema clasifico el caso como ${risk.label.toLowerCase()}.`,
-    description: `Puntaje: ${formatScore(result.puntaje)} / 100. ${adjustmentText}`,
+    headline: `${rulesCount} regla${rulesCount === 1 ? "" : "s"} aportaron evidencia directa al resultado final.`,
+    description: adjustmentText,
   };
 }
 

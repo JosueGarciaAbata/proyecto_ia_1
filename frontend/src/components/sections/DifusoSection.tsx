@@ -447,9 +447,8 @@ function RulesPanel({ result }: { result: ExplicacionResponse }) {
             <motion.div
               key={rule.numero}
               initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.35, delay: index * 0.03 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.03, ease: [0.22, 1, 0.36, 1] }}
             >
               <GlassPanel className="p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-4">
