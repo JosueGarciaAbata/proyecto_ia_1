@@ -477,16 +477,6 @@ Justificaci\'on: Un estudio de referencia cl\'asico de Mackowiak et al.\ estable
 
 Justificaci\'on: La frecuencia card\'iaca en reposo normal para adultos es de 60--100 lpm \cite{monga1995}. Durante el embarazo se produce un incremento fisiol\'ogico de 10--20 lpm respecto al valor basal, con valores medios de 80--90 lpm en el tercer trimestre \cite{monga1995,sanghavi2014}. El dataset presenta valores exclusivamente en el rango [60--90] lpm \cite{ahmed2020}, lo que refleja mediciones tomadas en condiciones de reposo relativo y la ausencia de casos de taquicardia franca ($>$100 lpm) en la poblaci\'on estudiada. Por ello el universo se acota al rango observado sin extrapolaci\'on. La categor\'ia ``normal'' [60--80] lpm abarca los valores de reposo habituales en el embarazo; la ``elevada'' [76--90] lpm corresponde a frecuencia alta pero fisiol\'ogicamente posible en gestantes (asociada con anemia, deshidrataci\'on o estr\'es) sin llegar a taquicardia patol\'ogica \cite{sanghavi2014}. Esta variable tiene menor poder discriminativo en el dataset, lo que justifica sus solo dos categor\'ias y la ausencia de reglas de alto riesgo aut\'onomas para ella.
 
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-            \textbf{[IMAGEN: Gr\'afica con 6 subplots (uno por variable) mostrando las funciones de membres\'ia trapezoidales de cada categor\'ia. Por ejemplo, para edad: tres curvas solapadas (joven/adulta/avanzada) sobre el eje X de 10 a 70.]}
-            \vspace{3cm}}}
-    \caption{Funciones de membres\'ia de las seis variables de entrada}
-    \label{fig:membresias_entrada}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
-\end{figure}
-
 \subsubsection{Variable de Salida: Puntaje de Riesgo}
 
 La salida del sistema difuso es la variable \textbf{puntaje\_riesgo} con universo $[0, 100]$ y tres conjuntos difusos:
@@ -503,8 +493,10 @@ La salida del sistema difuso es la variable \textbf{puntaje\_riesgo} con univers
         alto               & 62  & 75  & 100 & 100 \\
         \bottomrule
     \end{tabular}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia, siguiendo criterios de dise\~no de \cite{ross2010}.}
 \end{table}
+
+La partici\'on del universo de discurso de salida sigue los criterios de dise\~no de variables ling\"u\'isticas en sistemas Mamdani descritos por Ross \cite{ross2010}: los conjuntos deben (1) cubrir el universo completo sin gaps, (2) solaparse lo suficiente para que la defuzzificaci\'on por centroide produzca transiciones suaves entre niveles de riesgo, y (3) mantener una interpretaci\'on ling\"u\'istica inequ\'ivoca. Los par\'ametros concretos se determinaron de forma experta dividiendo el universo $[0,100]$ en tres regiones aproximadamente proporcionales, con solapamiento de 7--17 puntos entre regiones adyacentes, garantizando que ning\'un valor de entrada quede sin cobertura.
 
 El puntaje num\'erico resultante de la defuzzificaci\'on se convierte a etiqueta cl\'inica mediante los siguientes umbrales:
 
@@ -535,48 +527,65 @@ RIPPER ---al igual que PRISM--- opera sobre atributos \textbf{categ\'oricos}, no
 
 \paragraph{Segunda Etapa: Inducci\'on Asistida con RIPPER}
 
-En la segunda fase se emple\'o la biblioteca Python \texttt{wittgenstein}, que implementa el algoritmo \textbf{RIPPER} (\textit{Repeated Incremental Pruning to Produce Error Reduction}) de Cohen \cite{cohen1995}. RIPPER extiende PRISM con una fase de \textbf{poda} que elimina condiciones redundantes y reduce el sobreajuste: (1)~\textit{Fase de crecimiento:} igual que PRISM, construye una regla a\~nadiendo condiciones que maximizan la cobertura. (2)~\textit{Fase de poda:} evalúa qu\'e condiciones pueden eliminarse sin degradar el error en un conjunto de validaci\'on interno, produciendo reglas m\'as cortas y generalizables. (3)~\textit{Iteraci\'on:} repite construcci\'on-poda hasta que no se obtengan mejoras. La aplicaci\'on de RIPPER produjo reglas con mayor cobertura y menor especificidad, que fueron revisadas cl\'inicamente para verificar coherencia m\'edica y depuradas para eliminar las sin justificaci\'on independiente. El resultado son las \textbf{15 reglas} finales.
+En la segunda fase se emple\'o la biblioteca Python \texttt{wittgenstein}, que implementa el algoritmo \textbf{RIPPER} (\textit{Repeated Incremental Pruning to Produce Error Reduction}) de Cohen \cite{cohen1995}. RIPPER extiende PRISM con una fase de \textbf{poda} que elimina condiciones redundantes y reduce el sobreajuste: (1)~\textit{Fase de crecimiento:} igual que PRISM, construye una regla a\~nadiendo condiciones que maximizan la cobertura. (2)~\textit{Fase de poda:} evalúa qu\'e condiciones pueden eliminarse sin degradar el error en un conjunto de validaci\'on interno, produciendo reglas m\'as cortas y generalizables. (3)~\textit{Iteraci\'on:} repite construcci\'on-poda hasta que no se obtengan mejoras. La aplicaci\'on de RIPPER produjo reglas con mayor cobertura y menor especificidad, que fueron revisadas cl\'inicamente para verificar coherencia m\'edica y depuradas para eliminar las sin justificaci\'on independiente. El resultado son las \textbf{28 reglas} finales.
 
-\subsubsection{Las 15 Reglas Difusas}
+\subsubsection{Las 28 Reglas Difusas}
 
-\begin{longtable}{cp{4.5cm}p{5cm}c}
-    \caption{Reglas del sistema difuso Mamdani} \label{tab:reglas}                                                                                           \\
+Las 28 reglas fueron inducidas autom\'aticamente por RIPPER a partir del conjunto de entrenamiento discretizado y revisadas para verificar coherencia cl\'inica. Se distribuyen en 14 reglas para riesgo alto, 4 para riesgo medio y 10 para riesgo bajo.
+
+\begin{longtable}{cp{9cm}c}
+    \caption{Reglas del sistema difuso Mamdani --- inducidas por RIPPER} \label{tab:reglas} \\
     \toprule
-    \textbf{N\textordmasculine} & \textbf{Antecedentes}                     & \textbf{Justificaci\'on cl\'inica}                      & \textbf{Consecuente} \\
+    \textbf{N\textordmasculine} & \textbf{Antecedentes} & \textbf{Consecuente} \\
     \midrule
     \endfirsthead
     \toprule
-    \textbf{N\textordmasculine} & \textbf{Antecedentes}                     & \textbf{Justificaci\'on cl\'inica}                      & \textbf{Consecuente} \\
+    \textbf{N\textordmasculine} & \textbf{Antecedentes} & \textbf{Consecuente} \\
     \midrule
     \endhead
     \midrule
-    \multicolumn{4}{r}{\textit{Contin\'ua...}}                                                                                                               \\
+    \multicolumn{3}{r}{\textit{Contin\'ua...}} \\
     \endfoot
     \bottomrule
     \endlastfoot
-    1                           & AS=normal AND PS=normal AND PD=normal     & Todos los indicadores primarios normales                & bajo                 \\
-    2                           & AS=normal AND PD=normal AND TC=normal     & Az\'ucar, presi\'on diast\'olica y temperatura normales & bajo                 \\
-    3                           & AS=elevada AND PD=normal                  & Glucemia ligeramente elevada sin hipertensi\'on         & medio                \\
-    4                           & PS=elevada AND AS=normal                  & Presi\'on sistólica alta sin problema de glucemia       & medio                \\
-    5                           & PD=elevada AND AS=normal                  & Presi\'on diast\'olica alta sin problema de glucemia    & medio                \\
-    6                           & Edad=avanzada AND AS=normal AND PD=normal & Edad $\geq 35$ a\~nos con par\'ametros normales         & medio                \\
-    7                           & TC=elevada                                & Temperatura subfebril: posible infecci\'on incipiente   & medio                \\
-    8                           & AS=alta                                   & Glucemia muy alta: indicador primario de alto riesgo    & alto                 \\
-    9                           & AS=elevada AND PD=elevada                 & Coexistencia de glucemia elevada e hipertensi\'on       & alto                 \\
-    10                          & AS=elevada AND PS=elevada                 & Az\'ucar elevada con presi\'on sist\'olica elevada      & alto                 \\
-    11                          & AS=elevada AND Edad=avanzada              & Glucemia elevada en paciente de edad avanzada           & alto                 \\
-    12                          & PD=alta                                   & Presi\'on diast\'olica muy alta: riesgo auton\'omo      & alto                 \\
-    13                          & PS=alta                                   & Presi\'on sist\'olica muy alta: riesgo auton\'omo       & alto                 \\
-    14                          & TC=fiebre                                 & Fiebre: riesgo de infecci\'on/sepsis                    & alto                 \\
-    15                          & Edad=avanzada AND PD=elevada              & Edad avanzada con presi\'on diast\'olica elevada        & alto                 \\
+    1  & PS=elevada AND PD=alta AND AS=normal                                          & alto  \\
+    2  & AS=alta AND PD=alta AND PS=alta                                               & alto  \\
+    3  & AS=alta AND FC=elevada                                                        & alto  \\
+    4  & AS=elevada AND TC=normal AND Edad=adulta                                      & alto  \\
+    5  & AS=alta AND PD=alta AND Edad=adulta                                           & alto  \\
+    6  & AS=elevada AND FC=elevada AND TC=normal AND PD=alta                           & alto  \\
+    7  & Edad=avanzada AND AS=alta AND PD=alta                                         & alto  \\
+    8  & AS=elevada AND TC=elevada AND Edad=joven                                      & alto  \\
+    9  & Edad=avanzada AND AS=alta AND PS=normal                                       & alto  \\
+    10 & AS=elevada AND PD=elevada AND FC=elevada                                      & alto  \\
+    11 & TC=fiebre AND PD=normal AND Edad=adulta                                       & alto  \\
+    12 & TC=elevada AND PS=elevada                                                     & alto  \\
+    13 & PS=elevada AND PD=elevada AND Edad=joven                                      & alto  \\
+    14 & AS=elevada AND Edad=avanzada AND FC=elevada                                   & alto  \\
+    \midrule
+    15 & TC=elevada AND AS=normal AND PD=elevada AND Edad=adulta                       & medio \\
+    16 & PD=normal AND PS=elevada AND TC=normal                                        & medio \\
+    17 & PS=normal AND Edad=adulta AND TC=elevada                                      & medio \\
+    18 & PS=normal AND TC=elevada AND AS=normal AND FC=elevada                         & medio \\
+    \midrule
+    19 & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven AND FC=elevada & bajo  \\
+    20 & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven            & bajo  \\
+    21 & AS=normal AND PD=elevada AND TC=normal AND PS=normal AND Edad=avanzada AND FC=normal & bajo  \\
+    22 & AS=normal AND PS=normal AND TC=normal AND Edad=avanzada                       & bajo  \\
+    23 & AS=normal AND PS=normal AND TC=normal AND PD=elevada AND Edad=adulta AND FC=normal & bajo  \\
+    24 & AS=normal AND PS=normal AND TC=normal AND FC=elevada AND Edad=joven           & bajo  \\
+    25 & AS=normal AND PS=normal AND TC=normal AND FC=normal                           & bajo  \\
+    26 & AS=normal AND PS=normal AND PD=elevada AND Edad=avanzada                      & bajo  \\
+    27 & PS=normal AND AS=normal AND TC=fiebre AND FC=elevada                          & bajo  \\
+    28 & AS=normal AND PS=normal AND TC=normal AND PD=normal                           & bajo  \\
 \end{longtable}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- reglas inducidas por RIPPER sobre el conjunto de entrenamiento.}
 
-\textit{Nomenclatura: AS = az\'ucar en sangre, PS = presi\'on sist\'olica, PD = presi\'on diast\'olica, TC = temperatura corporal.}
+\textit{Nomenclatura: AS = az\'ucar en sangre, PS = presi\'on sist\'olica, PD = presi\'on diast\'olica, TC = temperatura corporal, FC = frecuencia card\'iaca.}
 
 \subsubsection{Proceso de Inferencia Mamdani: Paso a Paso}
 
-El motor de inferencia implementado en \texttt{motor.py} ejecuta los siguientes pasos para cada caso:
+El motor de inferencia ejecuta los siguientes pasos para cada caso:
 
 \paragraph{Paso 1: Fuzzificación}
 
@@ -585,6 +594,7 @@ Dado un valor cr\'itico $x_i$ para la variable $i$, se calcula el grado de membr
 \begin{equation}
     \mu_{joven}(32) = 0.0, \quad \mu_{adulta}(32) = 0.75, \quad \mu_{avanzada}(32) = 0.0
 \end{equation}
+
 
 \paragraph{Paso 2: Evaluación de Reglas}
 
@@ -599,6 +609,7 @@ Cuando m\'ultiples reglas apuntan al mismo consecuente, se aplica el operador OR
 \begin{equation}
     A_{consecuente} = \max_{\{k \,:\, consecuente_k = consecuente\}} \alpha_k
 \end{equation}
+
 
 \paragraph{Paso 3: Defuzzificación por Centroide}
 
@@ -623,60 +634,12 @@ Finalmente, el \textbf{centroide} (centro de gravedad) del \'area agregada propo
 
 Se eligi\'o el m\'etodo del centroide sobre otras alternativas (bisecci\'on, MOM --- Mean Of Maximum) porque es el m\'as utilizado en la pr\'actica, produce resultados suaves y continuos ante peque\~nas variaciones en la entrada, y tiene una interpretaci\'on geom\'etrica intuitiva como el ``centro de peso'' de la distribuci\'on difusa resultante.
 
-Si todos los conjuntos de salida tienen activaci\'on cero (ninguna regla se dispara), el sistema retorna un puntaje neutro de \textbf{50.0} como valor de respaldo. Este caso ---denominado internamente \texttt{sin\_activaci\'on}--- ocurre cuando el perfil de la paciente no coincide con ninguno de los antecedentes de las 15 reglas. El puntaje 50.0 cae en la zona de riesgo medio por los umbrales de clasificaci\'on, pero \textbf{no debe interpretarse como un resultado cl\'inico}: el sistema no tuvo informaci\'on suficiente para emitir un juicio. La interfaz web detecta esta condici\'on y muestra un aviso expl\'icito al usuario indicando que el perfil no activ\'o ninguna regla y que el resultado no constituye una clasificaci\'on fiable.
+Si todos los conjuntos de salida tienen activaci\'on cero (ninguna regla se dispara), el sistema retorna un puntaje neutro de \textbf{50.0} como valor de respaldo. Este caso ocurre cuando el perfil de la paciente no coincide con ninguno de los antecedentes de las 28 reglas. El puntaje 50.0 cae en la zona de riesgo medio por los umbrales de clasificaci\'on, pero \textbf{no debe interpretarse como un resultado cl\'inico}: el sistema no tuvo informaci\'on suficiente para emitir un juicio. La interfaz web detecta esta condici\'on y muestra un aviso expl\'icito al usuario indicando que el perfil no activ\'o ninguna regla y que el resultado no constituye una clasificaci\'on fiable.
 
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-            \textbf{[IMAGEN: Diagrama del proceso Mamdani completo para un caso ejemplo. Mostrar: (1) fuzzificaci\'on de cada variable, (2) activaci\'on de reglas representativas, (3) conjuntos de salida recortados, (4) uni\'on agregada, (5) centroide marcado con flecha.]}
-            \vspace{3cm}}}
-    \caption{Proceso de inferencia Mamdani: fuzzificaci\'on, evaluaci\'on, agregaci\'on y defuzzificaci\'on}
-    \label{fig:proceso_mamdani}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
-\end{figure}
 
-\subsubsection{Implementación: Motor Vectorizado}
+\subsubsection{Motor de Inferencia Vectorizado}
 
-El motor fue implementado con \textbf{procesamiento vectorizado} usando NumPy para permitir la evaluaci\'on eficiente de lotes completos de pacientes, lo cual es cr\'itico durante la fase de optimizaci\'on gen\'etica donde el sistema es evaluado miles de veces.
-
-\begin{lstlisting}[caption={Núcleo del motor de inferencia Mamdani (motor.py)}, label={lst:motor}]
-def inferir_lote(self, entradas):
-    """Clasifica un lote de casos de forma vectorizada."""
-    n = len(next(iter(entradas.values())))
-
-    # Paso 1: fuzzificar todas las variables
-    pertenencias = {}
-    for variable in VARIABLES_ENTRADA:
-        pertenencias[variable] = {}
-        universo = self.universos_entrada[variable]
-        valores = np.asarray(entradas[variable], dtype=float)
-        for categoria, curva in self.curvas_entrada[variable].items():
-            pertenencias[variable][categoria] = np.array(
-                [fuzz.interp_membership(universo, curva, v) for v in valores]
-            )
-
-    # Paso 2: evaluar reglas (AND=minimo, OR=maximo)
-    act_bajo = np.zeros(n)
-    act_medio = np.zeros(n)
-    act_alto = np.zeros(n)
-    for regla_var_cats, consecuente in self._reglas_compiladas:
-        fuerza = np.ones(n)
-        for variable, categoria in regla_var_cats:
-            fuerza = np.minimum(fuerza, pertenencias[variable][categoria])
-        np.maximum({"bajo": act_bajo, "medio": act_medio,
-                    "alto": act_alto}[consecuente], fuerza,
-                   out={"bajo": act_bajo, "medio": act_medio,
-                        "alto": act_alto}[consecuente])
-
-    # Paso 3: defuzzificar cada caso (centroide)
-    puntajes = np.array([
-        self._desfusificar({"bajo": float(act_bajo[i]),
-                            "medio": float(act_medio[i]),
-                            "alto": float(act_alto[i])})
-        for i in range(n)
-    ])
-    return {"puntajes": puntajes, "riesgos": [...], "activaciones": [...]}
-\end{lstlisting}
+El motor de inferencia fue dise\~nado con \textbf{procesamiento vectorizado} para permitir la evaluaci\'on eficiente de lotes completos de pacientes. Esta capacidad es cr\'itica durante la fase de optimizaci\'on gen\'etica, donde el sistema difuso es evaluado cientos de veces por generaci\'on sobre el conjunto de validaci\'on completo. Para cada lote de casos, el motor ejecuta secuencialmente los tres pasos del proceso Mamdani: (1) fuzzificaci\'on de todas las variables de entrada, (2) evaluaci\'on de las 28 reglas aplicando AND-m\'inimo por regla y OR-m\'aximo por categor\'ia de salida, y (3) defuzzificaci\'on por centroide sobre el conjunto agregado de salida. El resultado para cada paciente es un puntaje num\'erico en $[0, 100]$, la etiqueta de riesgo correspondiente y las activaciones por nivel de riesgo.
 
 % -----------------------------------------------------------
 \subsection{Algoritmo Genético}
@@ -870,7 +833,7 @@ Esta estrategia evita el sobreentrenamiento (el AG sigue explorando mucho tiempo
 
 \subsubsection{Mecanismo de Reparación del Cromosoma}
 
-Despu\'es del cruce y la mutaci\'on, un cromosoma puede volverse \textbf{inv\'alido}: trapezoides con puntos desordenados ($a > b$), rangos fuera de los l\'imites de la variable, o categor\'ias con solapamiento excesivo. La funci\'on \texttt{reparar\_cromosoma} aplica las siguientes correcciones en 5 iteraciones:
+Despu\'es del cruce y la mutaci\'on, un cromosoma puede volverse \textbf{inv\'alido}: trapezoides con puntos desordenados ($a > b$), rangos fuera de los l\'imites de la variable, o categor\'ias con solapamiento excesivo. El mecanismo de reparaci\'on aplica las siguientes correcciones en hasta 5 iteraciones:
 
 \begin{enumerate}
     \item \textbf{Recorte al dominio:} $g_i = \text{clip}(g_i,\, \text{l\'im}_{inf},\, \text{l\'im}_{sup})$
@@ -883,26 +846,7 @@ Despu\'es del cruce y la mutaci\'on, un cromosoma puede volverse \textbf{inv\'al
 
 La reparaci\'on se aplica despu\'es de la inicializaci\'on, despu\'es del cruce y despu\'es de la mutaci\'on. Esto garantiza que \textbf{todos los individuos evaluados siempre representen sistemas difusos v\'alidos e interpretables}.
 
-\begin{lstlisting}[caption={Función de fitness (algoritmo\_genetico.py)}, label={lst:fitness}]
-def evaluar_individuo(cromosoma, datos_validacion):
-    cromosoma_reparado = reparar_cromosoma(cromosoma)
-    sistema = SistemaDifusoMamdani(decodificar_cromosoma(cromosoma_reparado))
-    inferencia = sistema.inferir_lote(datos_validacion["entradas"])
-
-    macro_f1   = calcular_macro_f1(datos_validacion["riesgos"],
-                                    inferencia["riesgos"])
-    recall_alto = calcular_recall_de_riesgo_alto(datos_validacion["riesgos"],
-                                                  inferencia["riesgos"])
-    p_interp  = calcular_penalizacion_interpretabilidad(cromosoma_reparado)
-    p_desv    = calcular_penalizacion_desviacion(cromosoma_reparado,
-                                                  CROMOSOMA_BASE, RANGOS_GENES)
-
-    fitness = (0.75 * macro_f1
-             + 0.25 * recall_alto
-             - 0.80 * p_interp["total"]
-             - 0.05 * p_desv)
-    return fitness
-\end{lstlisting}
+Para evaluar cada individuo, el sistema: (1) repara el cromosoma si es necesario, (2) decodifica los 68 genes a par\'ametros de funciones de membres\'ia, (3) construye el sistema difuso completo, (4) lo evalúa sobre el conjunto de validaci\'on y (5) calcula el fitness seg\'un la funci\'on definida en la ecuaci\'on~\eqref{eq:fitness}.
 
 \subsubsection{Parámetros del Algoritmo Genético}
 
@@ -955,28 +899,6 @@ El sistema se compone de dos aplicaciones independientes que se comunican v\'ia 
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
-\subsubsection{Estructura del Proyecto}
-
-\begin{verbatim}
-proyecto_ia_1/
-|-- backend/
-|   \-- src/
-|       |-- app/                     # FastAPI: rutas y controladores
-|       |   |-- main.py              # Configuracion CORS, routers
-|       |   \-- controllers/         # Endpoints HTTP
-|       \-- riesgo_materno/          # Paquete central
-|           |-- datos/               # CSV del dataset
-|           |-- modelos/             # modelo_optimizado.json
-|           |-- logica_difusa/       # motor.py, variables.py, reglas.py
-|           |-- optimizacion/        # algoritmo_genetico.py, cromosoma.py
-|           |-- entrenamiento/       # entrenador.py, evaluacion.py
-|           \-- prediccion/          # predictor.py, validacion_entrada.py
-\-- frontend/
-    \-- src/
-        |-- components/              # Componentes React reutilizables
-        \-- pages/                   # Vistas principales
-\end{verbatim}
-
 \subsubsection{Persistencia del Modelo}
 
 El resultado del proceso de optimizaci\'on gen\'etica se almacena en \texttt{modelo\_optimizado.json}, que contiene:
@@ -989,12 +911,72 @@ El resultado del proceso de optimizaci\'on gen\'etica se almacena en \texttt{mod
 
 En tiempo de predicci\'on, el sistema carga este archivo y reconstruye el sistema difuso completo en memoria, sin necesidad de re-ejecutar el proceso de optimizaci\'on.
 
+\subsubsection{Sistema en Funcionamiento: Caso de Ejemplo}
+
+Las siguientes capturas muestran el sistema en operaci\'on para el caso de ejemplo: paciente de 25 a\~nos, PS = 130 mmHg, PD = 80 mmHg, glucosa = 15 mmol/L, temperatura = 98 \textdegree F, FC = 86 lpm. Las im\'agenes cubren el flujo completo desde el ingreso de datos hasta la explicaci\'on del resultado, incluyendo las curvas de membres\'ia, la fuzzificaci\'on, las reglas activadas y la defuzzificaci\'on.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{picture/interfaz_web_del_sistema.png}
-    \caption{Interfaz web del sistema de predicci\'on de riesgo materno}
+    \includegraphics[width=0.88\textwidth]{picture/logica_difusa/interfaz_ingreso_paciente.png}
+    \caption{Ingreso de los indicadores cl\'inicos del paciente}
     \label{fig:interfaz_web}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{picture/logica_difusa/resultado_riesgo_alto.png}
+    \caption{Resultado del an\'alisis: clasificaci\'on de riesgo alto con puntaje 84.0 sobre 100}
+    \label{fig:resultado_riesgo_alto}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{picture/logica_difusa/explicacion_reglas_activadas.png}
+    \caption{Reglas que influyeron en la decisi\'on y su peso de activaci\'on}
+    \label{fig:explicacion_reglas}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{picture/logica_difusa/curvas_membresia_edad.png}
+    \caption{Curvas de membres\'ia de la variable Edad: l\'inea discontinua = base, l\'inea s\'olida = optimizado. La l\'inea vertical marca el valor actual (25 a\~nos).}
+    \label{fig:membresias_entrada}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{picture/logica_difusa/panel_reglas_ripper.png}
+    \caption{Panel de reglas IF-THEN aprendidas por RIPPER, accesible desde la secci\'on de sistema difuso}
+    \label{fig:panel_reglas}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{picture/logica_difusa/fuzzificacion_tabla.png}
+    \caption{Tabla de fuzzificaci\'on: grados de membres\'ia de cada variable para el caso de ejemplo}
+    \label{fig:fuzzificacion_tabla}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{picture/logica_difusa/reglas_activadas_detalle.png}
+    \caption{Detalle de las reglas activadas con sus antecedentes y fuerzas de activaci\'on}
+    \label{fig:reglas_activadas}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{picture/logica_difusa/agregacion_defuzzificacion.png}
+    \caption{Agregaci\'on por nivel de riesgo y defuzzificaci\'on por centroide (puntaje = 84.0, riesgo alto)}
+    \label{fig:proceso_mamdani}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
 \end{figure}
 
 % -----------------------------------------------------------
@@ -1060,15 +1042,15 @@ El sistema optimizado identifica correctamente el 75.6\% de los casos de alto ri
 La estructura de las reglas (Tabla \ref{tab:reglas}) revela la jerarqu\'ia de importancia de las variables:
 
 \begin{itemize}
-    \item \textbf{Az\'ucar en sangre:} Es el predictor m\'as fuerte. La regla 8 (\textit{si AS=alta $\Rightarrow$ alto riesgo}) se activa de forma aut\'onoma. Aparece en 6 de las 15 reglas.
-    \item \textbf{Presi\'on arterial (sist\'olica y diast\'olica):} Segunda en importancia. Cada una tiene una regla que la convierte en indicador de alto riesgo por s\'i sola (reglas 12 y 13).
-    \item \textbf{Temperatura corporal:} La fiebre tambi\'en activa alto riesgo de forma independiente (regla 14), por su asociaci\'on con sepsis.
-    \item \textbf{Frecuencia card\'iaca:} Variable de menor impacto. Solo tiene 2 categor\'ias y no genera alto riesgo por s\'i sola.
+    \item \textbf{Az\'ucar en sangre:} Es el predictor m\'as fuerte. Las reglas 2, 3, 5, 7 y 9 se activan exclusivamente por AS=alta, y aparece como antecedente en 11 de las 28 reglas. La regla 3 (\textit{AS=alta AND FC=elevada}) es la de mayor cobertura para alto riesgo.
+    \item \textbf{Presi\'on arterial (sist\'olica y diast\'olica):} Segunda en importancia. Aparece combinada en m\'ultiples reglas de alto riesgo (reglas 1, 6, 10, 12, 13) y tambi\'en en reglas de riesgo medio (reglas 16, 17).
+    \item \textbf{Temperatura corporal:} La fiebre activa alto riesgo en combinaci\'on con otras variables (regla 11) y aparece en reglas de bajo riesgo cuando los dem\'as indicadores son normales (regla 27), lo que refleja su car\'acter dependiente del contexto cl\'inico.
+    \item \textbf{Frecuencia card\'iaca:} Variable de impacto moderado. Aparece en 8 reglas, principalmente como factor agravante en combinaci\'on con az\'ucar o presi\'on elevadas.
 \end{itemize}
 
 \subsubsection{Casos Extremos}
 
-Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), la regla 8 se activa con fuerza 1.0 y el sistema produce directamente puntaje $\geq 75$ (alto riesgo), independientemente de los valores de las dem\'as variables. Esto refleja el criterio cl\'inico de que la hiperglucemia severa por s\'i sola es una emergencia obst\'etrica.
+Cuando az\'ucar en sangre = alta y frecuencia card\'iaca = elevada, la regla 3 se activa con fuerza m\'axima y el sistema produce puntaje $\geq 75$ (alto riesgo). De forma similar, AS=alta combinada con presi\'on diast\'olica alta activa las reglas 2, 5 y 7 simult\'aneamente. Esto refleja el criterio cl\'inico de que la hiperglucemia severa, especialmente cuando coexiste con hipertensi\'on, constituye una emergencia obst\'etrica.
 
 % -----------------------------------------------------------
 \subsection{Limitaciones}
@@ -1079,7 +1061,7 @@ Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), la regla 8 se activa
 
     \item \textbf{Origen geogr\'afico:} El dataset fue recolectado en zonas rurales de Bangladesh. Los rangos cl\'inicos y la prevalencia de las condiciones de riesgo pueden diferir en otras regiones o poblaciones, limitando la generalizabilidad del sistema.
 
-    \item \textbf{Reglas basadas en literatura general:} Las 15 reglas fueron dise\~nadas a partir de literatura m\'edica internacional y no fueron validadas por especialistas en obstetricia locales. Un proceso de validaci\'on con m\'edicos expertos fortalecer\'ia la base cl\'inica del sistema.
+    \item \textbf{Reglas inducidas sin validaci\'on cl\'inica experta:} Las 28 reglas fueron inducidas autom\'aticamente por RIPPER sobre el dataset y revisadas para verificar coherencia m\'edica b\'asica, pero no fueron validadas por especialistas en obstetricia. Un proceso de validaci\'on con m\'edicos expertos fortalecer\'ia la base cl\'inica del sistema.
 
     \item \textbf{Sin validaci\'on cl\'inica prospectiva:} El sistema no ha sido evaluado en condiciones de uso real con pacientes reales. Su uso en entornos cl\'inicos requer\'iria estudios prospectivos que comparen sus predicciones con diagn\'osticos m\'edicos y resultados perinatales.
 
@@ -1162,6 +1144,9 @@ Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), la regla 8 se activa
 
         \bibitem{mamdani1975}
         E. H. Mamdani and S. Assilian, ``An Experiment in Linguistic Synthesis with a Fuzzy Logic Controller,'' \textit{Int. J. Man-Mach. Stud.}, vol. 7, no. 1, pp. 1--13, 1975.
+
+        \bibitem{ross2010}
+        T. J. Ross, \textit{Fuzzy Logic with Engineering Applications}, 3rd ed. Chichester, UK: John Wiley \& Sons, 2010.
 
 \bibitem{whelton2018}
 P. K. Whelton et al., ``2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults,'' \textit{J. Am. Coll. Cardiol.}, vol. 71, no. 19, pp. e127--e248, 2018. DOI: 10.1016/j.jacc.2017.11.006.
