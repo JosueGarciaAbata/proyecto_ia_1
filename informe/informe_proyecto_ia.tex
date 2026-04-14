@@ -183,7 +183,7 @@ La elecci\'on de este dataset sobre otras alternativas estuvo motivada por tres 
 \begin{enumerate}
     \item \textbf{Variables continuas fuzzificables:} Todas las variables de entrada son valores num\'ericos continuos dentro de rangos bien definidos. Esto es ideal para la l\'ogica difusa, que requiere definir curvas de membres\'ia sobre un universo continuo. Un dataset con variables categ\'oricas o binarias no se presta naturalmente a este enfoque.
 
-    \item \textbf{Dominio m\'edico con conocimiento experto disponible:} Existe abundante literatura cl\'inica sobre los rangos normales y patol\'ogicos de cada una de las seis variables, lo que permiti\'o definir las categor\'ias ling\"u\'isticas y sus par\'ametros de forma inform\'acion por evidencia cient\'ifica y no de manera arbitraria.
+    \item \textbf{Dominio m\'edico con conocimiento experto disponible:} Existe abundante literatura cl\'inica sobre los rangos normales y patol\'ogicos de cada una de las seis variables, lo que permiti\'o definir las categor\'ias ling\"u\'isticas y sus par\'ametros por evidencia cient\'ifica y no de manera arbitraria.
 
     \item \textbf{Tama\~no adecuado para validaci\'on:} Con 1.014 registros es posible realizar una partici\'on estratificada entrenamiento/validaci\'on/prueba que permita evaluar el desempe\~no del sistema y del proceso de optimizaci\'on de manera confiable.
 
@@ -330,12 +330,12 @@ El sistema implementado es un \textbf{sistema difuso de tipo~1} (T1-FLS, \textit
 
 \begin{figure}[H]
     \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{2.5cm}
-            \textbf{[IMAGEN: Diagrama de una funci\'on trapezoidal con los puntos a, b, c, d etiquetados, mostrando el soporte, el n\'ucleo y las rampas laterales. Eje X = valor de la variable, Eje Y = grado de membres\'ia (0 a 1).]}
-            \vspace{2.5cm}}}
+    \includegraphics[width=0.85\textwidth]{picture/rectangular.png}
     \caption{Funci\'on de membres\'ia trapezoidal: par\'ametros $[a, b, c, d]$}
     \label{fig:trapmf}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+
+    \vspace{2pt}
+    {\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 \subsubsection{Variables de Entrada: Categorías y Parámetros}
@@ -366,6 +366,8 @@ Cada variable de entrada cuenta con 2 o 3 categor\'ias ling\"u\'isticas. Los pun
 
 \paragraph{Variable 1: Edad (años)}
 
+Justificaci\'on: La literatura obst\'etrica considera ``edad materna avanzada'' a partir de los 35 a\~nos como factor de riesgo independiente para hipertensi\'on gestacional, diabetes gestacional y complicaciones del parto. La categor\'ia ``joven'' (menor de 20 a\~nos) tambi\'en representa riesgo por inmadurez biol\'ogica y socioecon\'omica.
+
 \begin{table}[H]
     \centering
     \caption{Funciones de membres\'ia --- Edad [10, 70] a\~nos}
@@ -382,8 +384,9 @@ Cada variable de entrada cuenta con 2 o 3 categor\'ias ling\"u\'isticas. Los pun
 \end{table}
 
 Justificaci\'on: El rango del dataset [10, 70] a\~nos \cite{ahmed2020} cubre el espectro completo de edad reproductiva documentado. La Organizaci\'on Mundial de la Salud define el embarazo adolescente (menores de 20 a\~nos) como situaci\'on de alto riesgo obst\'etrico por inmadurez biol\'ogica del canal del parto, mayor prevalencia de desnutrici\'on materna y acceso limitado a atenci\'on prenatal \cite{who2021adolescent}. En el extremo opuesto, la ``edad materna avanzada'' (AMA), definida convencionalmente como $\geq 35$ a\~nos por el ACOG, se asocia de forma independiente con mayor riesgo de hipertensi\'on gestacional, diabetes gestacional, parto prematuro y anomal\'ias cromosómicas \cite{acog2020}. Estudios epidemiol\'ogicos de gran escala confirman que la morbilidad materna perinatal es m\'inima entre los 20 y 34 a\~nos, ventana que abarca la categor\'ia ``adulta'' del sistema \cite{cavazos2014,yogev2010}. Los puntos del trapezoide ``avanzada'' comienzan en 34 a\~nos para capturar el riesgo creciente en los a\~nos previos al umbral oficial de AMA, cuya relevancia cl\'inica est\'a bien documentada \cite{acog2020}.
-
 \paragraph{Variable 2: Presión Sistólica (mmHg)}
+
+Justificaci\'on: El criterio cl\'inico de hipertensi\'on gestacional establece presi\'on sist\'olica $\geq 140$ mmHg como umbral de alerta. La zona ``elevada'' (120--145 mmHg) corresponde a la hipertensi\'on estadio 1 seg\'un las gu\'ias de la Asociaci\'on Americana del Coraz\'on (AHA).
 
 \begin{table}[H]
     \centering
@@ -401,8 +404,9 @@ Justificaci\'on: El rango del dataset [10, 70] a\~nos \cite{ahmed2020} cubre el 
 \end{table}
 
 Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on sist\'olica en: normal ($<$120 mmHg), elevada (120--129 mmHg), estadio~1 (130--139 mmHg) y estadio~2 ($\geq$140 mmHg) \cite{whelton2018}. En obstetricia, el ACOG y la OMS establecen $\geq$140 mmHg como umbral diagn\'ostico de hipertensi\'on gestacional y criterio de sospecha de preeclampsia \cite{acog2020,who2011hypertension}; a partir de $\geq$160 mmHg se considera hipertensi\'on gestacional grave que exige tratamiento farmacol\'ogico inmediato \cite{acog2020}. La categor\'ia ``alta'' del sistema arranca en 140 mmHg (plena certeza desde 148 mmHg) para replicar estos umbrales; la ``elevada'' (120--145 mmHg) cubre el estadio~1 de la AHA, zona de vigilancia intensificada; y la ``normal'' con n\'ucleo hasta 110 mmHg refleja que por debajo de ese valor la presi\'on sist\'olica aislada no constituye factor de riesgo gestacional \cite{whelton2018}.
-
 \paragraph{Variable 3: Presión Diastólica (mmHg)}
+
+Justificaci\'on: El umbral cl\'inico de hipertensi\'on gestacional se fija en presi\'on diast\'olica $\geq 90$ mmHg seg\'un la OMS. La zona ``elevada'' (76--95 mmHg) cubre la transici\'on hacia ese umbral de riesgo, mientras que valores $\geq 90$ mmHg requieren intervenci\'on cl\'inica inmediata.
 
 \begin{table}[H]
     \centering
@@ -423,6 +427,8 @@ Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on diast\'olica en: 
 
 \paragraph{Variable 4: Azúcar en Sangre (mmol/L)}
 
+Justificaci\'on: El criterio diagn\'ostico de diabetes gestacional (IADPSG) establece que la glucemia en ayunas $\geq 5.1$ mmol/L (92 mg/dL) y la glucemia postprandial $\geq 8.5$ mmol/L (153 mg/dL) indican diabetes gestacional. El nivel ``alto'' ($\geq 14$ mmol/L) corresponde a hiperglucemia severa asociada con riesgo de cetoacidosis.
+
 \begin{table}[H]
     \centering
     \caption{Funciones de membres\'ia --- Az\'ucar en Sangre [6, 19] mmol/L}
@@ -439,8 +445,9 @@ Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on diast\'olica en: 
 \end{table}
 
 Justificaci\'on: Los valores del dataset [6.0--19.0] mmol/L corresponden a mediciones de glucemia aleatoria (no en ayunas) \cite{ahmed2020}. El grupo IADPSG establece como criterios diagn\'osticos de diabetes mellitus gestacional (DMG): glucemia en ayunas $\geq$5.1 mmol/L, a la hora $\geq$10.0 mmol/L y a las dos horas $\geq$8.5 mmol/L en la prueba de tolerancia oral a la glucosa \cite{iadpsg2010}. La Asociaci\'on Americana de Diabetes (ADA) define glucemia aleatoria $\geq$11.1 mmol/L (200 mg/dL) como criterio diagn\'ostico de diabetes en presencia de s\'intomas, y glucemia en ayunas $\geq$7.0 mmol/L como umbral de confirmaci\'on \cite{ada2024}. Con base en estos criterios: la categor\'ia ``normal'' [6.0--8.5] mmol/L abarca el rango por debajo del umbral postprandial IADPSG; la ``elevada'' [8.0--14.0] mmol/L cubre desde la zona de riesgo de DMG hasta hiperglucemia notable; y la ``alta'' [$\geq$12 mmol/L, certeza plena desde 14 mmol/L] representa hiperglucemia severa ($>$200 mg/dL) asociada con riesgo de cetoacidosis diab\'etica y complicaciones perinatales graves \cite{ada2024}.
-
 \paragraph{Variable 5: Temperatura Corporal (\textdegree F)}
+
+Justificaci\'on: La temperatura normal en el embarazo oscila entre 97.0 y 99.0 \textdegree F. La fiebre ($\geq 100.4$ \textdegree F $= 38$ \textdegree C) durante el embarazo es indicativa de infecci\'on o sepsis, condici\'on potencialmente letal para la madre y el feto.
 
 \begin{table}[H]
     \centering
@@ -458,8 +465,9 @@ Justificaci\'on: Los valores del dataset [6.0--19.0] mmol/L corresponden a medic
 \end{table}
 
 Justificaci\'on: Un estudio de referencia cl\'asico de Mackowiak et al.\ estableci\'o que la temperatura corporal normal en adultos oscila entre 36.1 y 37.2 \textdegree C (97.0--99.0 \textdegree F), con media de 36.8 \textdegree C \cite{mackowiak1992}. El umbral de fiebre cl\'inica universalmente aceptado es $\geq$38.0 \textdegree C ($\geq$100.4 \textdegree F) \cite{mackowiak1992}. En obstetricia, la fiebre es un signo de alarma de primer orden: puede indicar corioamnionitis, infecci\'on del tracto urinario ascendente o sepsis puerperal, condiciones asociadas con mortalidad materna y neonatal elevada \cite{soper2009}. La categor\'ia ``fiebre'' del sistema parte desde 101 \textdegree F con soporte desde 100.4 \textdegree F, garantizando que ning\'un caso febril quede sin clasificar. La categor\'ia ``elevada'' (99.0--101.5 \textdegree F) corresponde al rango subfebril (37.2--38.6 \textdegree C), zona de alerta incipiente con vigilancia estrecha recomendada en gestantes. El universo [97, 103] \textdegree F reproduce exactamente el rango del dataset \cite{ahmed2020}.
-
 \paragraph{Variable 6: Frecuencia Cardíaca (lpm)}
+
+Justificaci\'on: La frecuencia card\'iaca normal en reposo es inferior a 80 lpm durante el embarazo. La taquicardia ($\geq 90$ lpm) puede indicar anemia, infecci\'on o insuficiencia card\'iaca gestacional, condiciones asociadas a mayor morbimortalidad materna.
 
 \begin{table}[H]
     \centering
@@ -477,6 +485,15 @@ Justificaci\'on: Un estudio de referencia cl\'asico de Mackowiak et al.\ estable
 
 Justificaci\'on: La frecuencia card\'iaca en reposo normal para adultos es de 60--100 lpm \cite{monga1995}. Durante el embarazo se produce un incremento fisiol\'ogico de 10--20 lpm respecto al valor basal, con valores medios de 80--90 lpm en el tercer trimestre \cite{monga1995,sanghavi2014}. El dataset presenta valores exclusivamente en el rango [60--90] lpm \cite{ahmed2020}, lo que refleja mediciones tomadas en condiciones de reposo relativo y la ausencia de casos de taquicardia franca ($>$100 lpm) en la poblaci\'on estudiada. Por ello el universo se acota al rango observado sin extrapolaci\'on. La categor\'ia ``normal'' [60--80] lpm abarca los valores de reposo habituales en el embarazo; la ``elevada'' [76--90] lpm corresponde a frecuencia alta pero fisiol\'ogicamente posible en gestantes (asociada con anemia, deshidrataci\'on o estr\'es) sin llegar a taquicardia patol\'ogica \cite{sanghavi2014}. Esta variable tiene menor poder discriminativo en el dataset, lo que justifica sus solo dos categor\'ias y la ausencia de reglas de alto riesgo aut\'onomas para ella.
 
+\begin{figure}[H]
+    \centering
+    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
+            \textbf{[IMAGEN: Gr\'afica con 6 subplots (uno por variable) mostrando las funciones de membres\'ia trapezoidales de cada categor\'ia. Por ejemplo, para edad: tres curvas solapadas (joven/adulta/avanzada) sobre el eje X de 10 a 70.]}
+            \vspace{3cm}}}
+    \caption{Funciones de membres\'ia de las seis variables de entrada}
+    \label{fig:membresias_entrada}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+\end{figure}
 \subsubsection{Variable de Salida: Puntaje de Riesgo}
 
 La salida del sistema difuso es la variable \textbf{puntaje\_riesgo} con universo $[0, 100]$ y tres conjuntos difusos:
@@ -636,11 +653,9 @@ Se eligi\'o el m\'etodo del centroide sobre otras alternativas (bisecci\'on, MOM
 
 Si todos los conjuntos de salida tienen activaci\'on cero (ninguna regla se dispara), el sistema retorna un puntaje neutro de \textbf{50.0} como valor de respaldo. Este caso ocurre cuando el perfil de la paciente no coincide con ninguno de los antecedentes de las 28 reglas. El puntaje 50.0 cae en la zona de riesgo medio por los umbrales de clasificaci\'on, pero \textbf{no debe interpretarse como un resultado cl\'inico}: el sistema no tuvo informaci\'on suficiente para emitir un juicio. La interfaz web detecta esta condici\'on y muestra un aviso expl\'icito al usuario indicando que el perfil no activ\'o ninguna regla y que el resultado no constituye una clasificaci\'on fiable.
 
-
 \subsubsection{Motor de Inferencia Vectorizado}
 
 El motor de inferencia fue dise\~nado con \textbf{procesamiento vectorizado} para permitir la evaluaci\'on eficiente de lotes completos de pacientes. Esta capacidad es cr\'itica durante la fase de optimizaci\'on gen\'etica, donde el sistema difuso es evaluado cientos de veces por generaci\'on sobre el conjunto de validaci\'on completo. Para cada lote de casos, el motor ejecuta secuencialmente los tres pasos del proceso Mamdani: (1) fuzzificaci\'on de todas las variables de entrada, (2) evaluaci\'on de las 28 reglas aplicando AND-m\'inimo por regla y OR-m\'aximo por categor\'ia de salida, y (3) defuzzificaci\'on por centroide sobre el conjunto agregado de salida. El resultado para cada paciente es un puntaje num\'erico en $[0, 100]$, la etiqueta de riesgo correspondiente y las activaciones por nivel de riesgo.
-
 % -----------------------------------------------------------
 \subsection{Algoritmo Genético}
 % -----------------------------------------------------------
@@ -1009,12 +1024,12 @@ La siguiente tabla compara el rendimiento del sistema difuso con los par\'ametro
 
 \begin{figure}[H]
     \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-            \textbf{[IMAGEN: Gr\'afica de l\'inea con el eje X = generaci\'on (0 a 60) y el eje Y = valor de fitness. Mostrar dos curvas: mejor fitness por generaci\'on y fitness promedio de la poblaci\'on. Marcar con punto la generaci\'on donde se alcanz\'o el mejor resultado (generaci\'on 52 aprox. con fitness = 0.703).]}
-            \vspace{3cm}}}
+    \includegraphics[width=0.85\textwidth]{picture/fitness.png}
     \caption{Evoluci\'on del fitness a lo largo de las 60 generaciones del algoritmo gen\'etico}
     \label{fig:evolucion_fitness}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+
+    \vspace{2pt}
+    {\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 El proceso de optimizaci\'on parti\'o de un fitness inicial de 0.566 (generaci\'on 0) y alcanz\'o su mejor valor de 0.703 en la generaci\'on 52, momento en que el MacroF1 en validaci\'on era de 0.663. El algoritmo se detuvo en la generaci\'on 60 al alcanzar el m\'aximo de generaciones configurado (paciencia = 50, m\'ax.~generaciones = 60).
@@ -1039,7 +1054,7 @@ El sistema optimizado identifica correctamente el 75.6\% de los casos de alto ri
 
 \subsubsection{Variable m\'as Influyente}
 
-La estructura de las reglas (Tabla \ref{tab:reglas}) revela la jerarqu\'ia de importancia de las variables:
+La estructura de las reglas (Tabla \ref{tab:reglas}) revela la jerarqu\'ia de importancia de las variables. El conjunto de reglas refinado es m\'as sensible a combinaciones de factores concurrentes, lo que permite detectar riesgo en escenarios cl\'inicos que el dise\~no original no cubr\'ia:
 
 \begin{itemize}
     \item \textbf{Az\'ucar en sangre:} Es el predictor m\'as fuerte. Las reglas 2, 3, 5, 7 y 9 se activan exclusivamente por AS=alta, y aparece como antecedente en 11 de las 28 reglas. La regla 3 (\textit{AS=alta AND FC=elevada}) es la de mayor cobertura para alto riesgo.
