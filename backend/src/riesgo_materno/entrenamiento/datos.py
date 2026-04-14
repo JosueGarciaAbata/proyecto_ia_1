@@ -58,17 +58,18 @@ def dividir_datos_estratificados(tabla):
         "prueba": prueba.reset_index(drop=True),
     }
 
-
 def convertir_split_a_diccionario(tabla_split):
     """Convierte un DataFrame de split a dict {entradas: arrays por variable, riesgos: array de etiquetas}."""
-    return {
-        "entradas": {
-            variable: tabla_split[variable].to_numpy(dtype=float)
-            for variable in VARIABLES_ENTRADA
-        },
-        "riesgos": tabla_split["riesgo"].to_numpy(dtype=object),
-    }
+    entradas = {}
+    for variable in VARIABLES_ENTRADA:
+        entradas[variable] = tabla_split[variable].to_numpy(dtype=float)
 
+    riesgos = tabla_split["riesgo"].to_numpy(dtype=object)
+
+    return {
+        "entradas": entradas,
+        "riesgos": riesgos,
+    }
 
 def resumir_splits(splits):
     """Genera una tabla con el tamaño y conteo por clase de cada split."""

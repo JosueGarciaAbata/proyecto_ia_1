@@ -24,7 +24,7 @@ def obtener_resultado_entrenamiento(forzar_reentrenamiento=False, parametros=Non
         return entrenar_y_guardar()
 
 
-def obtener_membresias_optimizadas():
+def     obtener_membresias_optimizadas():
     """Carga las membresias optimizadas desde disco si existen, o entrena desde cero."""
     resultado = cargar_modelo_optimizado()
     if resultado is not None:
@@ -50,22 +50,23 @@ def entrenar_y_guardar(
         "probabilidad_cruce": probabilidad_cruce,
         "probabilidad_mutacion": probabilidad_mutacion,
     }
+
     datos = cargar_datos(RUTA_CSV)
     splits = dividir_datos_estratificados(datos)
-    datos_por_split = {
-        nombre: convertir_split_a_diccionario(tabla)
-        for nombre, tabla in splits.items()
-    }
-    resultados_base = evaluar_membresias_en_splits(MEMBRESIAS_BASE, datos_por_split)
-    mejor_individuo, historial = ejecutar_algoritmo_genetico(
-        datos_por_split["validacion"],
-        parametros_override=parametros_override,
-    )
+
+    datos_por_split = {}
+    for nombre, tabla in splits.items():
+        datos_convertidos = convertir_split_a_diccionario(tabla)
+        datos_por_split[nombre] = datos_convertidos
+
+    mejor_individuo, historial = ejecutar_algoritmo_genetico(datos_por_split["validacion"], parametros_override=parametros_override,)
     membresias_optimizadas = decodificar_cromosoma(mejor_individuo.cromosoma)
     resultados_optimizados = evaluar_membresias_en_splits(
         membresias_optimizadas,
         datos_por_split,
     )
+
+    resultados_base = evaluar_membresias_en_splits(MEMBRESIAS_BASE, datos_por_split)
     tabla_comparativa = crear_tabla_comparativa(resultados_base, resultados_optimizados)
 
     resultado = {
