@@ -411,12 +411,12 @@ function FuzzificationPanel({ result }: { result: ExplicacionResponse }) {
                     <td key={cat} className="py-1.5 px-2 text-center whitespace-nowrap">
                       <span className="text-[10px] text-slate-400 capitalize">{cat} </span>
                       <span
-                        className={`font-mono text-xs font-semibold ${
+                        className={`font-mono text-xs font-bold ${
                           mu > 0.5
                             ? "text-cyan-700"
                             : mu > 0.1
                               ? "text-sky-600"
-                              : "text-slate-300"
+                              : "text-slate-500"
                         }`}
                       >
                         {mu.toFixed(3)}
