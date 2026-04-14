@@ -99,7 +99,7 @@ export function DifusoSection({ explanationResult }: DifusoSectionProps) {
               className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-cyan-300 hover:bg-cyan-50"
             >
               <List className="h-4 w-4 text-cyan-600" />
-              {showReglas ? "Ocultar reglas RIPPER" : "Ver todas las reglas RIPPER"}
+              {showReglas ? "Ocultar reglas" : "Ver reglas"}
               {reglasData && (
                 <span className="rounded-full bg-cyan-100 px-2 py-0.5 text-xs font-semibold text-cyan-700">
                   {reglasData.total}
@@ -169,7 +169,9 @@ export function DifusoSection({ explanationResult }: DifusoSectionProps) {
               )}
               <FuzzificationPanel result={explanationResult} />
               <RulesPanel result={explanationResult} />
-              <AggregacionPanel result={explanationResult} />
+              {!explanationResult.sin_activacion && (
+                <AggregacionPanel result={explanationResult} />
+              )}
             </>
           ) : (
             <GlassPanel className="mt-6 p-6 text-sm text-slate-500">
@@ -294,8 +296,8 @@ function MembershipCurvesPanel({
   };
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.3fr_0.7fr]">
-      <GlassPanel className="p-5 sm:p-6">
+    <div className="w-full grid gap-4 xl:grid-cols-[260px_1fr] xl:items-stretch">
+      <GlassPanel className="p-5 sm:p-6 flex flex-col">
         <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">Variables</div>
         <div className="mt-4 flex flex-col gap-2">
           {variableNames.map((v) => (
@@ -372,51 +374,57 @@ function MembershipCurvesPanel({
 
 function FuzzificationPanel({ result }: { result: ExplicacionResponse }) {
   const variables = Object.entries(result.pertenencias);
+  // max categories across all variables to know how many columns to render
+  const maxCats = Math.max(...variables.map(([, cats]) => Object.keys(cats).length));
 
   return (
-    <GlassPanel className="mt-6 p-6 sm:p-7">
-      <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80 mb-4">
+    <GlassPanel className="mt-6 p-5 sm:p-6">
+      <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80 mb-3">
         Fuzzificacion — grados de pertenencia del caso actual
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-sky-100">
-              <th className="py-2 pr-4 text-left font-semibold text-slate-700">Variable</th>
-              <th className="py-2 pr-4 text-left font-semibold text-slate-700">Valor</th>
-              {variables[0]?.[1] &&
-                Object.keys(variables[0][1]).map((cat) => (
-                  <th key={cat} className="py-2 px-3 text-center font-semibold text-slate-700">
-                    {cat}
-                  </th>
-                ))}
+            <tr className="border-b border-sky-100 text-xs uppercase tracking-wide text-slate-500">
+              <th className="py-1 pr-4 text-left font-semibold">Variable</th>
+              <th className="py-1 pr-4 text-right font-semibold">Valor</th>
+              {Array.from({ length: maxCats }, (_, i) => (
+                <th key={i} className="py-1 px-2 text-center font-semibold text-slate-400">
+                  Cat. {i + 1}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {variables.map(([variable, cats]) => {
               const valor = result.entrada_validada[variable];
+              const catEntries = Object.entries(cats);
               return (
-                <tr key={variable} className="border-b border-sky-50 hover:bg-sky-50/40">
-                  <td className="py-2.5 pr-4 font-medium text-slate-800">
+                <tr key={variable} className="border-b border-sky-50 hover:bg-sky-50/30">
+                  <td className="py-1.5 pr-4 font-medium text-slate-800 whitespace-nowrap text-xs">
                     {getFieldLabel(variable)}
                   </td>
-                  <td className="py-2.5 pr-4 font-mono text-slate-500">
+                  <td className="py-1.5 pr-4 text-right font-mono text-slate-500 whitespace-nowrap text-xs">
                     {valor !== undefined ? valor : "—"}
                   </td>
-                  {Object.entries(cats).map(([cat, mu]) => (
-                    <td key={cat} className="py-2.5 px-3 text-center">
+                  {catEntries.map(([cat, mu]) => (
+                    <td key={cat} className="py-1.5 px-2 text-center whitespace-nowrap">
+                      <span className="text-[10px] text-slate-400 capitalize">{cat} </span>
                       <span
-                        className={`inline-block rounded-full px-2.5 py-1 font-mono text-xs font-semibold ${
+                        className={`font-mono text-xs font-semibold ${
                           mu > 0.5
-                            ? "bg-cyan-100 text-cyan-800"
+                            ? "text-cyan-700"
                             : mu > 0.1
-                              ? "bg-sky-50 text-sky-700"
-                              : "text-slate-400"
+                              ? "text-sky-600"
+                              : "text-slate-300"
                         }`}
                       >
                         {mu.toFixed(3)}
                       </span>
                     </td>
+                  ))}
+                  {Array.from({ length: maxCats - catEntries.length }, (_, i) => (
+                    <td key={`empty-${i}`} className="py-1.5 px-2" />
                   ))}
                 </tr>
               );
@@ -432,6 +440,7 @@ function FuzzificationPanel({ result }: { result: ExplicacionResponse }) {
 
 function AggregacionPanel({ result }: { result: ExplicacionResponse }) {
   const narrative = buildClinicalNarrative(result);
+  const esFallback = result.sin_activacion;
 
   return (
     <GlassPanel className="mt-6 p-6 sm:p-7">
@@ -478,22 +487,29 @@ function AggregacionPanel({ result }: { result: ExplicacionResponse }) {
           <div className="flex items-end gap-3">
             <div
               className="text-5xl font-semibold"
-              style={{ color: getRiskUi(result.riesgo).accent }}
+              style={{ color: esFallback ? "#94a3b8" : getRiskUi(result.riesgo).accent }}
             >
               {result.puntaje.toFixed(1)}
             </div>
             <div className="mb-1 text-sm text-slate-500">/ 100</div>
           </div>
-          <div
-            className="inline-flex w-fit rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]"
-            style={{
-              borderColor: `${getRiskUi(result.riesgo).accent}55`,
-              color: getRiskUi(result.riesgo).accent,
-              backgroundColor: `${getRiskUi(result.riesgo).accent}18`,
-            }}
-          >
-            {getRiskUi(result.riesgo).label}
-          </div>
+          {esFallback ? (
+            <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+              <AlertTriangle className="h-3 w-3" />
+              Valor neutro de respaldo
+            </div>
+          ) : (
+            <div
+              className="inline-flex w-fit rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]"
+              style={{
+                borderColor: `${getRiskUi(result.riesgo).accent}55`,
+                color: getRiskUi(result.riesgo).accent,
+                backgroundColor: `${getRiskUi(result.riesgo).accent}18`,
+              }}
+            >
+              {getRiskUi(result.riesgo).label}
+            </div>
+          )}
 
           {/* Barra visual del centroide sobre el universo de salida 0-100 */}
           <div className="mt-2">
@@ -558,6 +574,15 @@ function RulesPanel({ result }: { result: ExplicacionResponse }) {
       </div>
 
       <div className="mt-5 space-y-3">
+        {sortedRules.length === 0 && (
+          <div className="flex items-start gap-3 rounded-2xl border border-amber-100 bg-amber-50/60 px-4 py-3 text-sm text-amber-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+            <span>
+              Ninguna regla se activo para este perfil. El puntaje 50 es un valor neutro de
+              respaldo generado cuando no hay evidencia clinica disponible.
+            </span>
+          </div>
+        )}
         {sortedRules.map((rule, index) => {
           const ruleRisk = getRiskUi(rule.consecuente);
           const narrative = buildRuleNarrative(rule);

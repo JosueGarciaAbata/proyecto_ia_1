@@ -13,7 +13,7 @@ def evaluar_cromosoma_en_splits(cromosoma, datos_por_split):
 
 
 def evaluar_membresias_en_splits(membresias, datos_por_split):
-    “””Construye el sistema difuso con las membresias dadas y mide su desempeno en cada split.”””
+    """Construye el sistema difuso con las membresias dadas y mide su desempeno en cada split."""
     sistema = SistemaDifusoMamdani(membresias)
     resultados = {}
     for nombre_split, datos_split in datos_por_split.items():

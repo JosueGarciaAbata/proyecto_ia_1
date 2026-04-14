@@ -186,7 +186,20 @@ La elecci\'on de este dataset sobre otras alternativas estuvo motivada por tres 
     \item \textbf{Dominio m\'edico con conocimiento experto disponible:} Existe abundante literatura cl\'inica sobre los rangos normales y patol\'ogicos de cada una de las seis variables, lo que permiti\'o definir las categor\'ias ling\"u\'isticas y sus par\'ametros de forma inform\'acion por evidencia cient\'ifica y no de manera arbitraria.
 
     \item \textbf{Tama\~no adecuado para validaci\'on:} Con 1.014 registros es posible realizar una partici\'on estratificada entrenamiento/validaci\'on/prueba que permita evaluar el desempe\~no del sistema y del proceso de optimizaci\'on de manera confiable.
+
+    \item \textbf{Variables cl\'inicamente validadas:} Un estudio independiente posterior (Hossain et al., 2026 \cite{hossain2026}) que replica el mismo dominio con 6.058 registros de 9 centros hospitalarios de Bangladesh confirm\'o mediante an\'alisis ANOVA que las mismas seis variables presentan diferencias estad\'isticamente significativas entre niveles de riesgo ($p < 0.001$). El an\'alisis de importancia de variables con XGBoost en ese estudio identific\'o exactamente las mismas variables como los principales predictores, validando de forma independiente la selecci\'on realizada.
 \end{enumerate}
+
+\subsubsection{Contexto de Recolección: Infraestructura IoT}
+
+El dataset UCI fue recolectado en hospitales, cl\'inicas comunitarias y centros de atenci\'on primaria de zonas rurales de Bangladesh mediante un sistema de monitoreo basado en Internet de las Cosas (IoT) \cite{ahmed2020}. Hossain et al. \cite{hossain2026} documentan en detalle la infraestructura t\'ecnica de recoleci\'on empleada en el mismo contexto geogr\'afico e institucional: sensores IoT controlados por Raspberry Pi 4 que capturan lecturas autom\'aticas cada 30 minutos, incluyendo tens\'iometro (OMRON HEM-7120), sensor de temperatura (DS18B20), gluc\'ometro (ACCU-CHEK) y ox\'imetro de pulso. Los datos son transmitidos con cifrado TLS 1.3 a almacenamiento en la nube, con sincronizaci\'on cada 5 minutos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{picture/obtencion_datos_ejemplo.png}
+    \caption{Personal de salud asistiendo a una paciente con el dispositivo IoT de monitoreo durante una sesi\'on de campo en uno de los hospitales asociados. Se mantuvieron consentimiento \'etico y privacidad del paciente. (Fuente: Hossain et al., 2026 \cite{hossain2026})}
+    \label{fig:obtencion_datos}
+\end{figure}
 
 \subsubsection{Preprocesamiento}
 
@@ -236,7 +249,7 @@ Esta b\'usqueda permiti\'o definir tanto las categor\'ias ling\"u\'isticas (por 
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.15]{picture/investigacion.jpg}
+\includegraphics[scale=0.40]{picture/investigacion.jpg}
 \caption{Evidencia de la b\'usqueda bibliogr\'afica sistem\'atica (m\'as de 205 fuentes consultadas)}
 \label{fig:investigacion}
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
@@ -253,6 +266,8 @@ Esta b\'usqueda permiti\'o definir tanto las categor\'ias ling\"u\'isticas (por 
 \textbf{Enhanced Neuro-Fuzzy System Based on Genetic Algorithm for Medical Diagnosis} \cite{neurofuzzyga}. Demuestra que los algoritmos gen\'eticos pueden utilizarse eficazmente para optimizar los par\'ametros de sistemas neuro-difusos en diagn\'ostico m\'edico, logrando mejoras significativas en exactitud respecto a los sistemas configurados manualmente por expertos.
 
 \textbf{GA Tuning Fuzzy Rule-Based Classification Systems --- Cardiovascular} \cite{gatunefuzzy}. Caso de estudio del uso de algoritmos gen\'eticos para ajustar sistemas de clasificaci\'on difusa con conjuntos difusos de valor intervalar en diagn\'ostico cardiovascular. Proporciona evidencia de que el ajuste autom\'atico de par\'ametros mediante AG mejora consistentemente el rendimiento de los sistemas difusos.
+
+\textbf{Hossain et al. (2026)} --- \textit{A comprehensive maternal health risk prediction dataset from IoT-enabled medical cyber-physical systems in developing countries} \cite{hossain2026}. Art\'iculo de datos publicado en \textit{BMC Medical Informatics and Decision Making} que describe un dataset ampliado de 6.058 registros de embarazadas recolectados en 9 centros de salud de Bangladesh mediante sensores IoT (Raspberry Pi 4, tens\'iometro OMRON HEM-7120, gluc\'ometro, sensor de temperatura, ox\'imetro). El dataset incluye 8 caracter\'isticas cl\'inicas; 6 de ellas coinciden exactamente con las variables del dataset UCI utilizado en este proyecto. An\'alisis ANOVA confirm\'o que todas las caracter\'isticas presentan diferencias estad\'isticamente significativas entre niveles de riesgo ($p < 0.001$), validando de forma independiente la selecci\'on de variables del sistema desarrollado. Adicionalmente, el an\'alisis de importancia de variables con XGBoost identific\'o presi\'on diast\'olica (18.1\%), temperatura corporal (17.7\%) y presi\'on sist\'olica (17.0\%) como los tres predictores principales, consistente con la jerarqu\'ia de variables establecida en las reglas del sistema difuso de este proyecto.
 
 % -----------------------------------------------------------
 \subsection{Sistema de Lógica Difusa (Motor Mamdani)}
@@ -768,6 +783,8 @@ F_1^{macro} = \frac{1}{3}\sum_{c \in \{\text{bajo, medio, alto}\}} F_1^{(c)}
 
 Se eligió el promedio \textbf{macro} (en lugar de ponderado o micro) porque las tres clases reciben igual importancia sin importar su frecuencia. Con promedio ponderado, las mejoras en la clase mayoritaria dominar\'ian la m\'etrica; con macro, el sistema \textbf{debe clasificar bien las tres clases simult\'aneamente}. Se usa MacroF1 en lugar de \textit{accuracy} porque en el dataset desbalanceado (40\% bajo, 33\% medio, 27\% alto) un clasificador que prediga siempre ``bajo riesgo'' obtendr\'ia 40\% de exactitud, pero $F_1^{(c)} = 0$ para las clases medio y alto, resultando en $F_1^{macro} \approx 0.13$. Esto lo convierte en la m\'etrica m\'as exigente e informativa, por lo que recibe el peso dominante de 0.75 en la funci\'on de fitness.
 
+El contraste con el trabajo de Hossain et al. \cite{hossain2026} ilustra esta decisi\'on: su dataset tiene una distribuci\'on casi perfectamente balanceada (33.28\% / 33.72\% / 33.00\%), lo que les permite reportar \textit{accuracy} (99.34\%) como m\'etrica principal sin riesgo de enga\~no. Nuestro dataset UCI presenta un desbalance de hasta 13 puntos porcentuales entre clases, situaci\'on en la que el MacroF1 es la m\'etrica est\'andar en la literatura de clasificaci\'on m\'edica desbalanceada \cite{apriceno2025}.
+
 \paragraph{Recall de Alto Riesgo (peso 0.25)}
 
 \begin{equation}
@@ -847,7 +864,7 @@ Se preservan los \textbf{3 mejores individuos} de cada generaci\'on (elitismo = 
 
 \subsubsection{Early Stopping}
 
-El algoritmo se detiene anticipadamente si transcurren \textbf{20 generaciones consecutivas} sin mejora en el fitness del mejor individuo (paciencia = 20).
+El algoritmo se detiene anticipadamente si transcurren \textbf{50 generaciones consecutivas} sin mejora en el fitness del mejor individuo (paciencia = 50).
 
 Esta estrategia evita el sobreentrenamiento (el AG sigue explorando mucho tiempo despu\'es de haber convergido, sin ganancia real) y reduce el tiempo de c\'omputo cuando la poblaci\'on ha convergido.
 
@@ -898,7 +915,7 @@ def evaluar_individuo(cromosoma, datos_validacion):
         \midrule
         Tama\~no de poblaci\'on    & Individuos por generaci\'on                       & 50             \\
         M\'ax. generaciones        & L\'imite superior de iteraciones                  & 60             \\
-        Paciencia (early stopping) & Generaciones sin mejora para detener              & 20             \\
+        Paciencia (early stopping) & Generaciones sin mejora para detener              & 50             \\
         Probabilidad de cruce      & $p_c$                                             & 0.85           \\
         Probabilidad de mutaci\'on & $p_m$ por gen                                     & 0.04           \\
         Tama\~no de torneo         & $k$                                               & 3              \\
@@ -1018,7 +1035,7 @@ La siguiente tabla compara el rendimiento del sistema difuso con los par\'ametro
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
-El proceso de optimizaci\'on parti\'o de un fitness inicial de 0.566 (generaci\'on 0) y alcanz\'o su mejor valor de 0.703 en la generaci\'on 52, moment en que el MacroF1 en validaci\'on era de 0.663. El algoritmo se estabiliz\'o en la generaci\'on 60 por criterio de early stopping (20 generaciones sin mejora).
+El proceso de optimizaci\'on parti\'o de un fitness inicial de 0.566 (generaci\'on 0) y alcanz\'o su mejor valor de 0.703 en la generaci\'on 52, momento en que el MacroF1 en validaci\'on era de 0.663. El algoritmo se detuvo en la generaci\'on 60 al alcanzar el m\'aximo de generaciones configurado (paciencia = 50, m\'ax.~generaciones = 60).
 
 \subsubsection{Análisis de Resultados}
 
@@ -1123,6 +1140,11 @@ Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), la regla 8 se activa
         \bibitem{ahmed2020}
         M. Ahmed et al., ``Maternal Health Risk Data Set,'' UCI Machine Learning Repository, 2020. DOI: 10.24432/C5DP5D.
 
+
+        \bibitem{hossain2026}
+        M. M. Hossain, N. M. Nayan, and M. A. Kashem, ``A Comprehensive Maternal Health Risk Prediction Dataset from IoT-Enabled Medical Cyber-Physical Systems in Developing Countries: Supporting Machine Learning and Deep Learning Applications for Clinical Decision Support,'' \textit{BMC Med. Inform. Decis. Mak.}, vol. 26, no. 79, 2026. DOI: 10.1186/s12911-026-03343-1.
+
+
         \bibitem{apriceno2025}
         M. Apriceno et al., ``A Trustworthy Evolutionary Fuzzy Neural Network Framework for Maternal Health Risk Classification,'' in \textit{Proc. AIME 2025}, Lecture Notes in Computer Science, vol. 15871, Springer, 2025, pp. 32--42. DOI: 10.1007/978-3-031-95841-0\_4.
 
@@ -1182,6 +1204,7 @@ J. Cendrowska, ``PRISM: An Algorithm for Inducing Modular Rules,'' \textit{Int. 
 
 \bibitem{cohen1995}
 W. W. Cohen, ``Fast Effective Rule Induction,'' in \textit{Proc. 12th Int. Conf. Mach. Learn. (ICML 1995)}, Tahoe City, CA, USA, Jul. 1995, pp. 115--123.
+
 
 \end{thebibliography}
 }
