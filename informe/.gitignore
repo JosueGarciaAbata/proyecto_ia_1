@@ -1,0 +1,40 @@
+# ── Archivos generados por compilación LaTeX ──────────────────────────────
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+*.xdv
+*.run.xml
+*.bcf
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.idx
+*.ilg
+*.ind
+*.dvi
+
+# ── Archivos temporales del editor ─────────────────────────────────────────
+*~
+*.swp
+.DS_Store
+texput.log
+history.txt
+
+# ── PDFs de referencia / descargados (no son salidas del proyecto) ──────────
+bussiness-case/Informe_del_Proyecto*.pdf

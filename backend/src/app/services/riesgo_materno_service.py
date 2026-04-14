@@ -13,6 +13,11 @@ from src.riesgo_materno.prediccion import predecir_caso
 from src.riesgo_materno.prediccion.predictor import obtener_curvas_membresia, predecir_caso_con_explicacion
 
 _lock_reentrenamiento = threading.Lock()
+_entrenamiento_activo = False
+
+
+def esta_entrenando() -> bool:
+    return _entrenamiento_activo
 
 # ── Prediccion ────────────────────────────────────────────────────────────────
 
@@ -76,8 +81,13 @@ def obtener_comparacion_ga() -> dict:
 
 def reentrenar_ga_con_progreso(parametros: dict, progress_callback) -> dict:
     """Entrena el GA emitiendo cada generacion via progress_callback."""
+    global _entrenamiento_activo
     with _lock_reentrenamiento:
-        resultado = entrenar_con_progreso(parametros=parametros, progress_callback=progress_callback)
+        _entrenamiento_activo = True
+        try:
+            resultado = entrenar_con_progreso(parametros=parametros, progress_callback=progress_callback)
+        finally:
+            _entrenamiento_activo = False
     mejor = resultado["mejor_individuo"]
     return {
         "exito": True,

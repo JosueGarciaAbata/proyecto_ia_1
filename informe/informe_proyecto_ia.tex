@@ -75,17 +75,17 @@
 % ============================================================
 
 \begin{tabbing}
-\hspace{7.5cm} \= \kill
-\textbf{Tema:} \> Sistema de Soporte a la Toma de Decisiones M\a'{e}dicas: \\
-              \> Clasificaci\a'{o}n de Riesgo en Salud Materna mediante \\
-              \> L\a'{o}gica Difusa y Algoritmos Gen\a'{e}ticos \\
-\textbf{Carrera:} \> Ingenier\a'{i}a de Software \\
-\textbf{Unidad de Organizaci\a'{o}n Curricular:} \> PROFESIONAL \\
-\textbf{Nivel y Paralelo:} \> S\a'{e}ptimo semestre \\
-\textbf{Alumnos participantes:} \> Bonilla Joel \\
-              \> Garcia Josue \\
-\textbf{Asignatura:} \> Inteligencia Artificial \\
-\textbf{Docente:} \> % <-- Completar con el nombre del docente
+    \hspace{7.5cm} \= \kill
+    \textbf{Tema:} \> Sistema de Soporte a la Toma de Decisiones M\a'{e}dicas: \\
+    \> Clasificaci\a'{o}n de Riesgo en Salud Materna mediante \\
+    \> L\a'{o}gica Difusa y Algoritmos Gen\a'{e}ticos \\
+    \textbf{Carrera:} \> Ingenier\a'{i}a de Software \\
+    \textbf{Unidad de Organizaci\a'{o}n Curricular:} \> PROFESIONAL \\
+    \textbf{Nivel y Paralelo:} \> S\a'{e}ptimo semestre \\
+    \textbf{Alumnos participantes:} \> Bonilla Joel \\
+    \> Garcia Josue \\
+    \textbf{Asignatura:} \> Inteligencia Artificial \\
+    \textbf{Docente:} \> % <-- Completar con el nombre del docente
 \end{tabbing}
 
 % ============================================================
@@ -140,40 +140,40 @@ El dataset utilizado es el \textbf{Maternal Health Risk Data Set}, disponible en
 El dataset contiene \textbf{1.014 registros} de pacientes embarazadas, cada uno descrito por seis variables num\'ericas continuas y etiquetado con un nivel de riesgo asignado por criterio cl\'inico experto.
 
 \begin{table}[H]
-\centering
-\small\begin{tabular}{llll}
-\toprule
-\textbf{Variable (CSV)} & \textbf{Nombre interno} & \textbf{Unidad} & \textbf{Rango} \\
-\midrule
-Age & edad & a\~nos & 10 -- 70 \\
-SystolicBP & presion\_sistolica & mmHg & 70 -- 160 \\
-DiastolicBP & presion\_diastolica & mmHg & 49 -- 100 \\
-BS & azucar\_sangre & mmol/L & 6 -- 19 \\
-BodyTemp & temperatura\_corporal & \textdegree F & 97 -- 103 \\
-HeartRate & frecuencia\_cardiaca & lpm & 60 -- 90 \\
-\bottomrule
-\end{tabular}
-\label{tab:variables_dataset}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \small\begin{tabular}{llll}
+        \toprule
+        \textbf{Variable (CSV)} & \textbf{Nombre interno} & \textbf{Unidad} & \textbf{Rango} \\
+        \midrule
+        Age                     & edad                    & a\~nos          & 10 -- 70       \\
+        SystolicBP              & presion\_sistolica      & mmHg            & 70 -- 160      \\
+        DiastolicBP             & presion\_diastolica     & mmHg            & 49 -- 100      \\
+        BS                      & azucar\_sangre          & mmol/L          & 6 -- 19        \\
+        BodyTemp                & temperatura\_corporal   & \textdegree F   & 97 -- 103      \\
+        HeartRate               & frecuencia\_cardiaca    & lpm             & 60 -- 90       \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:variables_dataset}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 La variable objetivo \texttt{RiskLevel} toma tres valores: \textit{low risk}, \textit{mid risk} y \textit{high risk}.
 
 \begin{table}[H]
-\centering
-\begin{tabular}{lcc}
-\toprule
-\textbf{Clase} & \textbf{Registros} & \textbf{Porcentaje} \\
-\midrule
-low risk & 406 & 40.0\% \\
-mid risk & 336 & 33.1\% \\
-high risk & 272 & 26.8\% \\
-\midrule
-\textbf{Total} & \textbf{1.014} & \textbf{100\%} \\
-\bottomrule
-\end{tabular}
-\label{tab:distribucion_clases}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Clase} & \textbf{Registros} & \textbf{Porcentaje} \\
+        \midrule
+        low risk       & 406                & 40.0\%              \\
+        mid risk       & 336                & 33.1\%              \\
+        high risk      & 272                & 26.8\%              \\
+        \midrule
+        \textbf{Total} & \textbf{1.014}     & \textbf{100\%}      \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:distribucion_clases}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 \subsubsection{Justificación de la Elección del Dataset}
@@ -193,18 +193,18 @@ La elecci\'on de este dataset sobre otras alternativas estuvo motivada por tres 
 Se identificaron y eliminaron 2 registros con valores de frecuencia card\'iaca igual a 7 lpm, claramente inconsistentes con cualquier medici\'on vital posible en una persona viva. El dataset resultante de 1.012 registros fue dividido en tres subconjuntos usando partici\'on \textbf{estratificada} (preservando la distribuci\'on de clases en cada subconjunto):
 
 \begin{table}[H]
-\centering
-\begin{tabular}{lcc}
-\toprule
-\textbf{Subconjunto} & \textbf{Proporción} & \textbf{Registros aprox.} \\
-\midrule
-Entrenamiento & 70\% & 708 \\
-Validación & 15\% & 152 \\
-Prueba & 15\% & 152 \\
-\bottomrule
-\end{tabular}
-\label{tab:split}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Subconjunto} & \textbf{Proporción} & \textbf{Registros aprox.} \\
+        \midrule
+        Entrenamiento        & 70\%                & 708                       \\
+        Validación           & 15\%                & 152                       \\
+        Prueba               & 15\%                & 152                       \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:split}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 El subconjunto de validaci\'on se usa durante la optimizaci\'on gen\'etica para evaluar el fitness de cada individuo. El subconjunto de prueba se reserva exclusivamente para la evaluaci\'on final del sistema optimizado, garantizando que los resultados reportados no est\'en sesgados por el proceso de optimizaci\'on.
@@ -276,15 +276,15 @@ Una \textbf{funci\'on de membres\'ia} $\mu_A(x)$ describe el grado con que un va
 El sistema utiliza exclusivamente \textbf{funciones trapezoidales}, definidas por cuatro par\'ametros $[a, b, c, d]$:
 
 \begin{equation}
-\mu_{trap}(x;\, a, b, c, d) =
-\begin{cases}
-0 & \text{si } x \leq a \\
-\dfrac{x - a}{b - a} & \text{si } a < x \leq b \\
-1 & \text{si } b < x \leq c \\
-\dfrac{d - x}{d - c} & \text{si } c < x \leq d \\
-0 & \text{si } x > d
-\end{cases}
-\label{eq:trapmf}
+    \mu_{trap}(x;\, a, b, c, d) =
+    \begin{cases}
+        0                    & \text{si } x \leq a     \\
+        \dfrac{x - a}{b - a} & \text{si } a < x \leq b \\
+        1                    & \text{si } b < x \leq c \\
+        \dfrac{d - x}{d - c} & \text{si } c < x \leq d \\
+        0                    & \text{si } x > d
+    \end{cases}
+    \label{eq:trapmf}
 \end{equation}
 
 donde:
@@ -298,13 +298,13 @@ donde:
 La funci\'on trapezoidal fue elegida porque permite representar de forma natural rangos cl\'inicos con zonas de certeza plena (el n\'ucleo, donde la presi\'on es definitivamente ``alta'' sin ambig\"uedad) y zonas de transici\'on gradual (las rampas laterales, donde el cl\'inico puede no tener certeza absoluta).
 
 \begin{figure}[H]
-\centering
-\fbox{\parbox{0.85\textwidth}{\centering\vspace{2.5cm}
-\textbf{[IMAGEN: Diagrama de una funci\'on trapezoidal con los puntos a, b, c, d etiquetados, mostrando el soporte, el n\'ucleo y las rampas laterales. Eje X = valor de la variable, Eje Y = grado de membres\'ia (0 a 1).]}
-\vspace{2.5cm}}}
-\caption{Funci\'on de membres\'ia trapezoidal: par\'ametros $[a, b, c, d]$}
-\label{fig:trapmf}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \fbox{\parbox{0.85\textwidth}{\centering\vspace{2.5cm}
+            \textbf{[IMAGEN: Diagrama de una funci\'on trapezoidal con los puntos a, b, c, d etiquetados, mostrando el soporte, el n\'ucleo y las rampas laterales. Eje X = valor de la variable, Eje Y = grado de membres\'ia (0 a 1).]}
+            \vspace{2.5cm}}}
+    \caption{Funci\'on de membres\'ia trapezoidal: par\'ametros $[a, b, c, d]$}
+    \label{fig:trapmf}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 \subsubsection{Variables de Entrada: Categorías y Parámetros}
@@ -336,18 +336,18 @@ Cada variable de entrada cuenta con 2 o 3 categor\'ias ling\"u\'isticas. Los pun
 \paragraph{Variable 1: Edad (años)}
 
 \begin{table}[H]
-\centering
-\caption{Funciones de membres\'ia --- Edad [10, 70] a\~nos}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
-\midrule
-joven    & 10 & 10 & 20 & 28 \\
-adulta   & 24 & 28 & 34 & 38 \\
-avanzada & 34 & 40 & 70 & 70 \\
-\bottomrule
-\end{tabular}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Funciones de membres\'ia --- Edad [10, 70] a\~nos}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
+        \midrule
+        joven              & 10  & 10  & 20  & 28  \\
+        adulta             & 24  & 28  & 34  & 38  \\
+        avanzada           & 34  & 40  & 70  & 70  \\
+        \bottomrule
+    \end{tabular}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 Justificaci\'on: El rango del dataset [10, 70] a\~nos \cite{ahmed2020} cubre el espectro completo de edad reproductiva documentado. La Organizaci\'on Mundial de la Salud define el embarazo adolescente (menores de 20 a\~nos) como situaci\'on de alto riesgo obst\'etrico por inmadurez biol\'ogica del canal del parto, mayor prevalencia de desnutrici\'on materna y acceso limitado a atenci\'on prenatal \cite{who2021adolescent}. En el extremo opuesto, la ``edad materna avanzada'' (AMA), definida convencionalmente como $\geq 35$ a\~nos por el ACOG, se asocia de forma independiente con mayor riesgo de hipertensi\'on gestacional, diabetes gestacional, parto prematuro y anomal\'ias cromosómicas \cite{acog2020}. Estudios epidemiol\'ogicos de gran escala confirman que la morbilidad materna perinatal es m\'inima entre los 20 y 34 a\~nos, ventana que abarca la categor\'ia ``adulta'' del sistema \cite{cavazos2014,yogev2010}. Los puntos del trapezoide ``avanzada'' comienzan en 34 a\~nos para capturar el riesgo creciente en los a\~nos previos al umbral oficial de AMA, cuya relevancia cl\'inica est\'a bien documentada \cite{acog2020}.
@@ -355,18 +355,18 @@ Justificaci\'on: El rango del dataset [10, 70] a\~nos \cite{ahmed2020} cubre el 
 \paragraph{Variable 2: Presión Sistólica (mmHg)}
 
 \begin{table}[H]
-\centering
-\caption{Funciones de membres\'ia --- Presi\'on Sist\'olica [70, 160] mmHg}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
-\midrule
-normal  & 70  & 70  & 110 & 125 \\
-elevada & 120 & 128 & 138 & 145 \\
-alta    & 140 & 148 & 160 & 160 \\
-\bottomrule
-\end{tabular}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Funciones de membres\'ia --- Presi\'on Sist\'olica [70, 160] mmHg}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
+        \midrule
+        normal             & 70  & 70  & 110 & 125 \\
+        elevada            & 120 & 128 & 138 & 145 \\
+        alta               & 140 & 148 & 160 & 160 \\
+        \bottomrule
+    \end{tabular}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on sist\'olica en: normal ($<$120 mmHg), elevada (120--129 mmHg), estadio~1 (130--139 mmHg) y estadio~2 ($\geq$140 mmHg) \cite{whelton2018}. En obstetricia, el ACOG y la OMS establecen $\geq$140 mmHg como umbral diagn\'ostico de hipertensi\'on gestacional y criterio de sospecha de preeclampsia \cite{acog2020,who2011hypertension}; a partir de $\geq$160 mmHg se considera hipertensi\'on gestacional grave que exige tratamiento farmacol\'ogico inmediato \cite{acog2020}. La categor\'ia ``alta'' del sistema arranca en 140 mmHg (plena certeza desde 148 mmHg) para replicar estos umbrales; la ``elevada'' (120--145 mmHg) cubre el estadio~1 de la AHA, zona de vigilancia intensificada; y la ``normal'' con n\'ucleo hasta 110 mmHg refleja que por debajo de ese valor la presi\'on sist\'olica aislada no constituye factor de riesgo gestacional \cite{whelton2018}.
@@ -374,18 +374,18 @@ Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on sist\'olica en: n
 \paragraph{Variable 3: Presión Diastólica (mmHg)}
 
 \begin{table}[H]
-\centering
-\caption{Funciones de membres\'ia --- Presi\'on Diast\'olica [49, 100] mmHg}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
-\midrule
-normal  & 49 & 49 & 70 & 80 \\
-elevada & 76 & 82 & 90 & 95 \\
-alta    & 90 & 95 & 100 & 100 \\
-\bottomrule
-\end{tabular}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Funciones de membres\'ia --- Presi\'on Diast\'olica [49, 100] mmHg}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
+        \midrule
+        normal             & 49  & 49  & 70  & 80  \\
+        elevada            & 76  & 82  & 90  & 95  \\
+        alta               & 90  & 95  & 100 & 100 \\
+        \bottomrule
+    \end{tabular}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on diast\'olica en: normal ($<$80 mmHg), estadio~1 (80--89 mmHg) y estadio~2 ($\geq$90 mmHg) \cite{whelton2018}. El ACOG y la OMS definen hipertensi\'on gestacional cuando la diast\'olica alcanza $\geq$90 mmHg en dos lecturas separadas \cite{acog2020,who2011hypertension}; este umbral fija el l\'imite inferior de la categor\'ia ``alta'' del sistema. La categor\'ia ``elevada'' (76--95 mmHg) cubre el estadio~1 de la AHA y la zona de prehipertensi\'on gestacional donde las gu\'ias recomiendan vigilancia intensificada \cite{whelton2018}. El l\'imite inferior del universo (49 mmHg) reproduce el m\'inimo del dataset \cite{ahmed2020}, consistente con la vasodilataci\'on fisiol\'ogica del segundo trimestre que puede reducir transitoriamente la presi\'on diast\'olica \cite{monga1995}.
@@ -393,18 +393,18 @@ Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on diast\'olica en: 
 \paragraph{Variable 4: Azúcar en Sangre (mmol/L)}
 
 \begin{table}[H]
-\centering
-\caption{Funciones de membres\'ia --- Az\'ucar en Sangre [6, 19] mmol/L}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
-\midrule
-normal  & 6.0  & 6.0  & 7.5  & 8.5  \\
-elevada & 8.0  & 9.0  & 12.0 & 14.0 \\
-alta    & 12.0 & 14.0 & 19.0 & 19.0 \\
-\bottomrule
-\end{tabular}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Funciones de membres\'ia --- Az\'ucar en Sangre [6, 19] mmol/L}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Categoría} & $a$  & $b$  & $c$  & $d$  \\
+        \midrule
+        normal             & 6.0  & 6.0  & 7.5  & 8.5  \\
+        elevada            & 8.0  & 9.0  & 12.0 & 14.0 \\
+        alta               & 12.0 & 14.0 & 19.0 & 19.0 \\
+        \bottomrule
+    \end{tabular}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 Justificaci\'on: Los valores del dataset [6.0--19.0] mmol/L corresponden a mediciones de glucemia aleatoria (no en ayunas) \cite{ahmed2020}. El grupo IADPSG establece como criterios diagn\'osticos de diabetes mellitus gestacional (DMG): glucemia en ayunas $\geq$5.1 mmol/L, a la hora $\geq$10.0 mmol/L y a las dos horas $\geq$8.5 mmol/L en la prueba de tolerancia oral a la glucosa \cite{iadpsg2010}. La Asociaci\'on Americana de Diabetes (ADA) define glucemia aleatoria $\geq$11.1 mmol/L (200 mg/dL) como criterio diagn\'ostico de diabetes en presencia de s\'intomas, y glucemia en ayunas $\geq$7.0 mmol/L como umbral de confirmaci\'on \cite{ada2024}. Con base en estos criterios: la categor\'ia ``normal'' [6.0--8.5] mmol/L abarca el rango por debajo del umbral postprandial IADPSG; la ``elevada'' [8.0--14.0] mmol/L cubre desde la zona de riesgo de DMG hasta hiperglucemia notable; y la ``alta'' [$\geq$12 mmol/L, certeza plena desde 14 mmol/L] representa hiperglucemia severa ($>$200 mg/dL) asociada con riesgo de cetoacidosis diab\'etica y complicaciones perinatales graves \cite{ada2024}.
@@ -412,18 +412,18 @@ Justificaci\'on: Los valores del dataset [6.0--19.0] mmol/L corresponden a medic
 \paragraph{Variable 5: Temperatura Corporal (\textdegree F)}
 
 \begin{table}[H]
-\centering
-\caption{Funciones de membres\'ia --- Temperatura Corporal [97, 103] \textdegree F}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
-\midrule
-normal  & 97.0 & 97.0 & 98.5 & 99.5  \\
-elevada & 99.0 & 100.0 & 101.0 & 101.5 \\
-fiebre  & 101.0 & 101.5 & 103.0 & 103.0 \\
-\bottomrule
-\end{tabular}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Funciones de membres\'ia --- Temperatura Corporal [97, 103] \textdegree F}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Categoría} & $a$   & $b$   & $c$   & $d$   \\
+        \midrule
+        normal             & 97.0  & 97.0  & 98.5  & 99.5  \\
+        elevada            & 99.0  & 100.0 & 101.0 & 101.5 \\
+        fiebre             & 101.0 & 101.5 & 103.0 & 103.0 \\
+        \bottomrule
+    \end{tabular}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 Justificaci\'on: Un estudio de referencia cl\'asico de Mackowiak et al.\ estableci\'o que la temperatura corporal normal en adultos oscila entre 36.1 y 37.2 \textdegree C (97.0--99.0 \textdegree F), con media de 36.8 \textdegree C \cite{mackowiak1992}. El umbral de fiebre cl\'inica universalmente aceptado es $\geq$38.0 \textdegree C ($\geq$100.4 \textdegree F) \cite{mackowiak1992}. En obstetricia, la fiebre es un signo de alarma de primer orden: puede indicar corioamnionitis, infecci\'on del tracto urinario ascendente o sepsis puerperal, condiciones asociadas con mortalidad materna y neonatal elevada \cite{soper2009}. La categor\'ia ``fiebre'' del sistema parte desde 101 \textdegree F con soporte desde 100.4 \textdegree F, garantizando que ning\'un caso febril quede sin clasificar. La categor\'ia ``elevada'' (99.0--101.5 \textdegree F) corresponde al rango subfebril (37.2--38.6 \textdegree C), zona de alerta incipiente con vigilancia estrecha recomendada en gestantes. El universo [97, 103] \textdegree F reproduce exactamente el rango del dataset \cite{ahmed2020}.
@@ -431,29 +431,29 @@ Justificaci\'on: Un estudio de referencia cl\'asico de Mackowiak et al.\ estable
 \paragraph{Variable 6: Frecuencia Cardíaca (lpm)}
 
 \begin{table}[H]
-\centering
-\caption{Funciones de membres\'ia --- Frecuencia Card\'iaca [60, 90] lpm}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
-\midrule
-normal  & 60 & 60 & 72 & 80 \\
-elevada & 76 & 82 & 90 & 90 \\
-\bottomrule
-\end{tabular}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Funciones de membres\'ia --- Frecuencia Card\'iaca [60, 90] lpm}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
+        \midrule
+        normal             & 60  & 60  & 72  & 80  \\
+        elevada            & 76  & 82  & 90  & 90  \\
+        \bottomrule
+    \end{tabular}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 Justificaci\'on: La frecuencia card\'iaca en reposo normal para adultos es de 60--100 lpm \cite{monga1995}. Durante el embarazo se produce un incremento fisiol\'ogico de 10--20 lpm respecto al valor basal, con valores medios de 80--90 lpm en el tercer trimestre \cite{monga1995,sanghavi2014}. El dataset presenta valores exclusivamente en el rango [60--90] lpm \cite{ahmed2020}, lo que refleja mediciones tomadas en condiciones de reposo relativo y la ausencia de casos de taquicardia franca ($>$100 lpm) en la poblaci\'on estudiada. Por ello el universo se acota al rango observado sin extrapolaci\'on. La categor\'ia ``normal'' [60--80] lpm abarca los valores de reposo habituales en el embarazo; la ``elevada'' [76--90] lpm corresponde a frecuencia alta pero fisiol\'ogicamente posible en gestantes (asociada con anemia, deshidrataci\'on o estr\'es) sin llegar a taquicardia patol\'ogica \cite{sanghavi2014}. Esta variable tiene menor poder discriminativo en el dataset, lo que justifica sus solo dos categor\'ias y la ausencia de reglas de alto riesgo aut\'onomas para ella.
 
 \begin{figure}[H]
-\centering
-\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-\textbf{[IMAGEN: Gr\'afica con 6 subplots (uno por variable) mostrando las funciones de membres\'ia trapezoidales de cada categor\'ia. Por ejemplo, para edad: tres curvas solapadas (joven/adulta/avanzada) sobre el eje X de 10 a 70.]}
-\vspace{3cm}}}
-\caption{Funciones de membres\'ia de las seis variables de entrada}
-\label{fig:membresias_entrada}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
+            \textbf{[IMAGEN: Gr\'afica con 6 subplots (uno por variable) mostrando las funciones de membres\'ia trapezoidales de cada categor\'ia. Por ejemplo, para edad: tres curvas solapadas (joven/adulta/avanzada) sobre el eje X de 10 a 70.]}
+            \vspace{3cm}}}
+    \caption{Funciones de membres\'ia de las seis variables de entrada}
+    \label{fig:membresias_entrada}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 \subsubsection{Variable de Salida: Puntaje de Riesgo}
@@ -461,29 +461,29 @@ Justificaci\'on: La frecuencia card\'iaca en reposo normal para adultos es de 60
 La salida del sistema difuso es la variable \textbf{puntaje\_riesgo} con universo $[0, 100]$ y tres conjuntos difusos:
 
 \begin{table}[H]
-\centering
-\caption{Funciones de membres\'ia --- Puntaje de Riesgo [0, 100]}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
-\midrule
-bajo  & 0  & 0  & 25 & 42 \\
-medio & 35 & 45 & 58 & 70 \\
-alto  & 62 & 75 & 100 & 100 \\
-\bottomrule
-\end{tabular}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Funciones de membres\'ia --- Puntaje de Riesgo [0, 100]}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Categoría} & $a$ & $b$ & $c$ & $d$ \\
+        \midrule
+        bajo               & 0   & 0   & 25  & 42  \\
+        medio              & 35  & 45  & 58  & 70  \\
+        alto               & 62  & 75  & 100 & 100 \\
+        \bottomrule
+    \end{tabular}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 El puntaje num\'erico resultante de la defuzzificaci\'on se convierte a etiqueta cl\'inica mediante los siguientes umbrales:
 
 \begin{equation}
-\text{RiskLevel} =
-\begin{cases}
-\text{low risk}  & \text{si puntaje} < 40 \\
-\text{mid risk}  & \text{si } 40 \leq \text{puntaje} < 65 \\
-\text{high risk} & \text{si puntaje} \geq 65
-\end{cases}
+    \text{RiskLevel} =
+    \begin{cases}
+        \text{low risk}  & \text{si puntaje} < 40                 \\
+        \text{mid risk}  & \text{si } 40 \leq \text{puntaje} < 65 \\
+        \text{high risk} & \text{si puntaje} \geq 65
+    \end{cases}
 \end{equation}
 
 \subsubsection{M\'etodo de Inducci\'on de Reglas: PRISM y RIPPER}
@@ -505,35 +505,35 @@ En la segunda fase se emple\'o la biblioteca Python \texttt{wittgenstein}, que i
 \subsubsection{Las 15 Reglas Difusas}
 
 \begin{longtable}{cp{4.5cm}p{5cm}c}
-\caption{Reglas del sistema difuso Mamdani} \label{tab:reglas} \\
-\toprule
-\textbf{N\textordmasculine} & \textbf{Antecedentes} & \textbf{Justificaci\'on cl\'inica} & \textbf{Consecuente} \\
-\midrule
-\endfirsthead
-\toprule
-\textbf{N\textordmasculine} & \textbf{Antecedentes} & \textbf{Justificaci\'on cl\'inica} & \textbf{Consecuente} \\
-\midrule
-\endhead
-\midrule
-\multicolumn{4}{r}{\textit{Contin\'ua...}} \\
-\endfoot
-\bottomrule
-\endlastfoot
-1  & AS=normal AND PS=normal AND PD=normal  & Todos los indicadores primarios normales & bajo \\
-2  & AS=normal AND PD=normal AND TC=normal  & Az\'ucar, presi\'on diast\'olica y temperatura normales & bajo \\
-3  & AS=elevada AND PD=normal              & Glucemia ligeramente elevada sin hipertensi\'on & medio \\
-4  & PS=elevada AND AS=normal              & Presi\'on sistólica alta sin problema de glucemia & medio \\
-5  & PD=elevada AND AS=normal              & Presi\'on diast\'olica alta sin problema de glucemia & medio \\
-6  & Edad=avanzada AND AS=normal AND PD=normal & Edad $\geq 35$ a\~nos con par\'ametros normales & medio \\
-7  & TC=elevada                            & Temperatura subfebril: posible infecci\'on incipiente & medio \\
-8  & AS=alta                               & Glucemia muy alta: indicador primario de alto riesgo & alto \\
-9  & AS=elevada AND PD=elevada             & Coexistencia de glucemia elevada e hipertensi\'on & alto \\
-10 & AS=elevada AND PS=elevada             & Az\'ucar elevada con presi\'on sist\'olica elevada & alto \\
-11 & AS=elevada AND Edad=avanzada          & Glucemia elevada en paciente de edad avanzada & alto \\
-12 & PD=alta                               & Presi\'on diast\'olica muy alta: riesgo auton\'omo & alto \\
-13 & PS=alta                               & Presi\'on sist\'olica muy alta: riesgo auton\'omo & alto \\
-14 & TC=fiebre                             & Fiebre: riesgo de infecci\'on/sepsis & alto \\
-15 & Edad=avanzada AND PD=elevada          & Edad avanzada con presi\'on diast\'olica elevada & alto \\
+    \caption{Reglas del sistema difuso Mamdani} \label{tab:reglas}                                                                                           \\
+    \toprule
+    \textbf{N\textordmasculine} & \textbf{Antecedentes}                     & \textbf{Justificaci\'on cl\'inica}                      & \textbf{Consecuente} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{N\textordmasculine} & \textbf{Antecedentes}                     & \textbf{Justificaci\'on cl\'inica}                      & \textbf{Consecuente} \\
+    \midrule
+    \endhead
+    \midrule
+    \multicolumn{4}{r}{\textit{Contin\'ua...}}                                                                                                               \\
+    \endfoot
+    \bottomrule
+    \endlastfoot
+    1                           & AS=normal AND PS=normal AND PD=normal     & Todos los indicadores primarios normales                & bajo                 \\
+    2                           & AS=normal AND PD=normal AND TC=normal     & Az\'ucar, presi\'on diast\'olica y temperatura normales & bajo                 \\
+    3                           & AS=elevada AND PD=normal                  & Glucemia ligeramente elevada sin hipertensi\'on         & medio                \\
+    4                           & PS=elevada AND AS=normal                  & Presi\'on sistólica alta sin problema de glucemia       & medio                \\
+    5                           & PD=elevada AND AS=normal                  & Presi\'on diast\'olica alta sin problema de glucemia    & medio                \\
+    6                           & Edad=avanzada AND AS=normal AND PD=normal & Edad $\geq 35$ a\~nos con par\'ametros normales         & medio                \\
+    7                           & TC=elevada                                & Temperatura subfebril: posible infecci\'on incipiente   & medio                \\
+    8                           & AS=alta                                   & Glucemia muy alta: indicador primario de alto riesgo    & alto                 \\
+    9                           & AS=elevada AND PD=elevada                 & Coexistencia de glucemia elevada e hipertensi\'on       & alto                 \\
+    10                          & AS=elevada AND PS=elevada                 & Az\'ucar elevada con presi\'on sist\'olica elevada      & alto                 \\
+    11                          & AS=elevada AND Edad=avanzada              & Glucemia elevada en paciente de edad avanzada           & alto                 \\
+    12                          & PD=alta                                   & Presi\'on diast\'olica muy alta: riesgo auton\'omo      & alto                 \\
+    13                          & PS=alta                                   & Presi\'on sist\'olica muy alta: riesgo auton\'omo       & alto                 \\
+    14                          & TC=fiebre                                 & Fiebre: riesgo de infecci\'on/sepsis                    & alto                 \\
+    15                          & Edad=avanzada AND PD=elevada              & Edad avanzada con presi\'on diast\'olica elevada        & alto                 \\
 \end{longtable}
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 
@@ -548,7 +548,7 @@ El motor de inferencia implementado en \texttt{motor.py} ejecuta los siguientes 
 Dado un valor cr\'itico $x_i$ para la variable $i$, se calcula el grado de membres\'ia de ese valor en cada uno de sus conjuntos difusos mediante la ecuaci\'on \eqref{eq:trapmf}. Por ejemplo, para una paciente con edad = 32 a\~nos:
 
 \begin{equation}
-\mu_{joven}(32) = 0.0, \quad \mu_{adulta}(32) = 0.75, \quad \mu_{avanzada}(32) = 0.0
+    \mu_{joven}(32) = 0.0, \quad \mu_{adulta}(32) = 0.75, \quad \mu_{avanzada}(32) = 0.0
 \end{equation}
 
 \paragraph{Paso 2: Evaluación de Reglas}
@@ -556,13 +556,13 @@ Dado un valor cr\'itico $x_i$ para la variable $i$, se calcula el grado de membr
 Para cada regla $k$ con antecedentes $(var_1, cat_1), (var_2, cat_2), \ldots$, la \textbf{fuerza de activaci\'on} se calcula como el m\'inimo de los grados de membres\'ia de sus antecedentes (operador AND difuso):
 
 \begin{equation}
-\alpha_k = \min\bigl(\mu_{cat_1}(x_{var_1}),\; \mu_{cat_2}(x_{var_2}),\; \ldots\bigr)
+    \alpha_k = \min\bigl(\mu_{cat_1}(x_{var_1}),\; \mu_{cat_2}(x_{var_2}),\; \ldots\bigr)
 \end{equation}
 
 Cuando m\'ultiples reglas apuntan al mismo consecuente, se aplica el operador OR difuso (m\'aximo):
 
 \begin{equation}
-A_{consecuente} = \max_{\{k \,:\, consecuente_k = consecuente\}} \alpha_k
+    A_{consecuente} = \max_{\{k \,:\, consecuente_k = consecuente\}} \alpha_k
 \end{equation}
 
 \paragraph{Paso 3: Defuzzificación por Centroide}
@@ -570,20 +570,20 @@ A_{consecuente} = \max_{\{k \,:\, consecuente_k = consecuente\}} \alpha_k
 Cada conjunto difuso de salida (bajo, medio, alto) es \textbf{recortado} al nivel de activaci\'on correspondiente (m\'etodo \textit{clipping}):
 
 \begin{equation}
-\mu_{recortado,j}(y) = \min\bigl(A_j,\; \mu_{salida,j}(y)\bigr)
+    \mu_{recortado,j}(y) = \min\bigl(A_j,\; \mu_{salida,j}(y)\bigr)
 \end{equation}
 
 Los tres conjuntos recortados se \textbf{agregan} tomando el m\'aximo punto a punto:
 
 \begin{equation}
-\mu_{agregado}(y) = \max\bigl(\mu_{recortado,bajo}(y),\; \mu_{recortado,medio}(y),\; \mu_{recortado,alto}(y)\bigr)
+    \mu_{agregado}(y) = \max\bigl(\mu_{recortado,bajo}(y),\; \mu_{recortado,medio}(y),\; \mu_{recortado,alto}(y)\bigr)
 \end{equation}
 
 Finalmente, el \textbf{centroide} (centro de gravedad) del \'area agregada proporciona el puntaje num\'erico de salida:
 
 \begin{equation}
-y^* = \frac{\int_0^{100} y \cdot \mu_{agregado}(y)\, dy}{\int_0^{100} \mu_{agregado}(y)\, dy}
-\label{eq:centroide}
+    y^* = \frac{\int_0^{100} y \cdot \mu_{agregado}(y)\, dy}{\int_0^{100} \mu_{agregado}(y)\, dy}
+    \label{eq:centroide}
 \end{equation}
 
 Se eligi\'o el m\'etodo del centroide sobre otras alternativas (bisecci\'on, MOM --- Mean Of Maximum) porque es el m\'as utilizado en la pr\'actica, produce resultados suaves y continuos ante peque\~nas variaciones en la entrada, y tiene una interpretaci\'on geom\'etrica intuitiva como el ``centro de peso'' de la distribuci\'on difusa resultante.
@@ -591,13 +591,13 @@ Se eligi\'o el m\'etodo del centroide sobre otras alternativas (bisecci\'on, MOM
 Si todos los conjuntos de salida tienen activaci\'on cero (ning\'una regla se dispara), el sistema retorna un puntaje neutro de 50.0 como valor de respaldo.
 
 \begin{figure}[H]
-\centering
-\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-\textbf{[IMAGEN: Diagrama del proceso Mamdani completo para un caso ejemplo. Mostrar: (1) fuzzificaci\'on de cada variable, (2) activaci\'on de reglas representativas, (3) conjuntos de salida recortados, (4) uni\'on agregada, (5) centroide marcado con flecha.]}
-\vspace{3cm}}}
-\caption{Proceso de inferencia Mamdani: fuzzificaci\'on, evaluaci\'on, agregaci\'on y defuzzificaci\'on}
-\label{fig:proceso_mamdani}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
+            \textbf{[IMAGEN: Diagrama del proceso Mamdani completo para un caso ejemplo. Mostrar: (1) fuzzificaci\'on de cada variable, (2) activaci\'on de reglas representativas, (3) conjuntos de salida recortados, (4) uni\'on agregada, (5) centroide marcado con flecha.]}
+            \vspace{3cm}}}
+    \caption{Proceso de inferencia Mamdani: fuzzificaci\'on, evaluaci\'on, agregaci\'on y defuzzificaci\'on}
+    \label{fig:proceso_mamdani}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 \subsubsection{Implementación: Motor Vectorizado}
@@ -675,33 +675,33 @@ Cada \textbf{individuo} (soluci\'on candidata) en el algoritmo gen\'etico es un 
 La codificaci\'on es directa: los cuatro puntos $[a, b, c, d]$ de cada trapezoide se almacenan consecutivamente en el vector. Las variables se procesan en el siguiente orden: edad, presi\'on sist\'olica, presi\'on diast\'olica, az\'ucar en sangre, temperatura corporal, frecuencia card\'iaca.
 
 \begin{table}[H]
-\centering
-\caption{Estructura del cromosoma (68 genes)}
-\small\begin{tabular}{llcccc}
-\toprule
-\textbf{Variable} & \textbf{Categor\'ia} & \textbf{Genes} & $a$ & $b$ & $c$ \& $d$ \\
-\midrule
-edad & joven    & 1--4   & g1 & g2 & g3, g4 \\
-edad & adulta   & 5--8   & g5 & g6 & g7, g8 \\
-edad & avanzada & 9--12  & g9 & g10 & g11, g12 \\
-pres. sist. & normal   & 13--16 & \multicolumn{3}{c}{$\ldots$} \\
-pres. sist. & elevada  & 17--20 & \multicolumn{3}{c}{$\ldots$} \\
-pres. sist. & alta     & 21--24 & \multicolumn{3}{c}{$\ldots$} \\
-pres. diast. & normal  & 25--28 & \multicolumn{3}{c}{$\ldots$} \\
-pres. diast. & elevada & 29--32 & \multicolumn{3}{c}{$\ldots$} \\
-pres. diast. & alta    & 33--36 & \multicolumn{3}{c}{$\ldots$} \\
-az\'ucar s. & normal   & 37--40 & \multicolumn{3}{c}{$\ldots$} \\
-az\'ucar s. & elevada  & 41--44 & \multicolumn{3}{c}{$\ldots$} \\
-az\'ucar s. & alta     & 45--48 & \multicolumn{3}{c}{$\ldots$} \\
-temperatura & normal   & 49--52 & \multicolumn{3}{c}{$\ldots$} \\
-temperatura & elevada  & 53--56 & \multicolumn{3}{c}{$\ldots$} \\
-temperatura & fiebre   & 57--60 & \multicolumn{3}{c}{$\ldots$} \\
-frec. card. & normal   & 61--64 & \multicolumn{3}{c}{$\ldots$} \\
-frec. card. & elevada  & 65--68 & \multicolumn{3}{c}{g65, g66, g67, g68} \\
-\bottomrule
-\end{tabular}
-\label{tab:cromosoma}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Estructura del cromosoma (68 genes)}
+    \small\begin{tabular}{llcccc}
+        \toprule
+        \textbf{Variable} & \textbf{Categor\'ia} & \textbf{Genes} & $a$                                    & $b$ & $c$ \& $d$ \\
+        \midrule
+        edad              & joven                & 1--4           & g1                                     & g2  & g3, g4     \\
+        edad              & adulta               & 5--8           & g5                                     & g6  & g7, g8     \\
+        edad              & avanzada             & 9--12          & g9                                     & g10 & g11, g12   \\
+        pres. sist.       & normal               & 13--16         & \multicolumn{3}{c}{$\ldots$}                              \\
+        pres. sist.       & elevada              & 17--20         & \multicolumn{3}{c}{$\ldots$}                              \\
+        pres. sist.       & alta                 & 21--24         & \multicolumn{3}{c}{$\ldots$}                              \\
+        pres. diast.      & normal               & 25--28         & \multicolumn{3}{c}{$\ldots$}                              \\
+        pres. diast.      & elevada              & 29--32         & \multicolumn{3}{c}{$\ldots$}                              \\
+        pres. diast.      & alta                 & 33--36         & \multicolumn{3}{c}{$\ldots$}                              \\
+        az\'ucar s.       & normal               & 37--40         & \multicolumn{3}{c}{$\ldots$}                              \\
+        az\'ucar s.       & elevada              & 41--44         & \multicolumn{3}{c}{$\ldots$}                              \\
+        az\'ucar s.       & alta                 & 45--48         & \multicolumn{3}{c}{$\ldots$}                              \\
+        temperatura       & normal               & 49--52         & \multicolumn{3}{c}{$\ldots$}                              \\
+        temperatura       & elevada              & 53--56         & \multicolumn{3}{c}{$\ldots$}                              \\
+        temperatura       & fiebre               & 57--60         & \multicolumn{3}{c}{$\ldots$}                              \\
+        frec. card.       & normal               & 61--64         & \multicolumn{3}{c}{$\ldots$}                              \\
+        frec. card.       & elevada              & 65--68         & \multicolumn{3}{c}{g65, g66, g67, g68}                    \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:cromosoma}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 \subsubsection{Población Inicial}
@@ -719,8 +719,8 @@ La poblaci\'on inicial de 50 individuos se genera mediante una estrategia mixta:
 La funci\'on de fitness define el criterio de evaluaci\'on de cada individuo. Se dise\~n\'o como una funci\'on \textbf{multiobjetivo ponderada}:
 
 \begin{equation}
-\text{fitness} = 0.75 \cdot F_1^{macro} + 0.25 \cdot \text{Recall}_{alto} - 0.80 \cdot P_{interp} - 0.05 \cdot P_{desv}
-\label{eq:fitness}
+    \text{fitness} = 0.75 \cdot F_1^{macro} + 0.25 \cdot \text{Recall}_{alto} - 0.80 \cdot P_{interp} - 0.05 \cdot P_{desv}
+    \label{eq:fitness}
 \end{equation}
 
 A continuaci\'on se justifica cada t\'ermino:
@@ -730,7 +730,11 @@ A continuaci\'on se justifica cada t\'ermino:
 Para cada clase $c$, se definen primero \textbf{Precisi\'on} y \textbf{Recall} a partir de la matriz de confusi\'on:
 
 \begin{equation}
+<<<<<<< HEAD
 \text{Precision}_c = \frac{TP_c}{TP_c + FP_c}, \qquad \text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
+=======
+    F_1^{macro} = \frac{1}{3}\sum_{c \in \{bajo, medio, alto\}} \frac{2 \cdot \text{Precision}_c \cdot \text{Recall}_c}{\text{Precision}_c + \text{Recall}_c}
+>>>>>>> a9337484268012da3622eb46139c728bc4fcbbf8
 \end{equation}
 
 donde $TP_c$ son los verdaderos positivos (casos de clase~$c$ correctamente clasificados), $FP_c$ los falsos positivos (otras clases predichas como~$c$) y $FN_c$ los falsos negativos (casos de clase~$c$ predichos como otra). El \textbf{F1-Score por clase} es la media arm\'onica de ambas m\'etricas, que penaliza severamente cuando cualquiera de las dos es baja:
@@ -751,7 +755,7 @@ Se eligió el promedio \textbf{macro} (en lugar de ponderado o micro) porque las
 \paragraph{Recall de Alto Riesgo (peso 0.25)}
 
 \begin{equation}
-\text{Recall}_{alto} = \frac{TP_{alto}}{TP_{alto} + FN_{alto}}
+    \text{Recall}_{alto} = \frac{TP_{alto}}{TP_{alto} + FN_{alto}}
 \end{equation}
 
 El recall mide qu\'e proporci\'on de los casos de alto riesgo reales son correctamente identificados. En el contexto m\'edico, un falso negativo en alto riesgo (clasificar como bajo o medio a una paciente realmente en peligro) tiene consecuencias potencialmente letales. Por ello se incluye expl\'icitamente como t\'ermino de optimizaci\'on con un peso adicional de 0.25, complementando al MacroF1 con un \'enfasis extra en no perder casos cr\'iticos.
@@ -759,7 +763,7 @@ El recall mide qu\'e proporci\'on de los casos de alto riesgo reales son correct
 \paragraph{Penalización de Interpretabilidad (peso 0.80)}
 
 \begin{equation}
-P_{interp} = \frac{1}{2}\bigl(P_{huecos} + P_{solapamiento}\bigr)
+    P_{interp} = \frac{1}{2}\bigl(P_{huecos} + P_{solapamiento}\bigr)
 \end{equation}
 
 Un cromosoma puede ser muy preciso pero producir funciones de membres\'ia que no tienen sentido cl\'inico (por ejemplo, con grandes huecos entre categor\'ias contiguas o con solapamientos excesivos que impidan distinguirlas). La penalizaci\'on de interpretabilidad mide y penaliza estos dos defectos:
@@ -774,7 +778,7 @@ El peso alto (0.80) refleja que la interpretabilidad del sistema es una priorida
 \paragraph{Penalización de Desviación (peso 0.05)}
 
 \begin{equation}
-P_{desv} = \frac{1}{68} \sum_{i=1}^{68} \frac{|g_i - g_i^{base}|}{rango_i}
+    P_{desv} = \frac{1}{68} \sum_{i=1}^{68} \frac{|g_i - g_i^{base}|}{rango_i}
 \end{equation}
 
 Penaliza soluciones que se alejan mucho del dise\~no experto original, medido gen a gen como fracci\'on del rango de cada variable. Esto act\'ua como un regularizador que \textit{ancla} la b\'usqueda alrededor del conocimiento cl\'inico previo. El peso peque\~no (0.05) permite al AG alejarse del experto si la mejora en precisi\'on lo justifica, pero lo desincentiva sin raz\'on.
@@ -794,7 +798,7 @@ Se utiliz\'o \textbf{selecci\'on por torneo} con tama\~no $k = 3$. En cada torne
 Se implement\'o \textbf{cruce aritm\'etico} con probabilidad de cruce $p_c = 0.85$. Dados dos padres $P_1$ y $P_2$, los hijos $H_1$ y $H_2$ se generan como:
 
 \begin{equation}
-H_1 = \lambda \cdot P_1 + (1 - \lambda) \cdot P_2, \qquad H_2 = (1 - \lambda) \cdot P_1 + \lambda \cdot P_2
+    H_1 = \lambda \cdot P_1 + (1 - \lambda) \cdot P_2, \qquad H_2 = (1 - \lambda) \cdot P_1 + \lambda \cdot P_2
 \end{equation}
 
 donde $\lambda$ se genera aleatoriamente por gen desde una distribuci\'on uniforme $\mathcal{U}(0.25,\, 0.75)$.
@@ -811,7 +815,7 @@ donde $\lambda$ se genera aleatoriamente por gen desde una distribuci\'on unifor
 Cada gen $g_i$ de cada individuo muta con probabilidad $p_m = 0.04$ (4\%). Cuando muta, se le suma ruido gaussiano:
 
 \begin{equation}
-g_i' = g_i + \mathcal{N}(0,\; \sigma_i), \qquad \sigma_i = 0.05 \cdot rango_i
+    g_i' = g_i + \mathcal{N}(0,\; \sigma_i), \qquad \sigma_i = 0.05 \cdot rango_i
 \end{equation}
 
 \textbf{Por qu\'e mutaci\'on gaussiana y no uniforme:}
@@ -870,29 +874,29 @@ def evaluar_individuo(cromosoma, datos_validacion):
 \subsubsection{Parámetros del Algoritmo Genético}
 
 \begin{table}[H]
-\centering
-\caption{Hiperpar\'ametros del algoritmo gen\'etico}
-\begin{tabular}{p{4cm}p{8cm}c}
-\toprule
-\textbf{Par\'ametro} & \textbf{Descripci\'on} & \textbf{Valor} \\
-\midrule
-Tama\~no de poblaci\'on & Individuos por generaci\'on & 50 \\
-M\'ax. generaciones & L\'imite superior de iteraciones & 60 \\
-Paciencia (early stopping) & Generaciones sin mejora para detener & 20 \\
-Probabilidad de cruce & $p_c$ & 0.85 \\
-Probabilidad de mutaci\'on & $p_m$ por gen & 0.04 \\
-Tama\~no de torneo & $k$ & 3 \\
-Elitismo & Mejores individuos preservados & 3 \\
-$\lambda$ m\'in. cruce & L\'imite inferior del coeficiente de mezcla & 0.25 \\
-$\lambda$ m\'ax. cruce & L\'imite superior del coeficiente de mezcla & 0.75 \\
-$\sigma$ mutaci\'on & Intensidad relativa al rango de cada gen & 5\% \\
-Fracci\'on perturbada & Porci\'on de pob. inicial cercana al experto & 65\% \\
-Fracci\'on aleatoria & Porci\'on de pob. inicial completamente aleatoria & 35\% \\
-Tama\~no del cromosoma & N\'umero de genes & 68 \\
-\bottomrule
-\end{tabular}
-\label{tab:parametros_ag}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Hiperpar\'ametros del algoritmo gen\'etico}
+    \begin{tabular}{p{4cm}p{8cm}c}
+        \toprule
+        \textbf{Par\'ametro}       & \textbf{Descripci\'on}                            & \textbf{Valor} \\
+        \midrule
+        Tama\~no de poblaci\'on    & Individuos por generaci\'on                       & 50             \\
+        M\'ax. generaciones        & L\'imite superior de iteraciones                  & 60             \\
+        Paciencia (early stopping) & Generaciones sin mejora para detener              & 20             \\
+        Probabilidad de cruce      & $p_c$                                             & 0.85           \\
+        Probabilidad de mutaci\'on & $p_m$ por gen                                     & 0.04           \\
+        Tama\~no de torneo         & $k$                                               & 3              \\
+        Elitismo                   & Mejores individuos preservados                    & 3              \\
+        $\lambda$ m\'in. cruce     & L\'imite inferior del coeficiente de mezcla       & 0.25           \\
+        $\lambda$ m\'ax. cruce     & L\'imite superior del coeficiente de mezcla       & 0.75           \\
+        $\sigma$ mutaci\'on        & Intensidad relativa al rango de cada gen          & 5\%            \\
+        Fracci\'on perturbada      & Porci\'on de pob. inicial cercana al experto      & 65\%           \\
+        Fracci\'on aleatoria       & Porci\'on de pob. inicial completamente aleatoria & 35\%           \\
+        Tama\~no del cromosoma     & N\'umero de genes                                 & 68             \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:parametros_ag}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 % -----------------------------------------------------------
@@ -911,11 +915,11 @@ El sistema se compone de dos aplicaciones independientes que se comunican v\'ia 
 \subsubsection{Flujo Completo de una Predicción}
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.45\textwidth, height=0.4\textheight, keepaspectratio]{picture/flujo_sistema.png}
-\caption{Flujo completo de predicci\'on en el sistema}
-\label{fig:flujo_sistema}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \includegraphics[width=0.45\textwidth, height=0.4\textheight, keepaspectratio]{picture/flujo_sistema.png}
+    \caption{Flujo completo de predicci\'on en el sistema}
+    \label{fig:flujo_sistema}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 \subsubsection{Estructura del Proyecto}
@@ -953,11 +957,11 @@ El resultado del proceso de optimizaci\'on gen\'etica se almacena en \texttt{mod
 En tiempo de predicci\'on, el sistema carga este archivo y reconstruye el sistema difuso completo en memoria, sin necesidad de re-ejecutar el proceso de optimizaci\'on.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.75\textwidth]{picture/interfaz_web_del_sistema.png}
-\caption{Interfaz web del sistema de predicci\'on de riesgo materno}
-\label{fig:interfaz_web}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \includegraphics[width=0.75\textwidth]{picture/interfaz_web_del_sistema.png}
+    \caption{Interfaz web del sistema de predicci\'on de riesgo materno}
+    \label{fig:interfaz_web}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 % -----------------------------------------------------------
@@ -969,33 +973,33 @@ En tiempo de predicci\'on, el sistema carga este archivo y reconstruye el sistem
 La siguiente tabla compara el rendimiento del sistema difuso con los par\'ametros base (definidos por literatura) frente al sistema optimizado (par\'ametros ajustados por el algoritmo gen\'etico tras 60 generaciones):
 
 \begin{table}[H]
-\centering
-\caption{Comparativa de m\'etricas: sistema base vs. sistema optimizado}
-\begin{tabular}{lccc}
-\toprule
-\textbf{M\'etrica} & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
-\midrule
-MacroF1 --- Validaci\'on  & 0.455 & 0.663 & \textbf{+0.208} \\
-MacroF1 --- Prueba        & 0.469 & 0.610 & \textbf{+0.141} \\
-Recall Alto Riesgo --- Validaci\'on & 0.659 & 0.829 & \textbf{+0.170} \\
-Recall Alto Riesgo --- Prueba      & 0.707 & 0.756 & \textbf{+0.049} \\
-Exactitud Balanceada --- Prueba    & 0.485 & 0.611 & \textbf{+0.126} \\
-\bottomrule
-\end{tabular}
-\label{tab:resultados}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \caption{Comparativa de m\'etricas: sistema base vs. sistema optimizado}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{M\'etrica}                  & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
+        \midrule
+        MacroF1 --- Validaci\'on            & 0.455         & 0.663               & \textbf{+0.208}   \\
+        MacroF1 --- Prueba                  & 0.469         & 0.610               & \textbf{+0.141}   \\
+        Recall Alto Riesgo --- Validaci\'on & 0.659         & 0.829               & \textbf{+0.170}   \\
+        Recall Alto Riesgo --- Prueba       & 0.707         & 0.756               & \textbf{+0.049}   \\
+        Exactitud Balanceada --- Prueba     & 0.485         & 0.611               & \textbf{+0.126}   \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:resultados}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 \subsubsection{Evolución del Fitness}
 
 \begin{figure}[H]
-\centering
-\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-\textbf{[IMAGEN: Gr\'afica de l\'inea con el eje X = generaci\'on (0 a 60) y el eje Y = valor de fitness. Mostrar dos curvas: mejor fitness por generaci\'on y fitness promedio de la poblaci\'on. Marcar con punto la generaci\'on donde se alcanz\'o el mejor resultado (generaci\'on 52 aprox. con fitness = 0.703).]}
-\vspace{3cm}}}
-\caption{Evoluci\'on del fitness a lo largo de las 60 generaciones del algoritmo gen\'etico}
-\label{fig:evolucion_fitness}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
+            \textbf{[IMAGEN: Gr\'afica de l\'inea con el eje X = generaci\'on (0 a 60) y el eje Y = valor de fitness. Mostrar dos curvas: mejor fitness por generaci\'on y fitness promedio de la poblaci\'on. Marcar con punto la generaci\'on donde se alcanz\'o el mejor resultado (generaci\'on 52 aprox. con fitness = 0.703).]}
+            \vspace{3cm}}}
+    \caption{Evoluci\'on del fitness a lo largo de las 60 generaciones del algoritmo gen\'etico}
+    \label{fig:evolucion_fitness}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 El proceso de optimizaci\'on parti\'o de un fitness inicial de 0.566 (generaci\'on 0) y alcanz\'o su mejor valor de 0.703 en la generaci\'on 52, moment en que el MacroF1 en validaci\'on era de 0.663. El algoritmo se estabiliz\'o en la generaci\'on 60 por criterio de early stopping (20 generaciones sin mejora).
@@ -1086,41 +1090,42 @@ Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), la regla 8 se activa
 % -----------------------------------------------------------
 
 {
-\renewcommand{\refname}{}
-\vspace{-1.5em}
+    \renewcommand{\refname}{}
+    \vspace{-1.5em}
 
-\begin{thebibliography}{99}
+    \begin{thebibliography}{99}
 
-\bibitem{who2023}
-World Health Organization, ``Maternal Mortality,'' WHO Fact Sheet, 2023. [Online]. Available: \url{https://www.who.int/news-room/fact-sheets/detail/maternal-mortality}.
+        \bibitem{who2023}
+        World Health Organization, ``Maternal Mortality,'' WHO Fact Sheet, 2023. [Online]. Available: \url{https://www.who.int/news-room/fact-sheets/detail/maternal-mortality}.
 
-\bibitem{zadeh1965}
-L. A. Zadeh, ``Fuzzy Sets,'' \textit{Inf. Control}, vol. 8, no. 3, pp. 338--353, 1965.
+        \bibitem{zadeh1965}
+        L. A. Zadeh, ``Fuzzy Sets,'' \textit{Inf. Control}, vol. 8, no. 3, pp. 338--353, 1965.
 
-\bibitem{holland1975}
-J. H. Holland, \textit{Adaptation in Natural and Artificial Systems}. Ann Arbor, MI: University of Michigan Press, 1975.
+        \bibitem{holland1975}
+        J. H. Holland, \textit{Adaptation in Natural and Artificial Systems}. Ann Arbor, MI: University of Michigan Press, 1975.
 
-\bibitem{ahmed2020}
-M. Ahmed et al., ``Maternal Health Risk Data Set,'' UCI Machine Learning Repository, 2020. DOI: 10.24432/C5DP5D.
+        \bibitem{ahmed2020}
+        M. Ahmed et al., ``Maternal Health Risk Data Set,'' UCI Machine Learning Repository, 2020. DOI: 10.24432/C5DP5D.
 
-\bibitem{apriceno2025}
-M. Apriceno et al., ``A Trustworthy Evolutionary Fuzzy Neural Network Framework for Maternal Health Risk Classification,'' in \textit{Proc. AIME 2025}, Lecture Notes in Computer Science, vol. 15871, Springer, 2025, pp. 32--42. DOI: 10.1007/978-3-031-95841-0\_4.
+        \bibitem{apriceno2025}
+        M. Apriceno et al., ``A Trustworthy Evolutionary Fuzzy Neural Network Framework for Maternal Health Risk Classification,'' in \textit{Proc. AIME 2025}, Lecture Notes in Computer Science, vol. 15871, Springer, 2025, pp. 32--42. DOI: 10.1007/978-3-031-95841-0\_4.
 
-\bibitem{skmoe2025}
-C. S. Lima et al., ``An Explainable Fuzzy Framework for Assessing Preeclampsia Classification,'' \textit{Biomedicines}, vol. 13, no. 6, p. 1483, 2025. DOI: 10.3390/biomedicines13061483. PMC: PMC12190940.
+        \bibitem{skmoe2025}
+        C. S. Lima et al., ``An Explainable Fuzzy Framework for Assessing Preeclampsia Classification,'' \textit{Biomedicines}, vol. 13, no. 6, p. 1483, 2025. DOI: 10.3390/biomedicines13061483. PMC: PMC12190940.
 
-\bibitem{fuzzyobs2021}
-E. Papageorgiou, C. Salmeron, and F. Marotta, ``Fuzzy Logic Intelligent Systems and Methods in Midwifery and Obstetrics,'' \textit{Int. J. Environ. Res. Public Health}, vol. 18, no. 21, 2021. PMC: PMC8563028.
+        \bibitem{fuzzyobs2021}
+        E. Papageorgiou, C. Salmeron, and F. Marotta, ``Fuzzy Logic Intelligent Systems and Methods in Midwifery and Obstetrics,'' \textit{Int. J. Environ. Res. Public Health}, vol. 18, no. 21, 2021. PMC: PMC8563028.
 
-\bibitem{neurofuzzyga}
-A. R. Rashed and O. M. Al-Hazaimeh, ``Enhanced Neuro-Fuzzy System Based on Genetic Algorithm for Medical Diagnosis,'' \textit{J. Biosens. Bioelectron.}, vol. 7, no. 2, 2016. DOI: 10.4172/2155-6210.1000211.
+        \bibitem{neurofuzzyga}
+        A. R. Rashed and O. M. Al-Hazaimeh, ``Enhanced Neuro-Fuzzy System Based on Genetic Algorithm for Medical Diagnosis,'' \textit{J. Biosens. Bioelectron.}, vol. 7, no. 2, 2016. DOI: 10.4172/2155-6210.1000211.
 
-\bibitem{gatunefuzzy}
-J. Alcal\'a-Fdez, R. Alcal\'a, and F. Herrera, ``A Fuzzy Association Rule-Based Classification Model for High-Dimensional Problems with Genetic Rule Selection and Lateral Tuning,'' \textit{IEEE Trans. Fuzzy Syst.}, vol. 19, no. 5, pp. 857--872, 2011.
+        \bibitem{gatunefuzzy}
+        J. Alcal\'a-Fdez, R. Alcal\'a, and F. Herrera, ``A Fuzzy Association Rule-Based Classification Model for High-Dimensional Problems with Genetic Rule Selection and Lateral Tuning,'' \textit{IEEE Trans. Fuzzy Syst.}, vol. 19, no. 5, pp. 857--872, 2011.
 
-\bibitem{mamdani1975}
-E. H. Mamdani and S. Assilian, ``An Experiment in Linguistic Synthesis with a Fuzzy Logic Controller,'' \textit{Int. J. Man-Mach. Stud.}, vol. 7, no. 1, pp. 1--13, 1975.
+        \bibitem{mamdani1975}
+        E. H. Mamdani and S. Assilian, ``An Experiment in Linguistic Synthesis with a Fuzzy Logic Controller,'' \textit{Int. J. Man-Mach. Stud.}, vol. 7, no. 1, pp. 1--13, 1975.
 
+<<<<<<< HEAD
 \bibitem{whelton2018}
 P. K. Whelton et al., ``2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults,'' \textit{J. Am. Coll. Cardiol.}, vol. 71, no. 19, pp. e127--e248, 2018. DOI: 10.1016/j.jacc.2017.11.006.
 
@@ -1164,6 +1169,9 @@ J. Cendrowska, ``PRISM: An Algorithm for Inducing Modular Rules,'' \textit{Int. 
 W. W. Cohen, ``Fast Effective Rule Induction,'' in \textit{Proc. 12th Int. Conf. Mach. Learn. (ICML 1995)}, Tahoe City, CA, USA, Jul. 1995, pp. 115--123.
 
 \end{thebibliography}
+=======
+    \end{thebibliography}
+>>>>>>> a9337484268012da3622eb46139c728bc4fcbbf8
 }
 
 \end{document}

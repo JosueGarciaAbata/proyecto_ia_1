@@ -116,6 +116,9 @@ class SistemaDifusoMamdani:
         reglas_activadas = []
 
         for regla in REGLAS:
+
+            print("Evaluando regla:", regla)
+
             antecedentes_con_valor = [
                 {
                     "variable":    variable,

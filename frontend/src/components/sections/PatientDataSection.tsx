@@ -4,10 +4,10 @@ import {
   Droplets,
   HeartPulse,
   LoaderCircle,
-  type LucideIcon,
   Stethoscope,
   Thermometer,
   UserRound,
+  type LucideIcon,
 } from "lucide-react";
 import type { ChangeEvent, FormEvent } from "react";
 import type { PatientFormData } from "../../data/mockData";
@@ -60,11 +60,10 @@ export function PatientDataSection({
               return (
                 <motion.label
                   key={field.formKey}
+                  animate={{ opacity: 1, y: 0 }}
                   className="rounded-3xl border border-sky-100 bg-white/78 p-4 transition hover:border-cyan-300/35 hover:bg-cyan-50"
                   initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                  transition={{ duration: 0.4, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <div className="mb-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">

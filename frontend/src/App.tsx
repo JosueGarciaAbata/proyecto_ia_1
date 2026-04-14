@@ -31,7 +31,9 @@ export default function App() {
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    return () => { abortRef.current?.abort(); };
+    return () => {
+      abortRef.current?.abort();
+    };
   }, []);
 
   function handleFieldChange(
@@ -95,24 +97,24 @@ export default function App() {
       </div>
 
       <header className="sticky top-0 z-40 border-b border-sky-100/90 bg-white/78 backdrop-blur-xl">
-        <div className="mx-auto max-w-[1480px] px-4 py-3 sm:px-6 xl:px-8">
-          <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl border border-cyan-300/30 bg-cyan-50 p-2 text-cyan-700">
-                <ActivitySquare className="h-5 w-5" />
+        <div className="mx-auto max-w-[1480px] px-4 py-4 sm:px-6 xl:px-8">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="rounded-2xl border border-cyan-300/30 bg-cyan-50 p-3 text-cyan-700">
+                <ActivitySquare className="h-6 w-6" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-slate-900">
+                <div className="text-base font-semibold leading-tight text-slate-900">
                   Riesgo materno
                 </div>
-                <div className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
                   Logica difusa Mamdani + AG
                 </div>
               </div>
             </div>
 
             <nav>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeSection === item.key;
@@ -120,7 +122,7 @@ export default function App() {
                     <button
                       key={item.key}
                       className={cn(
-                        "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition",
+                        "inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition",
                         isActive
                           ? "border-cyan-400/40 bg-cyan-50 text-cyan-900 shadow-sm"
                           : "border-sky-100 bg-white/80 text-slate-700 hover:border-cyan-300/45 hover:bg-cyan-50 hover:text-slate-900",
@@ -128,7 +130,7 @@ export default function App() {
                       onClick={() => setActiveSection(item.key)}
                       type="button"
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-4 w-4 shrink-0" />
                       {item.label}
                     </button>
                   );
@@ -147,18 +149,7 @@ export default function App() {
           </div>
         ) : null}
 
-        <div className="mt-4 flex items-center gap-2">
-          <span className="rounded-full border border-cyan-300/35 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-800">
-            {activeSectionLabel}
-          </span>
-          {explanationResult && activeSection !== "prediccion" && (
-            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-              Caso analizado disponible
-            </span>
-          )}
-        </div>
 
-        {/* Secciones siempre montadas — se ocultan con CSS para no perder estado */}
         <AnimatedSection isActive={activeSection === "prediccion"}>
           <div className="space-y-6">
             <PatientDataSection
@@ -171,15 +162,15 @@ export default function App() {
               {(isAnalyzing || explanationResult || analysisError) && (
                 <motion.div
                   key="recommendation"
-                  initial={{ opacity: 0, y: 22, scale: 0.99 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.99 }}
+                  initial={{ opacity: 0, y: 22, scale: 0.99 }}
                   transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <RecommendationSection
-                    result={explanationResult}
-                    isLoading={isAnalyzing}
                     error={analysisError}
+                    isLoading={isAnalyzing}
+                    result={explanationResult}
                   />
                 </motion.div>
               )}
@@ -203,17 +194,12 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Ocurrio un error inesperado.";
 }
 
-// Envuelve cada sección para animar su entrada sin desmontarla.
-// Usa keyframes en una sola llamada para evitar que un controls.set
-// separado deje la sección atascada en opacity:0 si hay una re-render
-// entre las dos llamadas.
 function AnimatedSection({ isActive, children }: { isActive: boolean; children: React.ReactNode }) {
   const controls = useAnimationControls();
-  const prevIsActiveRef = useRef(false);
+  const prevIsActiveRef = useRef(isActive);
 
   useEffect(() => {
     if (isActive && !prevIsActiveRef.current) {
-      // Keyframes [inicio, fin] en una sola llamada — atómico, no se interrumpe
       void controls.start({
         opacity: [0, 1],
         y: [18, 0],
@@ -222,14 +208,14 @@ function AnimatedSection({ isActive, children }: { isActive: boolean; children: 
       });
     }
     prevIsActiveRef.current = isActive;
-  // controls es estable; excluirlo evita re-ejecuciones innecesarias
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive]);
+  }, [controls, isActive]);
 
   return (
-    // initial opacity:0 asegura que la sección empiece invisible
-    // antes de que la animación la traiga a opacity:1
-    <motion.div initial={{ opacity: 0 }} animate={controls} className={isActive ? undefined : "hidden"}>
+    <motion.div
+      animate={controls}
+      className={isActive ? undefined : "hidden"}
+      initial={{ opacity: isActive ? 1 : 0, y: 0, scale: 1 }}
+    >
       {children}
     </motion.div>
   );

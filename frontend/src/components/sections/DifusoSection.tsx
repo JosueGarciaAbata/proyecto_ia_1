@@ -56,7 +56,7 @@ export function DifusoSection({ explanationResult }: DifusoSectionProps) {
   return (
     <section className="section-anchor pt-10" id="difuso">
       <SectionHeader
-        eyebrow="Sistema difuso"
+        eyebrow="Inferencia Mamdani"
         title="Funciones de pertenencia y reglas"
         description="Curvas trapezoidales (base vs optimizado), fuzzificacion del caso actual y reglas activadas."
       />
@@ -371,12 +371,12 @@ function AggregacionPanel({ result }: { result: ExplicacionResponse }) {
                       {formatPercentage(activation)}
                     </span>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-sky-100">
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-100">
                     <motion.div
                       className="h-full rounded-full"
                       style={{ backgroundColor: risk.accent }}
                       initial={{ width: 0 }}
-                      animate={{ width: `${Math.max(2, activation * 100)}%` }}
+                      animate={{ width: `${activation > 0 ? Math.max(4, activation * 100) : 0}%` }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
                     />
                   </div>
@@ -386,7 +386,7 @@ function AggregacionPanel({ result }: { result: ExplicacionResponse }) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4 lg:pl-6 lg:border-l lg:border-sky-100">
           <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
             Defuzzificacion (centroide)
           </div>
@@ -409,13 +409,13 @@ function AggregacionPanel({ result }: { result: ExplicacionResponse }) {
           >
             {getRiskUi(result.riesgo).label}
           </div>
+        </div>
+      </div>
 
-          <div className="mt-3 rounded-2xl border border-sky-100 bg-sky-50/50 p-4 text-sm text-slate-600">
-            <div className="flex items-start gap-2">
-              <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-cyan-600" />
-              <p className="leading-6">{narrative.intro} {narrative.details}</p>
-            </div>
-          </div>
+      <div className="mt-5 border-t border-sky-100 pt-5">
+        <div className="flex items-start gap-2 text-sm text-slate-600">
+          <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-cyan-600" />
+          <p className="leading-6">{narrative.intro} {narrative.details}</p>
         </div>
       </div>
     </GlassPanel>
@@ -428,17 +428,22 @@ function RulesPanel({ result }: { result: ExplicacionResponse }) {
   const sortedRules = [...result.reglas_activadas].sort((a, b) => b.fuerza - a.fuerza);
 
   return (
-    <div className="mt-6">
-      <div className="mb-4 px-1">
-        <div className="text-base font-semibold text-slate-900">
-          Rule viewer — reglas activadas ({sortedRules.length})
+    <GlassPanel className="mt-6 p-5 sm:p-6">
+      <div className="flex items-start gap-4">
+        <div className="shrink-0 rounded-2xl border border-cyan-300/30 bg-cyan-50 p-3 text-cyan-700">
+          <BookOpen className="h-5 w-5" />
         </div>
-        <p className="mt-1 text-sm text-slate-500">
-          Ordenadas por fuerza de activacion, de mayor a menor.
-        </p>
+        <div>
+          <div className="text-base font-semibold text-slate-900">
+            Reglas activadas ({sortedRules.length})
+          </div>
+          <p className="mt-1 text-sm text-slate-500">
+            Ordenadas por fuerza de activacion, de mayor a menor.
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="mt-5 space-y-3">
         {sortedRules.map((rule, index) => {
           const ruleRisk = getRiskUi(rule.consecuente);
           const narrative = buildRuleNarrative(rule);
@@ -447,38 +452,38 @@ function RulesPanel({ result }: { result: ExplicacionResponse }) {
             <motion.div
               key={rule.numero}
               initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.35, delay: index * 0.03 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.03, ease: [0.22, 1, 0.36, 1] }}
             >
-              <GlassPanel className="p-4 sm:p-5">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-cyan-300/30 bg-cyan-50 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-700">
-                      R{rule.numero}
+              <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/92 p-5 sm:p-6">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="rounded-full border border-cyan-300/30 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700">
+                      Regla {rule.numero}
                     </span>
                     <span
-                      className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-[0.16em] ${toneClassMap[ruleRisk.tone]}`}
+                      className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${toneClassMap[ruleRisk.tone]}`}
                     >
-                      → {ruleRisk.label}
+                      Indica {ruleRisk.label.toLowerCase()}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="w-24 overflow-hidden rounded-full bg-sky-100 h-2">
-                      <div
-                        className="h-full rounded-full"
-                        style={{
-                          backgroundColor: ruleRisk.accent,
-                          width: `${Math.max(4, Math.round(rule.fuerza * 100))}%`,
-                        }}
-                      />
-                    </div>
-                    <span className="font-mono text-sm font-semibold text-slate-700">
-                      {formatPercentage(rule.fuerza)}
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
+                      Peso {formatPercentage(rule.fuerza)}
                     </span>
                   </div>
                 </div>
-                <p className="mt-3 text-xs leading-5 text-slate-500">{narrative}</p>
+                <p className="mt-4 text-sm leading-7 text-slate-700">
+                  <span className="font-medium text-slate-500">Se activo porque: </span>
+                  {narrative}
+                </p>
+                <div className="mt-4 overflow-hidden rounded-full bg-slate-100">
+                  <div
+                    className="h-1.5 rounded-full"
+                    style={{
+                      backgroundColor: ruleRisk.accent,
+                      width: `${Math.max(4, Math.round(rule.fuerza * 100))}%`,
+                    }}
+                  />
+                </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {rule.antecedentes.map((ant) => (
                     <span
@@ -491,11 +496,11 @@ function RulesPanel({ result }: { result: ExplicacionResponse }) {
                     </span>
                   ))}
                 </div>
-              </GlassPanel>
+              </div>
             </motion.div>
           );
         })}
       </div>
-    </div>
+    </GlassPanel>
   );
 }

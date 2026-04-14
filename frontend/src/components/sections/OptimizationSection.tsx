@@ -6,6 +6,7 @@ import {
   defaultReentrenarParams,
   getFieldLabel,
   obtenerComparacionGA,
+  obtenerEstadoGA,
   obtenerHistorialGA,
   reentrenarGAStream,
   type GAComparacionResponse,
@@ -64,6 +65,8 @@ export function OptimizationSection() {
   const [comparacion, setComparacion] = useState<GAComparacionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [retraining, setRetraining] = useState(false);
+  const [serverTraining, setServerTraining] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [logLines, setLogLines] = useState<string[]>([]);
@@ -73,18 +76,39 @@ export function OptimizationSection() {
   const logContainerRef = useRef<HTMLDivElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  async function fetchData() {
+  async function fetchData(): Promise<GAHistorialResponse | null> {
     setLoading(true);
     setFetchError(null);
     try {
       const [h, c] = await Promise.all([obtenerHistorialGA(), obtenerComparacionGA()]);
       setHistorial(h);
       setComparacion(c);
+      return h;
     } catch (e) {
       setFetchError(e instanceof Error ? e.message : "Error al cargar datos del GA.");
+      return null;
     } finally {
       setLoading(false);
     }
+  }
+
+  function iniciarPolling() {
+    async function poll() {
+      try {
+        const estado = await obtenerEstadoGA();
+        if (estado.en_entrenamiento) {
+          setServerTraining(true);
+          pollRef.current = setTimeout(poll, 2000);
+        } else {
+          setServerTraining(false);
+          await fetchData();
+        }
+      } catch {
+        setServerTraining(false);
+        pollRef.current = setTimeout(poll, 3000);
+      }
+    }
+    poll();
   }
 
   async function handleStartTraining(params: ReentrenarParams) {
@@ -146,8 +170,28 @@ export function OptimizationSection() {
     if (c) c.scrollTop = c.scrollHeight;
   }, [logLines]);
 
-  useEffect(() => { return () => { abortRef.current?.abort(); }; }, []);
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+      if (pollRef.current) clearTimeout(pollRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    async function iniciar() {
+      // Primero verificar si hay entrenamiento activo en el servidor
+      try {
+        const estado = await obtenerEstadoGA();
+        if (estado.en_entrenamiento) {
+          setServerTraining(true);
+          iniciarPolling();
+          return;
+        }
+      } catch { /* ignorar, continuar con carga normal */ }
+      fetchData();
+    }
+    iniciar();
+  }, []);
 
   // ── Derivados ─────────────────────────────────────────────────────────────
 
@@ -196,6 +240,16 @@ export function OptimizationSection() {
         </button>
       </div>
 
+      {/* ── 2a. Banner entrenamiento detectado en servidor (tras F5) ───────── */}
+      {serverTraining && !retraining && (
+        <div className="mt-3 flex items-center gap-2.5 rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3">
+          <LoaderCircle className="h-3.5 w-3.5 shrink-0 animate-spin text-amber-600" />
+          <span className="text-xs text-amber-800">
+            Entrenamiento en curso en el servidor. Los resultados apareceran automaticamente al finalizar.
+          </span>
+        </div>
+      )}
+
       {/* ── 2. Barra de estado compacta (solo durante entrenamiento) ────────── */}
       {retraining && (
         <div className="mt-3 flex items-center gap-2.5 rounded-2xl border border-cyan-200 bg-cyan-50/70 px-4 py-2.5">
@@ -226,12 +280,32 @@ export function OptimizationSection() {
         </GlassPanel>
       )}
       {fetchError && !retraining && (
-        <GlassPanel className="mt-4 p-5 text-sm text-rose-700">{fetchError}</GlassPanel>
+        <GlassPanel className="mt-4 flex items-center justify-between gap-4 p-5 text-sm text-rose-700">
+          <span>{fetchError}</span>
+          <button
+            onClick={() => fetchData()}
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-white px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition"
+            type="button"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Reintentar
+          </button>
+        </GlassPanel>
       )}
       {noData && (
-        <GlassPanel className="mt-6 p-4 text-sm text-amber-700 border-amber-200 bg-amber-50">
-          El modelo genetico aun no ha sido entrenado. Presione{" "}
-          <strong>Entrenar GA</strong> para ejecutar el algoritmo.
+        <GlassPanel className="mt-6 flex items-center justify-between gap-4 p-5 text-sm text-amber-700 border-amber-200 bg-amber-50">
+          <span>
+            El modelo genetico aun no ha sido entrenado. Presione{" "}
+            <strong>Entrenar GA</strong> para ejecutar el algoritmo.
+          </span>
+          <button
+            onClick={() => fetchData()}
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-50 transition"
+            type="button"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Recargar
+          </button>
         </GlassPanel>
       )}
 
@@ -243,23 +317,11 @@ export function OptimizationSection() {
         </div>
       )}
 
-      {/* ── 5. Gráficas: convergencia (izq) + comparación (der) ─────────────── */}
-      {(chartGens || comparacionDisponible) && (
-        <div className="relative mt-6 grid gap-6 xl:grid-cols-5">
-          {/* Convergencia */}
-          {chartGens && (
-            <div className="relative xl:col-span-3">
-              <ConvergenceChart gens={chartGens} isLive={isLive} />
-              {isRefreshing && <RefreshOverlay />}
-            </div>
-          )}
-          {/* Comparación base vs optimizado — apilada en columna derecha */}
-          {comparacionDisponible && (
-            <div className="relative xl:col-span-2">
-              <ComparisonPanel comparacion={comparacion!} />
-              {isRefreshing && <RefreshOverlay />}
-            </div>
-          )}
+      {/* ── 5. Gráfica de convergencia — ancho completo ──────────────────────── */}
+      {chartGens && (
+        <div className="relative mt-6">
+          <ConvergenceChart gens={chartGens} isLive={isLive} />
+          {isRefreshing && <RefreshOverlay />}
         </div>
       )}
 
@@ -347,6 +409,23 @@ export function OptimizationSection() {
             )}
           </AnimatePresence>
         </motion.div>
+      )}
+
+      {/* ── 7. Sección comparativa base vs optimizado ────────────────────────── */}
+      {comparacionDisponible && (
+        <div className="relative mt-12">
+          <GlassPanel className="mb-6 p-5 sm:p-6">
+            <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">Evaluacion comparativa</div>
+            <h2 className="mt-1 text-xl font-semibold text-slate-900">Base vs optimizado</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Comparacion de metricas entre el cromosoma base y el optimizado — ambos ya persistidos en disco. El optimizado corresponde al ultimo entrenamiento guardado.
+            </p>
+          </GlassPanel>
+          <div className="relative">
+            <ComparisonPanel comparacion={comparacion!} />
+            {isRefreshing && <RefreshOverlay />}
+          </div>
+        </div>
       )}
 
       {/* Modal de parámetros */}
@@ -644,34 +723,34 @@ function ComparisonPanel({ comparacion }: { comparacion: GAComparacionResponse }
   };
 
   return (
-    <div className="flex h-full flex-col gap-4">
-      {/* Gráfica de barras compacta */}
-      <ChartPanel title="Base vs optimizado" subtitle="Metricas en los tres splits.">
-        <div className="h-[210px]">
+    <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+      {/* Gráfica de barras */}
+      <ChartPanel title="Metricas en los tres splits" subtitle="Cromosoma base (gris) vs modelo optimizado (azul).">
+        <div className="h-[300px]">
           <ReactECharts notMerge={true} lazyUpdate={false} option={option} style={{ height: "100%", width: "100%" }} />
         </div>
       </ChartPanel>
 
       {/* Tabla de métricas */}
-      <GlassPanel className="p-4 sm:p-5">
-        <div className="mb-3 text-xs uppercase tracking-[0.22em] text-cyan-700/80">Tabla comparativa</div>
+      <GlassPanel className="p-5 sm:p-6">
+        <div className="mb-4 text-xs uppercase tracking-[0.22em] text-cyan-700/80">Tabla comparativa</div>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-sky-100 uppercase tracking-[0.12em] text-slate-400">
-                <th className="py-1.5 pr-3 text-left font-medium">Metrica</th>
-                <th className="py-1.5 px-2 text-right font-medium">Base</th>
-                <th className="py-1.5 px-2 text-right font-medium">Opt.</th>
-                <th className="py-1.5 pl-2 text-right font-medium">Δ</th>
+                <th className="py-2 pr-4 text-left font-medium">Metrica</th>
+                <th className="py-2 px-3 text-right font-medium">Base</th>
+                <th className="py-2 px-3 text-right font-medium">Opt.</th>
+                <th className="py-2 pl-3 text-right font-medium">Δ</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
                 <tr key={row.metrica} className="border-b border-sky-50">
-                  <td className="py-1.5 pr-3 text-slate-700">{row.metrica}</td>
-                  <td className="py-1.5 px-2 text-right font-mono text-slate-400">{row.base.toFixed(3)}</td>
-                  <td className="py-1.5 px-2 text-right font-mono font-semibold text-cyan-700">{row.optimizado.toFixed(3)}</td>
-                  <td className={cn("py-1.5 pl-2 text-right font-mono", row.delta >= 0 ? "text-emerald-600" : "text-rose-600")}>
+                  <td className="py-2.5 pr-4 text-slate-700">{row.metrica}</td>
+                  <td className="py-2.5 px-3 text-right font-mono text-slate-400">{row.base.toFixed(3)}</td>
+                  <td className="py-2.5 px-3 text-right font-mono font-semibold text-cyan-700">{row.optimizado.toFixed(3)}</td>
+                  <td className={cn("py-2.5 pl-3 text-right font-mono", row.delta >= 0 ? "text-emerald-600" : "text-rose-600")}>
                     {row.delta >= 0 ? "+" : ""}{row.delta.toFixed(3)}
                   </td>
                 </tr>
@@ -694,7 +773,7 @@ function ChromosomeTable({
   isLive?: boolean;
 }) {
   return (
-    <GlassPanel className={cn("rounded-tl-none p-5 sm:p-6", isLive && "border-cyan-200")}>
+    <GlassPanel className={cn("overflow-hidden rounded-tl-none p-5 sm:p-6", isLive && "border-cyan-200")}>
       <div className="mb-3 flex items-center gap-2">
         <span className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
           Mejor cromosoma — membresías decodificadas [a, b, c, d]

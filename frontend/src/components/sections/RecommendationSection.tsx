@@ -6,6 +6,7 @@ import {
   buildResultSummary,
   buildRuleNarrative,
   formatPercentage,
+  formatScore,
   formatValue,
   getFieldLabel,
   getRiskUi,
@@ -45,9 +46,9 @@ export function RecommendationSection({ result, isLoading, error }: Recommendati
         {isLoading ? (
           <motion.div
             key="loading"
-            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.28, ease: "easeOut" }}
           >
             <GlassPanel className="flex min-h-64 flex-col items-center justify-center gap-4 p-8 text-center">
@@ -63,9 +64,9 @@ export function RecommendationSection({ result, isLoading, error }: Recommendati
         ) : error ? (
           <motion.div
             key="error"
-            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.28, ease: "easeOut" }}
           >
             <GlassPanel className="flex items-start gap-3 p-6 text-rose-700">
@@ -79,9 +80,9 @@ export function RecommendationSection({ result, isLoading, error }: Recommendati
         ) : result ? (
           <motion.div
             key="result"
-            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
           >
             <ResultContent result={result} />
@@ -145,110 +146,90 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
 
   return (
     <div className="space-y-6">
-      {/* ── Gauge + resumen ─────────────────────────────────────────────────── */}
-      <GlassPanel className="overflow-hidden p-6 sm:p-8">
-        <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-          <div className="rounded-[2rem] border border-sky-100 bg-white/82 p-6 shadow-sm">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
-                  Resultado obtenido
-                </div>
-                <div className="mt-3 flex items-center gap-3">
-                  <div
-                    className="rounded-2xl p-3"
-                    style={{ backgroundColor: `${risk.accent}22`, color: risk.accent }}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <div
-                      className="inline-flex rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]"
-                      style={{
-                        borderColor: `${risk.accent}55`,
-                        color: risk.accent,
-                        backgroundColor: `${risk.accent}18`,
-                      }}
-                    >
-                      {risk.label}
-                    </div>
-                    <h3 className="mt-3 text-3xl font-semibold text-slate-900">{risk.label}</h3>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
-                Analisis completado
-              </div>
+      <GlassPanel className="overflow-hidden p-5 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
+              Resultado obtenido
             </div>
-            <div className="mt-6 h-72">
-              <ReactECharts
-                notMerge={true}
-                lazyUpdate={false}
-                option={gaugeOption}
-                style={{ height: "100%", width: "100%" }}
-              />
+            <div className="mt-3 flex items-center gap-3">
+              <div
+                className="rounded-2xl p-3"
+                style={{ backgroundColor: `${risk.accent}22`, color: risk.accent }}
+              >
+                <Icon className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-semibold text-slate-900 sm:text-[1.9rem]">
+                  {risk.label}
+                </h3>
+                <p className="mt-1 text-sm text-slate-500">
+                  Clasificacion final del caso analizado.
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="grid gap-5">
-            <div className="rounded-[2rem] border border-sky-100 bg-gradient-to-br from-white to-cyan-50 p-6">
-              <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
-                Resumen del resultado
-              </div>
-              <h3 className="mt-3 text-2xl font-semibold text-slate-900">{summary.headline}</h3>
-              <p className="mt-4 text-base leading-7 text-slate-600">{summary.description}</p>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-3xl border border-sky-100 bg-white/82 p-5">
-                <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                  Origen del modelo
-                </div>
-                <div className="mt-3 text-lg font-semibold text-slate-900">
-                  {result.origen_modelo}
-                </div>
-              </div>
-              <div className="rounded-3xl border border-sky-100 bg-white/82 p-5">
-                <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                  Reglas activadas
-                </div>
-                <div className="mt-3 text-3xl font-semibold text-slate-900">
-                  {result.reglas_activadas.length}
-                </div>
-              </div>
-            </div>
-
-            {result.ajustes_entrada.length > 0 ? (
-              <div className="rounded-[2rem] border border-sky-100 bg-white/82 p-6">
-                <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
-                  Valores ajustados automaticamente
-                </div>
-                <div className="mt-4 grid gap-3">
-                  {result.ajustes_entrada.map((adjustment) => (
-                    <div
-                      key={adjustment.variable}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sky-100 bg-sky-50/70 px-4 py-3 text-sm"
-                    >
-                      <span className="font-medium text-slate-700">
-                        {getFieldLabel(adjustment.variable)}
-                      </span>
-                      <span className="text-slate-500">
-                        {formatValue(adjustment.variable, adjustment.valor_original)}
-                        <span className="mx-2 text-cyan-500">→</span>
-                        <span className="font-semibold text-cyan-700">
-                          {formatValue(adjustment.variable, adjustment.valor_ajustado)}
-                        </span>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+          <div className="rounded-full border border-slate-200/80 bg-white/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+            Reglas activadas {result.reglas_activadas.length}
           </div>
         </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
+          <div className="h-56 rounded-[1.75rem] border border-slate-200/70 bg-slate-50/70 p-3 sm:h-60">
+            <ReactECharts
+              lazyUpdate={false}
+              notMerge={true}
+              option={gaugeOption}
+              style={{ height: "100%", width: "100%" }}
+            />
+          </div>
+
+          <div>
+            <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
+              Puntaje final
+            </div>
+            <div className="mt-2 flex items-end gap-2">
+              <span className="text-4xl font-semibold leading-none text-slate-900 sm:text-5xl">
+                {formatScore(result.puntaje)}
+              </span>
+              <span className="pb-1 text-sm font-medium text-slate-500">/100</span>
+            </div>
+            <p className="mt-3 text-base font-semibold leading-6 text-slate-900">
+              {summary.headline}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{summary.description}</p>
+          </div>
+        </div>
+
+        {result.ajustes_entrada.length > 0 ? (
+          <div className="mt-5 border-t border-sky-100 pt-4">
+            <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
+              Valores ajustados automaticamente
+            </div>
+            <div className="mt-3 grid gap-3">
+              {result.ajustes_entrada.map((adjustment) => (
+                <div
+                  key={adjustment.variable}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200/70 bg-slate-50/75 px-4 py-3 text-sm"
+                >
+                  <span className="font-medium text-slate-700">
+                    {getFieldLabel(adjustment.variable)}
+                  </span>
+                  <span className="text-slate-500">
+                    {formatValue(adjustment.variable, adjustment.valor_original)}
+                    <span className="mx-2 text-cyan-500">+</span>
+                    <span className="font-semibold text-cyan-700">
+                      {formatValue(adjustment.variable, adjustment.valor_ajustado)}
+                    </span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </GlassPanel>
 
-      {/* Narrativa clínica */}
       <GlassPanel className="p-6 sm:p-8">
         <div className="flex items-start gap-4">
           <div className="shrink-0 rounded-2xl border border-cyan-300/30 bg-cyan-50 p-3 text-cyan-700">
@@ -267,18 +248,22 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
         </div>
       </GlassPanel>
 
-      {/* Reglas activadas */}
-      <div>
-        <div className="mb-4 px-1">
-          <div className="text-base font-semibold text-slate-900">
-            Reglas que influyeron en la decision
+      <GlassPanel className="p-5 sm:p-6">
+        <div className="flex items-start gap-4">
+          <div className="shrink-0 rounded-2xl border border-cyan-300/30 bg-cyan-50 p-3 text-cyan-700">
+            <BookOpen className="h-5 w-5" />
           </div>
-          <p className="mt-1 text-sm text-slate-500">
-            Ordenadas por peso de influencia — de mayor a menor impacto en el resultado final.
-          </p>
+          <div>
+            <div className="text-base font-semibold text-slate-900">
+              Reglas que influyeron en la decision
+            </div>
+            <p className="mt-1 text-sm text-slate-500">
+              Ordenadas por peso de influencia, de mayor a menor impacto en el resultado final.
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="mt-5 space-y-4">
           {sortedRules.map((rule, index) => {
             const ruleRisk = getRiskUi(rule.consecuente);
             const ruleNarrative = buildRuleNarrative(rule);
@@ -287,12 +272,12 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
               <motion.div
                 key={rule.numero}
                 initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.4, delay: index * 0.04 }}
+                viewport={{ once: true, amount: 0.2 }}
+                whileInView={{ opacity: 1, y: 0 }}
               >
-                <GlassPanel className="p-5 sm:p-6">
-                  <div className="flex items-start justify-between gap-4">
+                <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/92 p-5 sm:p-6">
+                  <div className="flex flex-wrap items-center gap-3">
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="rounded-full border border-cyan-300/30 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700">
                         Regla {rule.numero}
@@ -302,12 +287,9 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
                       >
                         Indica {ruleRisk.label.toLowerCase()}
                       </span>
-                    </div>
-                    <div className="shrink-0 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-2 text-right">
-                      <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Peso</div>
-                      <div className="text-lg font-semibold text-slate-900">
-                        {formatPercentage(rule.fuerza)}
-                      </div>
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
+                        Peso {formatPercentage(rule.fuerza)}
+                      </span>
                     </div>
                   </div>
 
@@ -316,21 +298,21 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
                     {ruleNarrative}
                   </p>
 
-                    <div className="mt-4 overflow-hidden rounded-full bg-sky-100">
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{
-                          backgroundColor: ruleRisk.accent,
-                          width: `${Math.max(4, Math.round(rule.fuerza * 100))}%`,
+                  <div className="mt-4 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-1.5 rounded-full"
+                      style={{
+                        backgroundColor: ruleRisk.accent,
+                        width: `${Math.max(4, Math.round(rule.fuerza * 100))}%`,
                       }}
                     />
                   </div>
-                </GlassPanel>
+                </div>
               </motion.div>
             );
           })}
         </div>
-      </div>
+      </GlassPanel>
     </div>
   );
 }
