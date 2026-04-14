@@ -118,5 +118,8 @@ ESPECIFICACIONES_VARIABLES = OrderedDict(
     ]
 )
 
+# Eje x sobre el que se construye el area agregada en la desfusificacion
 PUNTOS_SALIDA = 401
+
+# Eje x sobre el que se dibuja la curva trapezoidal
 PUNTOS_GRAFICA = 300

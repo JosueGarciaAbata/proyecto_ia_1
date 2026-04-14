@@ -197,16 +197,27 @@ def inicializar_poblacion(tamano=None):
     if tamano is None:
         tamano = PARAMETROS_AG["tamano_poblacion"]
 
+    # recordemos que sigma_inicializacion es el ruido a crear variaciones del cromosoma base
+    # en el "espacio" o "rango" del cromosoma base.
     sigma = SIGMA_INICIALIZACION * (LIMITES_SUPERIORES - LIMITES_INFERIORES)
+    
+    # la poblacion arranca con un solo individuo.
     poblacion = [CROMOSOMA_BASE.copy()]
+
+    # recordemos que mencionamos que el 65% de los indviduos seran una perturbacion/variacion del cromosoma base
     cantidad_perturbados = math.floor(FRACCION_POBLACION_PERTURBADA * (tamano - 1))
+
+    # y los demas seran alteatorios.
     cantidad_aleatorios = tamano - 1 - cantidad_perturbados
 
     for _ in range(cantidad_perturbados):
+
+        # se promedia cercano a cero, por que no queremos que los trapecios sean favorecidos a ninguna direccion
         ruido = np.random.normal(loc=0.0, scale=sigma)
         poblacion.append(reparar_cromosoma(CROMOSOMA_BASE + ruido))
 
     for _ in range(cantidad_aleatorios):
+        # cualquier valor entre low y high tiene la misma probabilidad
         cromosoma_aleatorio = np.random.uniform(
             low=LIMITES_INFERIORES,
             high=LIMITES_SUPERIORES,
@@ -266,5 +277,7 @@ def mutacion_gaussiana(descendencia, instancia_ga):
     return descendencia_mutada
 
 
+# simplemente se utiliza para la cache
+# si se genera dos veces el mismo cromosoma, se devuelve el resultado cacheado.
 def crear_clave_solucion(solucion):
     return np.asarray(solucion, dtype=np.float64).round(8).tobytes()

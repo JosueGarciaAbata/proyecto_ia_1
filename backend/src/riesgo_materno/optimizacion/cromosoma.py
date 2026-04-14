@@ -46,6 +46,7 @@ def reparar_trapecio(trapecio, limite_inferior, limite_superior, epsilon):
     )
     a, b, c, d = trapecio
 
+    # epsilon -> tolerancia minima permitida para el ancho del trapecio.
     ancho_minimo = max(epsilon * 0.5, 1e-6)
 
     if d - a < ancho_minimo:
@@ -79,6 +80,7 @@ def ordenar_categorias_por_centro(bloque):
     return bloque[orden]
 
 
+# bloque -> edad: joven, adulta, avanzada
 def ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsilon):
     """Ajusta trapecios vecinos para que queden mejor organizados.
 
@@ -101,6 +103,7 @@ def ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsi
             derecha = bloque[indice + 1].copy()
 
             # Si hay hueco entre soportes, ambos se unen en el punto medio.
+            # d del trapecio izquierdo y a del trapecio derecho.
             if izquierda[3] < derecha[0]:
                 punto_medio = (izquierda[3] + derecha[0]) / 2.0
                 izquierda[3] = punto_medio
@@ -124,6 +127,7 @@ def ajustar_categorias_adyacentes(bloque, limite_inferior, limite_superior, epsi
             derecha = reparar_trapecio(derecha, limite_inferior, limite_superior, epsilon)
 
             # Si un nucleo invade al otro, se separan un poco.
+            # c del trapecio izquierdo y b del trapecio derecho.
             if izquierda[2] > derecha[1]:
                 punto_medio = (izquierda[2] + derecha[1]) / 2.0
                 izquierda[2] = punto_medio - epsilon / 2.0
@@ -226,7 +230,7 @@ def aplanar_membresias(membresias):
         np.asarray(rangos, dtype=float),
     )
 
-
+# Es el punto de partida
 def crear_membresias_base():
     """Crea las membresias iniciales usando ESPECIFICACIONES_VARIABLES."""
     membresias = OrderedDict()
@@ -241,7 +245,7 @@ def crear_membresias_base():
 # ---------------------------------------------------------------------------
 
 MEMBRESIAS_BASE = crear_membresias_base()
-CROMOSOMA_BASE_CRUDO, LIMITES_INFERIORES, LIMITES_SUPERIORES, RANGOS_GENES = aplanar_membresias(
-    MEMBRESIAS_BASE
-)
+CROMOSOMA_BASE_CRUDO, LIMITES_INFERIORES, LIMITES_SUPERIORES, RANGOS_GENES = aplanar_membresias(MEMBRESIAS_BASE)
+
+# Solo es por seguridad, aunqeu al ser base ya deberian ser validso en primer momento.
 CROMOSOMA_BASE = reparar_cromosoma(CROMOSOMA_BASE_CRUDO)

@@ -25,7 +25,7 @@ class SistemaDifusoMamdani:
         self.universos_entrada = self._crear_universos_entrada()
         self.universo_salida = self._crear_universo_salida()
 
-        # Las funciones de pertenencai son la definicion maetmatica minima de la curva.
+        # Las funciones de pertenencia son la definicion maetmatica minima de la curva.
         # Las curvas son el mecanismo real que convierte numeros exactso en significados difusos.
         self.curvas_entrada = self._crear_curvas_entrada()
         self.curvas_salida = self._crear_curvas_salida()
@@ -59,11 +59,11 @@ class SistemaDifusoMamdani:
         act_alto = np.zeros(n, dtype=float)
         mapa_act = {"bajo": act_bajo, "medio": act_medio, "alto": act_alto}
 
-        for regla_var_cats, consecuente in self._reglas_compiladas:
+        for antecedentes, consecuente in self._reglas_compiladas:
             # AND de antecedentes: minimo a lo largo de antecedentes
             fuerza = np.ones(n, dtype=float)
-            for variable, categoria in regla_var_cats:
-                fuerza = np.minimum(fuerza, pertenencias[variable][categoria])
+            for termino, categoria in antecedentes:
+                fuerza = np.minimum(fuerza, pertenencias[termino][categoria])
             # OR entre reglas: maximo
             np.maximum(mapa_act[consecuente], fuerza, out=mapa_act[consecuente])
 
@@ -117,15 +117,13 @@ class SistemaDifusoMamdani:
 
         for regla in REGLAS:
 
-            print("Evaluando regla:", regla)
-
             antecedentes_con_valor = [
                 {
-                    "variable":    variable,
+                    "variable":    termino,
                     "categoria":   categoria,
-                    "pertenencia": pertenencias[variable][categoria],
+                    "pertenencia": pertenencias[termino][categoria],
                 }
-                for variable, categoria in regla["antecedentes"]
+                for termino, categoria in regla["antecedentes"]
             ]
 
             # AND: la fuerza de la regla es el minimo de las pertenencias de sus antecedentes
@@ -162,6 +160,7 @@ class SistemaDifusoMamdani:
             salida_recortada = np.fmin(activaciones[categoria], curva_salida)
             salida_agregada = np.fmax(salida_agregada, salida_recortada)
 
+        # ---!!!
         if float(np.max(salida_agregada)) == 0.0:
             return self.puntaje_neutro
 

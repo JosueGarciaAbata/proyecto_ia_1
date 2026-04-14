@@ -79,6 +79,8 @@ def calcular_recall_de_riesgo_alto(riesgos_reales, riesgos_predichos):
             labels=ETIQUETAS_RIESGO,
             average=None,
             zero_division=0,
+            # es mas grave no detectar un riesgo alto, 
+            # que detectar un riesgo alto cuando no lo es, por eso se le da mas peso al recall de riesgo alto.
         )[ETIQUETAS_RIESGO.index("high risk")]
     )
 
