@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.13)  13 APR 2026 19:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.13)  13 APR 2026 21:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -586,7 +586,7 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 
 pdfTeX warning: pdflatex (file ./picture/logoSW2026.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<picture/logoSW2026.pdf, id=209, 2465.21pt x 293.095pt>
+<picture/logoSW2026.pdf, id=205, 2465.21pt x 293.095pt>
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
 Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 116.
@@ -629,7 +629,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 210.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 212.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -644,9 +644,13 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [3]
+Overfull \hbox (10.07259pt too wide) in paragraph at lines 242--243
+[]\T1/cmr/bx/n/10.95 An Ex-plai-na-ble Fuzzy Fra-me-work for As-ses-sing Pre-eclam-psia Clas-si-fi-ca-tion (SK-MOEFS)
+ []
+
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 241.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 243.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -661,13 +665,13 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [4]
-Overfull \hbox (10.07259pt too wide) in paragraph at lines 242--243
-[]\T1/cmr/bx/n/10.95 An Ex-plai-na-ble Fuzzy Fra-me-work for As-ses-sing Pre-eclam-psia Clas-si-fi-ca-tion (SK-MOEFS)
+Overfull \hbox (11.40912pt too wide) in paragraph at lines 269--270
+[]\T1/cmr/m/n/10.95 El sis-te-ma uti-li-za ex-clu-si-va-men-te \T1/cmr/bx/n/10.95 fun-cio-nes tra-pe-zoi-da-les\T1/cmr/m/n/10.95 , de-fi-ni-das por cua-tro pa-rá-me-tros $\OT1/cmr/m/n/10.95 [\OML/cmm/m/it/10.95 a; b; c; d\OT1/cmr/m/n/10.95 ]$\T1/cmr/m/n/10.95 : 
  []
 
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 268.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 281.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -682,13 +686,14 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [5]
-Overfull \hbox (11.40912pt too wide) in paragraph at lines 269--270
-[]\T1/cmr/m/n/10.95 El sis-te-ma uti-li-za ex-clu-si-va-men-te \T1/cmr/bx/n/10.95 fun-cio-nes tra-pe-zoi-da-les\T1/cmr/m/n/10.95 , de-fi-ni-das por cua-tro pa-rá-me-tros $\OT1/cmr/m/n/10.95 [\OML/cmm/m/it/10.95 a; b; c; d\OT1/cmr/m/n/10.95 ]$\T1/cmr/m/n/10.95 : 
- []
-
+<picture/rectangular.png, id=268, 730.98094pt x 402.75468pt>
+File: picture/rectangular.png Graphic file (type png)
+<use picture/rectangular.png>
+Package pdftex.def Info: picture/rectangular.png  used on input line 295.
+(pdftex.def)             Requested size: 413.32193pt x 227.72888pt.
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 307.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 310.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -702,10 +707,10 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
-[6]
+[6 <./picture/rectangular.png>]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 378.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 382.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -722,7 +727,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [7]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 425.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 441.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -737,9 +742,389 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [8]
+Underfull \hbox (badness 10000) in paragraph at lines 469--469
+[]|\T1/cmr/m/n/10.95 PS=elevada AND
+ []
+
+
+Underfull \hbox (badness 3547) in paragraph at lines 469--469
+\T1/cmr/m/n/10.95 con-cu-rren-te, ries-go de pre-
+ []
+
+
+Underfull \hbox (badness 4582) in paragraph at lines 470--470
+[]|\T1/cmr/m/n/10.95 AS=alta AND PD=alta
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 470--470
+[]|\T1/cmr/m/n/10.95 Triple com-bi-na-ción crí-ti-ca,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 471--471
+[]|\T1/cmr/m/n/10.95 AS=alta AND
+ []
+
+
+Underfull \hbox (badness 1789) in paragraph at lines 471--471
+[]|\T1/cmr/m/n/10.95 Glucemia crí-ti-ca con ta-qui-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 472--472
+[]|\T1/cmr/m/n/10.95 AS=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 472--472
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 3919) in paragraph at lines 472--472
+[]|\T1/cmr/m/n/10.95 Glucemia ele-va-da en edad
+ []
+
+
+Underfull \hbox (badness 4582) in paragraph at lines 473--473
+[]|\T1/cmr/m/n/10.95 AS=alta AND PD=alta
+ []
+
+
+Underfull \hbox (badness 3514) in paragraph at lines 473--473
+\T1/cmr/m/n/10.95 sión dias-tó-li-ca en pa-cien-te
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 474--474
+[]|\T1/cmr/m/n/10.95 AS=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 474--474
+\T1/cmr/m/n/10.95 FC=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 474--474
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 475--475
+[]|\T1/cmr/m/n/10.95 Ed=avanzada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 476--476
+[]|\T1/cmr/m/n/10.95 AS=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 476--476
+\T1/cmr/m/n/10.95 TC=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 477--477
+[]|\T1/cmr/m/n/10.95 Ed=avanzada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 478--478
+[]|\T1/cmr/m/n/10.95 AS=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 478--478
+\T1/cmr/m/n/10.95 PD=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 479--479
+[]|\T1/cmr/m/n/10.95 TC=fiebre AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 479--479
+\T1/cmr/m/n/10.95 PD=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 480--480
+[]|\T1/cmr/m/n/10.95 TC=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 481--481
+[]|\T1/cmr/m/n/10.95 PS=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 481--481
+\T1/cmr/m/n/10.95 PD=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 482--482
+[]|\T1/cmr/m/n/10.95 AS=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 482--482
+\T1/cmr/m/n/10.95 Ed=avanzada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 483--483
+[]|\T1/cmr/m/n/10.95 TC=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 483--483
+\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 483--483
+\T1/cmr/m/n/10.95 PD=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 484--484
+[]|\T1/cmr/m/n/10.95 PD=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 484--484
+\T1/cmr/m/n/10.95 PS=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 485--485
+[]|\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 485--485
+\T1/cmr/m/n/10.95 Ed=adulta AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 485--485
+[]|\T1/cmr/m/n/10.95 Temperatura sub-fe-bril en
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 486--486
+[]|\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 486--486
+\T1/cmr/m/n/10.95 TC=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 486--486
+\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 487--487
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 487--487
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 487--487
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 487--487
+\T1/cmr/m/n/10.95 PD=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 487--487
+\T1/cmr/m/n/10.95 Ed=joven AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 488--488
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 488--488
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 488--488
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 488--488
+\T1/cmr/m/n/10.95 PD=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 489--489
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 489--489
+\T1/cmr/m/n/10.95 PD=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 489--489
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 489--489
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 489--489
+\T1/cmr/m/n/10.95 Ed=avanzada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 490--490
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 490--490
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 490--490
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
+\T1/cmr/m/n/10.95 PD=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
+\T1/cmr/m/n/10.95 Ed=adulta AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
+\T1/cmr/m/n/10.95 FC=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 493--493
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 493--493
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 493--493
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 494--494
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 494--494
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 494--494
+\T1/cmr/m/n/10.95 PD=elevada AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 495--495
+[]|\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 495--495
+\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 495--495
+\T1/cmr/m/n/10.95 TC=fiebre AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 496--496
+[]|\T1/cmr/m/n/10.95 AS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 496--496
+\T1/cmr/m/n/10.95 PS=normal AND
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 496--496
+\T1/cmr/m/n/10.95 TC=normal AND
+ []
+
+c:/Users/josue/Desktop/proyecto_ia (actual)/informe/informe_proyecto_ia.tex:497: ignored error: Infinite glue shrinkage found in box being split
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 459.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 497.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -754,93 +1139,10 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [9]
-Underfull \hbox (badness 10000) in paragraph at lines 477--477
-[]|\T1/cmr/m/n/10.95 AS=normal AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 477--477
-\T1/cmr/m/n/10.95 PS=normal AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 478--478
-[]|\T1/cmr/m/n/10.95 AS=normal AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 478--478
-\T1/cmr/m/n/10.95 PD=normal AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 479--479
-[]|\T1/cmr/m/n/10.95 AS=elevada AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 480--480
-[]|\T1/cmr/m/n/10.95 PS=elevada AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 481--481
-[]|\T1/cmr/m/n/10.95 PD=elevada AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 482--482
-[]|\T1/cmr/m/n/10.95 Edad=avanzada AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 482--482
-\T1/cmr/m/n/10.95 AS=normal AND
- []
-
-
-Underfull \hbox (badness 1259) in paragraph at lines 483--483
-[]|\T1/cmr/m/n/10.95 Temperatura sub-fe-bril: po-si-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 485--485
-[]|\T1/cmr/m/n/10.95 AS=elevada AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 486--486
-[]|\T1/cmr/m/n/10.95 AS=elevada AND
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 487--487
-[]|\T1/cmr/m/n/10.95 AS=elevada AND
- []
-
-
-Underfull \hbox (badness 3746) in paragraph at lines 489--489
-[]|\T1/cmr/m/n/10.95 Presión sis-tó-li-ca muy al-ta:
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 490--490
-[]|\T1/cmr/m/n/10.95 Fiebre: ries-go de in-fec-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 491--491
-[]|\T1/cmr/m/n/10.95 Edad=avanzada AND
- []
-
-
-Underfull \hbox (badness 1242) in paragraph at lines 491--491
-[]|\T1/cmr/m/n/10.95 Edad avan-za-da con pre-sión
- []
-
+c:/Users/josue/Desktop/proyecto_ia (actual)/informe/informe_proyecto_ia.tex:497: ignored error: Infinite glue shrinkage found in box being split
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 501.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 497.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -857,7 +1159,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [10]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 557.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 518.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -872,10 +1174,9 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [11]
-Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 562.
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 591.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 565.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -892,7 +1193,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [12]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 660.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 619.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -909,7 +1210,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [13]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 688.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 661.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -926,7 +1227,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [14]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 726.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 699.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -943,7 +1244,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [15]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 763.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 734.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -958,9 +1259,20 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [16]
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 741.
+
+Underfull \hbox (badness 4168) in paragraph at lines 773--773
+[]|\T1/cmr/m/n/10.95 Paciencia (early stop-
+ []
+
+
+Underfull \hbox (badness 1117) in paragraph at lines 775--775
+[]|\T1/cmr/m/n/10.95 Probabilidad de mu-ta-
+ []
+
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 804.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 789.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -975,23 +1287,14 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [17]
-Underfull \hbox (badness 4168) in paragraph at lines 822--822
-[]|\T1/cmr/m/n/10.95 Paciencia (early stop-
- []
-
-
-Underfull \hbox (badness 1117) in paragraph at lines 824--824
-[]|\T1/cmr/m/n/10.95 Probabilidad de mu-ta-
- []
-
-<picture/flujo_sistema.png, id=430, 187.45032pt x 638.385pt>
+<picture/flujo_sistema.png, id=399, 187.45032pt x 638.385pt>
 File: picture/flujo_sistema.png Graphic file (type png)
 <use picture/flujo_sistema.png>
-Package pdftex.def Info: picture/flujo_sistema.png  used on input line 856.
+Package pdftex.def Info: picture/flujo_sistema.png  used on input line 807.
 (pdftex.def)             Requested size: 78.33101pt x 266.76587pt.
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 861.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 812.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -1008,7 +1311,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [18]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 889.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 840.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -1023,14 +1326,14 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [19 <./picture/flujo_sistema.png>]
-<picture/interfaz_web_del_sistema.png, id=453, 709.90219pt x 660.96938pt>
+<picture/interfaz_web_del_sistema.png, id=412, 709.90219pt x 660.96938pt>
 File: picture/interfaz_web_del_sistema.png Graphic file (type png)
 <use picture/interfaz_web_del_sistema.png>
-Package pdftex.def Info: picture/interfaz_web_del_sistema.png  used on input line 898.
+Package pdftex.def Info: picture/interfaz_web_del_sistema.png  used on input line 849.
 (pdftex.def)             Requested size: 364.6932pt x 339.56088pt.
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 929.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 880.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -1045,9 +1348,14 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
 [20 <./picture/interfaz_web_del_sistema.png>]
+<picture/fitness.png, id=419, 1094.58937pt x 367.3725pt>
+File: picture/fitness.png Graphic file (type png)
+<use picture/fitness.png>
+Package pdftex.def Info: picture/fitness.png  used on input line 885.
+(pdftex.def)             Requested size: 413.32193pt x 138.7229pt.
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 953.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 908.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -1061,10 +1369,10 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-29.9699pt}.
 
-[21]
+[21 <./picture/fitness.png>]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 989.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 950.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -1081,7 +1389,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [22]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 1038.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 998.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -1098,7 +1406,7 @@ Package fancyhdr Warning: \headheight is too small (35.0pt):
 [23]
 File: picture/logoSW2026.pdf Graphic file (type pdf)
 <use picture/logoSW2026.pdf>
-Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 1068.
+Package pdftex.def Info: picture/logoSW2026.pdf  used on input line 1019.
 (pdftex.def)             Requested size: 512.1496pt x 60.88986pt.
 
 Overfull \hbox (25.89198pt too wide) has occurred while \output is active
@@ -1121,20 +1429,20 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `informe_proyecto_ia.out' has not changed.
-(rerunfilecheck)             Checksum: E9CADDB3C6C90D811AE0897E5990E697;10053.
+(rerunfilecheck)             Checksum: 81E252D25621918EE83E9540767E0FC6;9811.
  ) 
 Here is how much of TeX's memory you used:
- 18966 strings out of 467871
- 301551 string characters out of 5418376
- 1285385 words of memory out of 5000000
- 47399 multiletter control sequences out of 15000+600000
+ 18900 strings out of 467871
+ 300840 string characters out of 5418376
+ 1175385 words of memory out of 5000000
+ 47373 multiletter control sequences out of 15000+600000
  645560 words of font info for 84 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,16n,79p,1070b,2170s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0600.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcbx1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0900.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti0900.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1095.pk><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on informe_proyecto_ia.pdf (24 pages, 747279 bytes).
+ 75i,16n,79p,1070b,1296s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0600.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcbx1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0900.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti0900.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1095.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\josue\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1095.pk><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/josue/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on informe_proyecto_ia.pdf (24 pages, 1048578 bytes).
 PDF statistics:
- 1135 PDF objects out of 1200 (max. 8388607)
- 218 named destinations out of 1000 (max. 500000)
- 12712 words of extra memory for PDF output out of 14400 (max. 10000000)
+ 1067 PDF objects out of 1200 (max. 8388607)
+ 178 named destinations out of 1000 (max. 500000)
+ 12714 words of extra memory for PDF output out of 14400 (max. 10000000)
 

@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1776128315.81792 "c:/Users/josue/Desktop/proyecto_ia (actual)/informe/informe_proyecto_ia.tex" "informe_proyecto_ia.pdf" "informe_proyecto_ia" 1776128317.58765 0
+["pdflatex"] 1776133124.8924 "c:/Users/josue/Desktop/proyecto_ia (actual)/informe/informe_proyecto_ia.tex" "informe_proyecto_ia.pdf" "informe_proyecto_ia" 1776133126.74576 0
   "C:/Users/josue/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1776127773 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/josue/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1000.pk" 1776127801 25420 8cd2295616c95b1ee45d1bdb79cd985d ""
   "C:/Users/josue/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1095.pk" 1776127809 28976 9937d0ef96cb6b7f9096ee7de5aabea6 ""
@@ -143,13 +143,15 @@
   "C:/Users/josue/AppData/Local/Programs/MiKTeX/tex/latex/tools/longtable.sty" 1761901070 16014 dfa4b4d4e04a78a3f05a90c19711737a ""
   "C:/Users/josue/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/josue/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/josue/Desktop/proyecto_ia (actual)/informe/informe_proyecto_ia.tex" 1776128314 68480 83adb0ae73764aaf12a02700fbd53ea4 ""
-  "informe_proyecto_ia.aux" 1776128317 15047 022d5b8c10b2c36d90a78db0cc1b13b4 "pdflatex"
-  "informe_proyecto_ia.out" 1776128317 10053 e9caddb3c6c90d811ae0897e5990e697 "pdflatex"
-  "informe_proyecto_ia.tex" 1776128314 68480 83adb0ae73764aaf12a02700fbd53ea4 ""
+  "c:/Users/josue/Desktop/proyecto_ia (actual)/informe/informe_proyecto_ia.tex" 1776133123 69046 58b7c6c01d1a862387c86c1f044950f1 ""
+  "informe_proyecto_ia.aux" 1776133126 13954 aeacca47dd21665df0d74440ff4bcc72 "pdflatex"
+  "informe_proyecto_ia.out" 1776133126 9811 81e252d25621918ee83e9540767e0fc6 "pdflatex"
+  "informe_proyecto_ia.tex" 1776133123 69046 58b7c6c01d1a862387c86c1f044950f1 ""
+  "picture/fitness.png" 1776132756 358911 e386f01bf7efc1966ec8bf6c4d46ded3 ""
   "picture/flujo_sistema.png" 1776116943 78076 93e62daccb153f4f714b3285f9db143b ""
   "picture/interfaz_web_del_sistema.png" 1776116943 409212 183c8897d4a381a10e337339723e02f2 ""
   "picture/logoSW2026.pdf" 1776116943 80955 e1826a8317e553efe48cef8fc429354d ""
+  "picture/rectangular.png" 1776130036 278452 c7aa09889f1e8f1452ca47b00dfb320d ""
   (generated)
   "informe_proyecto_ia.aux"
   "informe_proyecto_ia.log"

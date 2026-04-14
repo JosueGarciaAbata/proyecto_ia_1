@@ -184,7 +184,7 @@ La elecci\'on de este dataset sobre otras alternativas estuvo motivada por tres 
 \begin{enumerate}
     \item \textbf{Variables continuas fuzzificables:} Todas las variables de entrada son valores num\'ericos continuos dentro de rangos bien definidos. Esto es ideal para la l\'ogica difusa, que requiere definir curvas de membres\'ia sobre un universo continuo. Un dataset con variables categ\'oricas o binarias no se presta naturalmente a este enfoque.
 
-    \item \textbf{Dominio m\'edico con conocimiento experto disponible:} Existe abundante literatura cl\'inica sobre los rangos normales y patol\'ogicos de cada una de las seis variables, lo que permiti\'o definir las categor\'ias ling\"u\'isticas y sus par\'ametros de forma inform\'acion por evidencia cient\'ifica y no de manera arbitraria.
+    \item \textbf{Dominio m\'edico con conocimiento experto disponible:} Existe abundante literatura cl\'inica sobre los rangos normales y patol\'ogicos de cada una de las seis variables, lo que permiti\'o definir las categor\'ias ling\"u\'isticas y sus par\'ametros por evidencia cient\'ifica y no de manera arbitraria.
 
     \item \textbf{Tama\~no adecuado para validaci\'on:} Con 1.014 registros es posible realizar una partici\'on estratificada entrenamiento/validaci\'on/prueba que permita evaluar el desempe\~no del sistema y del proceso de optimizaci\'on de manera confiable.
 \end{enumerate}
@@ -292,12 +292,12 @@ La funci\'on trapezoidal fue elegida porque permite representar de forma natural
 
 \begin{figure}[H]
     \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{2.5cm}
-            \textbf{[IMAGEN: Diagrama de una funci\'on trapezoidal con los puntos a, b, c, d etiquetados, mostrando el soporte, el n\'ucleo y las rampas laterales. Eje X = valor de la variable, Eje Y = grado de membres\'ia (0 a 1).]}
-            \vspace{2.5cm}}}
+    \includegraphics[width=0.85\textwidth]{picture/rectangular.png}
     \caption{Funci\'on de membres\'ia trapezoidal: par\'ametros $[a, b, c, d]$}
     \label{fig:trapmf}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+
+    \vspace{2pt}
+    {\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 \subsubsection{Variables de Entrada: Categorías y Parámetros}
@@ -305,6 +305,8 @@ La funci\'on trapezoidal fue elegida porque permite representar de forma natural
 Cada variable de entrada cuenta con 2 o 3 categor\'ias ling\"u\'isticas. Los puntos de cada trapezoide fueron inicialmente definidos con base en los umbrales cl\'inicos de la literatura y posteriormente refinados por el algoritmo gen\'etico.
 
 \paragraph{Variable 1: Edad (años)}
+
+Justificaci\'on: La literatura obst\'etrica considera ``edad materna avanzada'' a partir de los 35 a\~nos como factor de riesgo independiente para hipertensi\'on gestacional, diabetes gestacional y complicaciones del parto. La categor\'ia ``joven'' (menor de 20 a\~nos) tambi\'en representa riesgo por inmadurez biol\'ogica y socioecon\'omica.
 
 \begin{table}[H]
     \centering
@@ -321,9 +323,9 @@ Cada variable de entrada cuenta con 2 o 3 categor\'ias ling\"u\'isticas. Los pun
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-Justificaci\'on: La literatura obst\'etrica considera ``edad materna avanzada'' a partir de los 35 a\~nos como factor de riesgo independiente para hipertensi\'on gestacional, diabetes gestacional y complicaciones del parto. La categor\'ia ``joven'' (menor de 20 a\~nos) tambi\'en representa riesgo por inmadurez biol\'ogica y socioecon\'omica.
-
 \paragraph{Variable 2: Presión Sistólica (mmHg)}
+
+Justificaci\'on: El criterio cl\'inico de hipertensi\'on gestacional establece presi\'on sist\'olica $\geq 140$ mmHg como umbral de alerta. La zona ``elevada'' (120--145 mmHg) corresponde a la hipertensi\'on estadio 1 seg\'un las gu\'ias de la Asociaci\'on Americana del Coraz\'on (AHA).
 
 \begin{table}[H]
     \centering
@@ -340,9 +342,9 @@ Justificaci\'on: La literatura obst\'etrica considera ``edad materna avanzada'' 
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-Justificaci\'on: El criterio cl\'inico de hipertensi\'on gestacional establece presi\'on sist\'olica $\geq 140$ mmHg como umbral de alerta. La zona ``elevada'' (120--145 mmHg) corresponde a la hipertensi\'on estadio 1 seg\'un las gu\'ias de la Asociaci\'on Americana del Coraz\'on (AHA).
-
 \paragraph{Variable 3: Presión Diastólica (mmHg)}
+
+Justificaci\'on: El umbral cl\'inico de hipertensi\'on gestacional se fija en presi\'on diast\'olica $\geq 90$ mmHg seg\'un la OMS. La zona ``elevada'' (76--95 mmHg) cubre la transici\'on hacia ese umbral de riesgo, mientras que valores $\geq 90$ mmHg requieren intervenci\'on cl\'inica inmediata.
 
 \begin{table}[H]
     \centering
@@ -361,6 +363,8 @@ Justificaci\'on: El criterio cl\'inico de hipertensi\'on gestacional establece p
 
 \paragraph{Variable 4: Azúcar en Sangre (mmol/L)}
 
+Justificaci\'on: El criterio diagn\'ostico de diabetes gestacional (IADPSG) establece que la glucemia en ayunas $\geq 5.1$ mmol/L (92 mg/dL) y la glucemia postprandial $\geq 8.5$ mmol/L (153 mg/dL) indican diabetes gestacional. El nivel ``alto'' ($\geq 14$ mmol/L) corresponde a hiperglucemia severa asociada con riesgo de cetoacidosis.
+
 \begin{table}[H]
     \centering
     \caption{Funciones de membres\'ia --- Az\'ucar en Sangre [6, 19] mmol/L}
@@ -376,9 +380,9 @@ Justificaci\'on: El criterio cl\'inico de hipertensi\'on gestacional establece p
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-Justificaci\'on: El criterio diagn\'ostico de diabetes gestacional (IADPSG) establece que la glucemia en ayunas $\geq 5.1$ mmol/L (92 mg/dL) y la glucemia postprandial $\geq 8.5$ mmol/L (153 mg/dL) indican diabetes gestacional. El nivel ``alto'' ($\geq 14$ mmol/L) corresponde a hiperglucemia severa asociada con riesgo de cetoacidosis.
-
 \paragraph{Variable 5: Temperatura Corporal (\textdegree F)}
+
+Justificaci\'on: La temperatura normal en el embarazo oscila entre 97.0 y 99.0 \textdegree F. La fiebre ($\geq 100.4$ \textdegree F $= 38$ \textdegree C) durante el embarazo es indicativa de infecci\'on o sepsis, condici\'on potencialmente letal para la madre y el feto.
 
 \begin{table}[H]
     \centering
@@ -395,9 +399,9 @@ Justificaci\'on: El criterio diagn\'ostico de diabetes gestacional (IADPSG) esta
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-Justificaci\'on: La temperatura normal en el embarazo oscila entre 97.0 y 99.0 \textdegree F. La fiebre ($\geq 100.4$ \textdegree F $= 38$ \textdegree C) durante el embarazo es indicativa de infecci\'on o sepsis, condici\'on potencialmente letal para la madre y el feto.
-
 \paragraph{Variable 6: Frecuencia Cardíaca (lpm)}
+
+Justificaci\'on: La frecuencia card\'iaca normal en reposo es inferior a 80 lpm durante el embarazo. La taquicardia ($\geq 90$ lpm) puede indicar anemia, infecci\'on o insuficiencia card\'iaca gestacional, condiciones asociadas a mayor morbimortalidad materna.
 
 \begin{table}[H]
     \centering
@@ -412,16 +416,6 @@ Justificaci\'on: La temperatura normal en el embarazo oscila entre 97.0 y 99.0 \
     \end{tabular}
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-            \textbf{[IMAGEN: Gr\'afica con 6 subplots (uno por variable) mostrando las funciones de membres\'ia trapezoidales de cada categor\'ia. Por ejemplo, para edad: tres curvas solapadas (joven/adulta/avanzada) sobre el eje X de 10 a 70.]}
-            \vspace{3cm}}}
-    \caption{Funciones de membres\'ia de las seis variables de entrada}
-    \label{fig:membresias_entrada}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
-\end{figure}
 
 \subsubsection{Variable de Salida: Puntaje de Riesgo}
 
@@ -453,46 +447,57 @@ El puntaje num\'erico resultante de la defuzzificaci\'on se convierte a etiqueta
     \end{cases}
 \end{equation}
 
-\subsubsection{Las 15 Reglas Difusas}
+\subsubsection{Las 28 Reglas Difusas}
 
-Se dise\~naron \textbf{15 reglas} tras un proceso de refinamiento que parti\'o de un conjunto inicial de 30 reglas con m\'ultiples antecedentes. El conjunto original produc\'ia problemas de clasificaci\'on porque muchas reglas eran demasiado espec\'ificas para activarse con los datos reales del dataset, generando casos donde ning\'un consecuente era activado con suficiente fuerza.
-
-La simplificaci\'on a 15 reglas no redundantes mejor\'o significativamente la cobertura y elimin\'o ambig\"uedades. El criterio fue que cada regla fuera cl\'inicamente justificable de forma independiente.
+Se dise\~naron \textbf{28 reglas} tras un proceso de refinamiento iterativo. El criterio fue que cada regla fuera cl\'inicamente justificable de forma independiente y que el conjunto cubriera los principales escenarios de riesgo materno sin redundancias.
 
 \begin{longtable}{cp{4.5cm}p{5cm}c}
-    \caption{Reglas del sistema difuso Mamdani} \label{tab:reglas}                                                                                           \\
+    \caption{Reglas del sistema difuso Mamdani} \label{tab:reglas}                                                                                                                                                    \\
     \toprule
-    \textbf{N\textordmasculine} & \textbf{Antecedentes}                     & \textbf{Justificaci\'on cl\'inica}                      & \textbf{Consecuente} \\
+    \textbf{N\textordmasculine} & \textbf{Antecedentes}                                                              & \textbf{Justificaci\'on cl\'inica}                                      & \textbf{Consecuente} \\
     \midrule
     \endfirsthead
     \toprule
-    \textbf{N\textordmasculine} & \textbf{Antecedentes}                     & \textbf{Justificaci\'on cl\'inica}                      & \textbf{Consecuente} \\
+    \textbf{N\textordmasculine} & \textbf{Antecedentes}                                                              & \textbf{Justificaci\'on cl\'inica}                                      & \textbf{Consecuente} \\
     \midrule
     \endhead
     \midrule
-    \multicolumn{4}{r}{\textit{Contin\'ua...}}                                                                                                               \\
+    \multicolumn{4}{r}{\textit{Contin\'ua...}}                                                                                                                                                                        \\
     \endfoot
     \bottomrule
     \endlastfoot
-    1                           & AS=normal AND PS=normal AND PD=normal     & Todos los indicadores primarios normales                & bajo                 \\
-    2                           & AS=normal AND PD=normal AND TC=normal     & Az\'ucar, presi\'on diast\'olica y temperatura normales & bajo                 \\
-    3                           & AS=elevada AND PD=normal                  & Glucemia ligeramente elevada sin hipertensi\'on         & medio                \\
-    4                           & PS=elevada AND AS=normal                  & Presi\'on sistólica alta sin problema de glucemia       & medio                \\
-    5                           & PD=elevada AND AS=normal                  & Presi\'on diast\'olica alta sin problema de glucemia    & medio                \\
-    6                           & Edad=avanzada AND AS=normal AND PD=normal & Edad $\geq 35$ a\~nos con par\'ametros normales         & medio                \\
-    7                           & TC=elevada                                & Temperatura subfebril: posible infecci\'on incipiente   & medio                \\
-    8                           & AS=alta                                   & Glucemia muy alta: indicador primario de alto riesgo    & alto                 \\
-    9                           & AS=elevada AND PD=elevada                 & Coexistencia de glucemia elevada e hipertensi\'on       & alto                 \\
-    10                          & AS=elevada AND PS=elevada                 & Az\'ucar elevada con presi\'on sist\'olica elevada      & alto                 \\
-    11                          & AS=elevada AND Edad=avanzada              & Glucemia elevada en paciente de edad avanzada           & alto                 \\
-    12                          & PD=alta                                   & Presi\'on diast\'olica muy alta: riesgo auton\'omo      & alto                 \\
-    13                          & PS=alta                                   & Presi\'on sist\'olica muy alta: riesgo auton\'omo       & alto                 \\
-    14                          & TC=fiebre                                 & Fiebre: riesgo de infecci\'on/sepsis                    & alto                 \\
-    15                          & Edad=avanzada AND PD=elevada              & Edad avanzada con presi\'on diast\'olica elevada        & alto                 \\
+    1                           & PS=elevada AND PD=alta AND AS=normal                                               & Hipertensi\'on sistolo-diast\'olica concurrente, riesgo de preeclampsia & alto                 \\
+    2                           & AS=alta AND PD=alta AND PS=alta                                                    & Triple combinaci\'on cr\'itica, emergencia obst\'etrica                 & alto                 \\
+    3                           & AS=alta AND FC=elevada                                                             & Glucemia cr\'itica con taquicardia, sobrecarga metab\'olico-card\'iaca  & alto                 \\
+    4                           & AS=elevada AND TC=normal AND Ed=adulta                                             & Glucemia elevada en edad adulta de mayor riesgo gestacional             & alto                 \\
+    5                           & AS=alta AND PD=alta AND Ed=adulta                                                  & Glucemia cr\'itica e hipertensi\'on diast\'olica en paciente adulta     & alto                 \\
+    6                           & AS=elevada AND FC=elevada AND TC=normal AND PD=alta                                & Cuatro indicadores concurrentes de estr\'es metab\'olico y vascular     & alto                 \\
+    7                           & Ed=avanzada AND AS=alta AND PD=alta                                                & Edad avanzada amplifica riesgo de glucemia cr\'itica e hipertensi\'on   & alto                 \\
+    8                           & AS=elevada AND TC=elevada AND Ed=joven                                             & Glucemia elevada con temperatura subfebril en paciente joven            & alto                 \\
+    9                           & Ed=avanzada AND AS=alta AND PS=normal                                              & Glucemia muy alta en edad avanzada, riesgo independiente                & alto                 \\
+    10                          & AS=elevada AND PD=elevada AND FC=elevada                                           & Glucemia, PD y FC elevadas simult\'aneamente                            & alto                 \\
+    11                          & TC=fiebre AND PD=normal AND Ed=adulta                                              & Fiebre en gestante adulta, indicativo de infecci\'on/sepsis             & alto                 \\
+    12                          & TC=elevada AND PS=elevada                                                          & Temperatura subfebril con hipertensi\'on sist\'olica                    & alto                 \\
+    13                          & PS=elevada AND PD=elevada AND Ed=joven                                             & Hipertensi\'on bilateral en paciente joven, riesgo vascular             & alto                 \\
+    14                          & AS=elevada AND Ed=avanzada AND FC=elevada                                          & Glucemia elevada con taquicardia en edad avanzada                       & alto                 \\
+    15                          & TC=elevada AND AS=normal AND PD=elevada AND Ed=adulta                              & TC y PD levemente elevadas en adulta, riesgo moderado                   & medio                \\
+    16                          & PD=normal AND PS=elevada AND TC=normal                                             & Solo presi\'on sist\'olica elevada sin otros factores                   & medio                \\
+    17                          & PS=normal AND Ed=adulta AND TC=elevada                                             & Temperatura subfebril en adulta, vigilancia requerida                   & medio                \\
+    18                          & PS=normal AND TC=elevada AND AS=normal AND FC=elevada                              & TC y FC elevadas sin hipertensi\'on ni glucemia alta                    & medio                \\
+    19                          & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Ed=joven AND FC=elevada    & Indicadores normales salvo FC leve en joven                             & bajo                 \\
+    20                          & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Ed=joven                   & Perfil completamente normal en paciente joven                           & bajo                 \\
+    21                          & AS=normal AND PD=elevada AND TC=normal AND PS=normal AND Ed=avanzada AND FC=normal & PD leve en avanzada, dem\'as par\'ametros normales                      & bajo                 \\
+    22                          & AS=normal AND PS=normal AND TC=normal AND Ed=avanzada                              & Par\'ametros normales en edad avanzada, riesgo base bajo                & bajo                 \\
+    23                          & AS=normal AND PS=normal AND TC=normal AND PD=elevada AND Ed=adulta AND FC=normal   & Solo PD levemente elevada en adulta sin factores adicionales            & bajo                 \\
+    24                          & AS=normal AND PS=normal AND TC=normal AND FC=elevada AND Ed=joven                  & FC leve en joven con todo lo dem\'as normal                             & bajo                 \\
+    25                          & AS=normal AND PS=normal AND TC=normal AND FC=normal                                & Cuatro indicadores primarios en rango normal                            & bajo                 \\
+    26                          & AS=normal AND PS=normal AND PD=elevada AND Ed=avanzada                             & PD leve en avanzada, sin temperatura ni glucemia alta                   & bajo                 \\
+    27                          & PS=normal AND AS=normal AND TC=fiebre AND FC=elevada                               & Fiebre con FC elevada pero sin hipertensi\'on ni glucemia alta          & bajo                 \\
+    28                          & AS=normal AND PS=normal AND TC=normal AND PD=normal                                & Todos los indicadores primarios en rango normal                         & bajo                 \\
 \end{longtable}
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 
-\textit{Nomenclatura: AS = az\'ucar en sangre, PS = presi\'on sist\'olica, PD = presi\'on diast\'olica, TC = temperatura corporal.}
+\textit{Nomenclatura: AS = az\'ucar en sangre, PS = presi\'on sist\'olica, PD = presi\'on diast\'olica, TC = temperatura corporal, FC = frecuencia card\'iaca, Ed = edad.}
 
 \subsubsection{Proceso de Inferencia Mamdani: Paso a Paso}
 
@@ -544,60 +549,6 @@ Finalmente, el \textbf{centroide} (centro de gravedad) del \'area agregada propo
 Se eligi\'o el m\'etodo del centroide sobre otras alternativas (bisecci\'on, MOM --- Mean Of Maximum) porque es el m\'as utilizado en la pr\'actica, produce resultados suaves y continuos ante peque\~nas variaciones en la entrada, y tiene una interpretaci\'on geom\'etrica intuitiva como el ``centro de peso'' de la distribuci\'on difusa resultante.
 
 Si todos los conjuntos de salida tienen activaci\'on cero (ning\'una regla se dispara), el sistema retorna un puntaje neutro de 50.0 como valor de respaldo.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-            \textbf{[IMAGEN: Diagrama del proceso Mamdani completo para un caso ejemplo. Mostrar: (1) fuzzificaci\'on de cada variable, (2) activaci\'on de reglas representativas, (3) conjuntos de salida recortados, (4) uni\'on agregada, (5) centroide marcado con flecha.]}
-            \vspace{3cm}}}
-    \caption{Proceso de inferencia Mamdani: fuzzificaci\'on, evaluaci\'on, agregaci\'on y defuzzificaci\'on}
-    \label{fig:proceso_mamdani}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
-\end{figure}
-
-\subsubsection{Implementación: Motor Vectorizado}
-
-El motor fue implementado con \textbf{procesamiento vectorizado} usando NumPy para permitir la evaluaci\'on eficiente de lotes completos de pacientes, lo cual es cr\'itico durante la fase de optimizaci\'on gen\'etica donde el sistema es evaluado miles de veces.
-
-\begin{lstlisting}[caption={Núcleo del motor de inferencia Mamdani (motor.py)}, label={lst:motor}]
-def inferir_lote(self, entradas):
-    """Clasifica un lote de casos de forma vectorizada."""
-    n = len(next(iter(entradas.values())))
-
-    # Paso 1: fuzzificar todas las variables
-    pertenencias = {}
-    for variable in VARIABLES_ENTRADA:
-        pertenencias[variable] = {}
-        universo = self.universos_entrada[variable]
-        valores = np.asarray(entradas[variable], dtype=float)
-        for categoria, curva in self.curvas_entrada[variable].items():
-            pertenencias[variable][categoria] = np.array(
-                [fuzz.interp_membership(universo, curva, v) for v in valores]
-            )
-
-    # Paso 2: evaluar reglas (AND=minimo, OR=maximo)
-    act_bajo = np.zeros(n)
-    act_medio = np.zeros(n)
-    act_alto = np.zeros(n)
-    for regla_var_cats, consecuente in self._reglas_compiladas:
-        fuerza = np.ones(n)
-        for variable, categoria in regla_var_cats:
-            fuerza = np.minimum(fuerza, pertenencias[variable][categoria])
-        np.maximum({"bajo": act_bajo, "medio": act_medio,
-                    "alto": act_alto}[consecuente], fuerza,
-                   out={"bajo": act_bajo, "medio": act_medio,
-                        "alto": act_alto}[consecuente])
-
-    # Paso 3: defuzzificar cada caso (centroide)
-    puntajes = np.array([
-        self._desfusificar({"bajo": float(act_bajo[i]),
-                            "medio": float(act_medio[i]),
-                            "alto": float(act_alto[i])})
-        for i in range(n)
-    ])
-    return {"puntajes": puntajes, "riesgos": [...], "activaciones": [...]}
-\end{lstlisting}
-
 % -----------------------------------------------------------
 \subsection{Algoritmo Genético}
 % -----------------------------------------------------------
@@ -931,12 +882,12 @@ La siguiente tabla compara el rendimiento del sistema difuso con los par\'ametro
 
 \begin{figure}[H]
     \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-            \textbf{[IMAGEN: Gr\'afica de l\'inea con el eje X = generaci\'on (0 a 60) y el eje Y = valor de fitness. Mostrar dos curvas: mejor fitness por generaci\'on y fitness promedio de la poblaci\'on. Marcar con punto la generaci\'on donde se alcanz\'o el mejor resultado (generaci\'on 52 aprox. con fitness = 0.703).]}
-            \vspace{3cm}}}
+    \includegraphics[width=0.85\textwidth]{picture/fitness.png}
     \caption{Evoluci\'on del fitness a lo largo de las 60 generaciones del algoritmo gen\'etico}
     \label{fig:evolucion_fitness}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+
+    \vspace{2pt}
+    {\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 El proceso de optimizaci\'on parti\'o de un fitness inicial de 0.566 (generaci\'on 0) y alcanz\'o su mejor valor de 0.703 en la generaci\'on 52, moment en que el MacroF1 en validaci\'on era de 0.663. El algoritmo se estabiliz\'o en la generaci\'on 60 por criterio de early stopping (20 generaciones sin mejora).
@@ -961,18 +912,18 @@ El sistema optimizado identifica correctamente el 75.6\% de los casos de alto ri
 
 \subsubsection{Variable m\'as Influyente}
 
-La estructura de las reglas (Tabla \ref{tab:reglas}) revela la jerarqu\'ia de importancia de las variables:
+La estructura de las reglas (Tabla \ref{tab:reglas}) revela la jerarqu\'ia de importancia de las variables. El conjunto de reglas refinado es m\'as sensible a combinaciones de factores concurrentes, lo que permite detectar riesgo en escenarios cl\'inicos que el dise\~no original no cubr\'ia:
 
 \begin{itemize}
-    \item \textbf{Az\'ucar en sangre:} Es el predictor m\'as fuerte. La regla 8 (\textit{si AS=alta $\Rightarrow$ alto riesgo}) se activa de forma aut\'onoma. Aparece en 6 de las 15 reglas.
-    \item \textbf{Presi\'on arterial (sist\'olica y diast\'olica):} Segunda en importancia. Cada una tiene una regla que la convierte en indicador de alto riesgo por s\'i sola (reglas 12 y 13).
-    \item \textbf{Temperatura corporal:} La fiebre tambi\'en activa alto riesgo de forma independiente (regla 14), por su asociaci\'on con sepsis.
-    \item \textbf{Frecuencia card\'iaca:} Variable de menor impacto. Solo tiene 2 categor\'ias y no genera alto riesgo por s\'i sola.
+    \item \textbf{Az\'ucar en sangre:} Es el predictor m\'as fuerte. Participa en la mayor\'ia de las reglas de alto riesgo, tanto de forma aut\'onoma como combinada con otros indicadores.
+    \item \textbf{Presi\'on arterial (sist\'olica y diast\'olica):} Segunda en importancia. El sistema es especialmente sensible a la coexistencia de presi\'on sist\'olica y diast\'olica elevadas, reflejando el criterio cl\'inico de preeclampsia.
+    \item \textbf{Temperatura corporal:} La fiebre activa alto riesgo de forma independiente por su asociaci\'on con infecci\'on y sepsis gestacional.
+    \item \textbf{Frecuencia card\'iaca:} Variable de menor impacto aislado, pero que amplifica el riesgo cuando aparece combinada con glucemia o temperatura elevadas.
 \end{itemize}
 
 \subsubsection{Casos Extremos}
 
-Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), la regla 8 se activa con fuerza 1.0 y el sistema produce directamente puntaje $\geq 75$ (alto riesgo), independientemente de los valores de las dem\'as variables. Esto refleja el criterio cl\'inico de que la hiperglucemia severa por s\'i sola es una emergencia obst\'etrica.
+Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), el sistema produce directamente puntaje $\geq 75$ (alto riesgo), independientemente de los valores de las dem\'as variables. Esto refleja el criterio cl\'inico de que la hiperglucemia severa por s\'i sola es una emergencia obst\'etrica.
 
 % -----------------------------------------------------------
 \subsection{Limitaciones}
@@ -983,7 +934,7 @@ Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), la regla 8 se activa
 
     \item \textbf{Origen geogr\'afico:} El dataset fue recolectado en zonas rurales de Bangladesh. Los rangos cl\'inicos y la prevalencia de las condiciones de riesgo pueden diferir en otras regiones o poblaciones, limitando la generalizabilidad del sistema.
 
-    \item \textbf{Reglas basadas en literatura general:} Las 15 reglas fueron dise\~nadas a partir de literatura m\'edica internacional y no fueron validadas por especialistas en obstetricia locales. Un proceso de validaci\'on con m\'edicos expertos fortalecer\'ia la base cl\'inica del sistema.
+    \item \textbf{Reglas basadas en literatura general:} Las 28 reglas fueron dise\~nadas a partir de literatura m\'edica internacional y no fueron validadas por especialistas en obstetricia locales. Un proceso de validaci\'on con m\'edicos expertos fortalecer\'ia la base cl\'inica del sistema.
 
     \item \textbf{Sin validaci\'on cl\'inica prospectiva:} El sistema no ha sido evaluado en condiciones de uso real con pacientes reales. Su uso en entornos cl\'inicos requer\'iria estudios prospectivos que comparen sus predicciones con diagn\'osticos m\'edicos y resultados perinatales.
 
