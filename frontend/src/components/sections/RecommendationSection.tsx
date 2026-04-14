@@ -146,6 +146,19 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
 
   return (
     <div className="space-y-6">
+      {result.sin_activacion && (
+        <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+          <div>
+            <p className="font-semibold">Ninguna regla se activo para este perfil</p>
+            <p className="mt-1 text-amber-700">
+              Los valores ingresados no coincidieron con ninguna regla aprendida por RIPPER.
+              El puntaje de 50 es un valor neutro por defecto, no una clasificacion clinica real.
+              Verifica que los valores ingresados sean correctos o consulta a un profesional.
+            </p>
+          </div>
+        </div>
+      )}
       <GlassPanel className="overflow-hidden p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

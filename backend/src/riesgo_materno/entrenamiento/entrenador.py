@@ -15,6 +15,7 @@ _lock_entrenamiento = threading.Lock()
 
 
 def obtener_resultado_entrenamiento(forzar_reentrenamiento=False, parametros=None):
+    """Devuelve el resultado de entrenamiento usando cache. Si forzar_reentrenamiento=True limpia el cache y reentrena."""
     with _lock_entrenamiento:
         if forzar_reentrenamiento:
             entrenar_y_guardar.cache_clear()
@@ -24,6 +25,7 @@ def obtener_resultado_entrenamiento(forzar_reentrenamiento=False, parametros=Non
 
 
 def obtener_membresias_optimizadas():
+    """Carga las membresias optimizadas desde disco si existen, o entrena desde cero."""
     resultado = cargar_modelo_optimizado()
     if resultado is not None:
         return resultado["membresias_optimizadas"], "modelo persistido en disco"
@@ -40,6 +42,7 @@ def entrenar_y_guardar(
     probabilidad_cruce=PARAMETROS_AG["probabilidad_cruce"],
     probabilidad_mutacion=PARAMETROS_AG["probabilidad_mutacion"],
 ):
+    """Carga datos, ejecuta el AG sobre validacion, guarda el mejor cromosoma en disco y devuelve el resultado completo."""
     parametros_override = {
         "tamano_poblacion": tamano_poblacion,
         "cantidad_hijos": cantidad_hijos,
@@ -123,6 +126,7 @@ def entrenar_con_progreso(parametros: dict, progress_callback=None):
 
 
 def cargar_modelo_optimizado():
+    """Lee modelo_optimizado.json y devuelve las membresias y metricas guardadas, o None si no existe."""
     ruta_modelo = Path(RUTA_MODELO_OPTIMIZADO)
     if not ruta_modelo.exists():
         return None
@@ -148,6 +152,7 @@ def cargar_modelo_optimizado():
 
 
 def guardar_modelo_optimizado(resultado):
+    """Serializa el mejor cromosoma, fitness, historial y tabla comparativa en modelo_optimizado.json."""
     mejor_individuo = resultado["mejor_individuo"]
     historial = resultado["historial"]
     tabla_comparativa = resultado["tabla_comparativa"]

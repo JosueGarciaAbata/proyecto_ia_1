@@ -22,6 +22,8 @@ export interface AjusteEntradaResponse {
 export interface PrediccionResponse {
   puntaje: number;
   riesgo: string;
+  // true cuando ninguna regla RIPPER activo — puntaje=50 es neutro, no un resultado clinico real
+  sin_activacion: boolean;
   sistema: string;
   origen_modelo: string;
   ajustes_entrada: AjusteEntradaResponse[];
@@ -47,6 +49,8 @@ export interface ExplicacionResponse {
   activaciones: Record<string, number>;
   puntaje: number;
   riesgo: string;
+  // true cuando ninguna regla RIPPER activo — puntaje=50 es neutro, no un resultado clinico real
+  sin_activacion: boolean;
   origen_modelo: string;
   ajustes_entrada: AjusteEntradaResponse[];
 }

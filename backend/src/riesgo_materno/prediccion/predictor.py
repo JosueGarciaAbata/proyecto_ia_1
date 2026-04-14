@@ -2,14 +2,11 @@ from ..entrenamiento.entrenador import obtener_membresias_optimizadas
 from ..logica_difusa.motor import SistemaDifusoMamdani
 from .validacion_entrada import construir_entrada_lote, validar_valores_entrada
 
-"""Contiene la lógica para predecir el riesgo materno utilizando un sistema difuso de Mamdani."""
 def predecir_caso(valores_entrada):
-    # Recordar: membrias_optimizadas -> funciones de pertenenecia.
+    """Predice el riesgo materno de un paciente usando el sistema difuso con membresias optimizadas por el AG."""
     membresias_optimizadas, origen_modelo = obtener_membresias_optimizadas()
     sistema = SistemaDifusoMamdani(membresias_optimizadas)
 
-    # Aqui hacemos el ajuste, es decir si llega una variable como 20.2 y tiene un ajute de 0.5, se ajusta a 20.0,
-    # y se guarda aquello para mostrarlo en la respuesta.
     entradas, ajustes = construir_entrada_lote(valores_entrada)
 
     inferencia = sistema.inferir_lote(entradas)
@@ -17,13 +14,14 @@ def predecir_caso(valores_entrada):
     return {
         "puntaje": float(inferencia["puntajes"][0]),
         "riesgo": str(inferencia["riesgos"][0]),
+        "sin_activacion": bool(inferencia["sin_activacion"][0]),
         "sistema": "optimizado entrenado desde el CSV original",
         "origen_modelo": origen_modelo,
         "ajustes_entrada": ajustes,
     }
 
-"""Retorna las curvas de membresía optimizadas del modelo actual, incluyendo el origen del modelo."""
 def obtener_curvas_membresia():
+    """Devuelve las curvas trapezoidales optimizadas de cada variable para visualizacion en el frontend."""
     membresias_optimizadas, origen_modelo = obtener_membresias_optimizadas()
     sistema = SistemaDifusoMamdani(membresias_optimizadas)
 
@@ -43,8 +41,8 @@ def obtener_curvas_membresia():
         "origen_modelo": origen_modelo,
     }
 
-"""Predice el riesgo de un paciente exponiendo todo el proceso difuso."""
 def predecir_caso_con_explicacion(valores_entrada):
+    """Predice el riesgo exponiendo pertenencias, reglas activadas y activaciones de cada nivel de riesgo."""
     membresias_optimizadas, origen_modelo = obtener_membresias_optimizadas()
     sistema = SistemaDifusoMamdani(membresias_optimizadas)
 
@@ -56,4 +54,5 @@ def predecir_caso_con_explicacion(valores_entrada):
         "entrada_validada": entradas,
         "origen_modelo": origen_modelo,
         "ajustes_entrada": ajustes,
+        "sin_activacion": resultado["sin_activacion"],
     }

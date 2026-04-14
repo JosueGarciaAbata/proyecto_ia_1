@@ -2,6 +2,7 @@ from ..logica_difusa.variables import ESPECIFICACIONES_VARIABLES, VARIABLES_ENTR
 
 
 def construir_entrada_lote(valores_entrada):
+    """Valida y convierte valores de entrada a formato de lote {variable: [valor]} para inferir_lote."""
     valores_validados, ajustes = validar_valores_entrada(valores_entrada)
     return (
         {variable: [valor] for variable, valor in valores_validados.items()},
@@ -10,6 +11,7 @@ def construir_entrada_lote(valores_entrada):
 
 
 def validar_valores_entrada(valores_entrada):
+    """Valida cada variable contra su dominio, satura valores cercanos al limite y rechaza los que esten muy fuera."""
     valores_validados = {}
     ajustes = []
     for variable in VARIABLES_ENTRADA:
@@ -39,6 +41,7 @@ def validar_valores_entrada(valores_entrada):
 
 
 def saturar_si_esta_cerca_del_limite(valor, minimo, maximo, tolerancia):
+    """Satura al limite si el valor esta dentro de la tolerancia, devuelve None si esta demasiado fuera."""
     # Decision conservadora para entrada individual:
     # si el valor queda ligeramente fuera del dominio operativo del sistema,
     # se satura al limite; si se aleja demasiado, se rechaza.

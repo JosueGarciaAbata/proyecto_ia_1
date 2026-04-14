@@ -7,15 +7,13 @@ from .metricas import crear_resumen_evaluacion
 
 
 def evaluar_cromosoma_en_splits(cromosoma, datos_por_split):
+    """Decodifica el cromosoma a membresias y evalua el sistema difuso en todos los splits."""
     membresias = decodificar_cromosoma(cromosoma)
     return evaluar_membresias_en_splits(membresias, datos_por_split)
 
 
-# Al final lo que queremos medir no es “qué bonito se ve el cromosoma”,
-# sino cómo se comporta el sistema difuso que ese cromosoma produce.
-
-# Recordemos que el cromosoma representa funciones de pertenencia.
 def evaluar_membresias_en_splits(membresias, datos_por_split):
+    “””Construye el sistema difuso con las membresias dadas y mide su desempeno en cada split.”””
     sistema = SistemaDifusoMamdani(membresias)
     resultados = {}
     for nombre_split, datos_split in datos_por_split.items():
@@ -24,6 +22,7 @@ def evaluar_membresias_en_splits(membresias, datos_por_split):
 
 
 def evaluar_sistema_en_split(sistema, datos_split):
+    """Infiere en lote sobre un split y devuelve resumen de metricas mas puntajes y riesgos predichos."""
     inferencia = sistema.inferir_lote(datos_split["entradas"])
     puntajes = inferencia["puntajes"]
     riesgos = inferencia["riesgos"]
@@ -38,6 +37,7 @@ def evaluar_sistema_en_split(sistema, datos_split):
 
 
 def crear_tabla_comparativa(base, optimizado):
+    """Compara metricas del sistema base vs optimizado en todos los splits, incluyendo delta de mejora."""
     tabla = pd.DataFrame(
         [
             {
@@ -72,5 +72,6 @@ def crear_tabla_comparativa(base, optimizado):
             },
         ]
     )
+    # delta = diferencia entre el sistema optimizado y el base — positivo significa mejora
     tabla["delta"] = tabla["optimizado"] - tabla["base"]
     return tabla
