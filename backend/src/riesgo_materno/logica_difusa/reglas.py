@@ -1,12 +1,11 @@
 # Reglas del sistema difuso Mamdani para riesgo materno.
 #
 # Carga las reglas aprendidas por RIPPER desde reglas_aprendidas.json.
-# Si no existe, usa las reglas manuales desde reglas_manuales.json.
 # Para regenerar las reglas: python -m src.riesgo_materno.entrenamiento.ripper
 
 import json
 
-from ..entrenamiento.modelo import RUTA_REGLAS_APRENDIDAS, RUTA_REGLAS_MANUALES
+from ..entrenamiento.modelo import RUTA_REGLAS_APRENDIDAS
 
 
 def _leer_json(ruta):
@@ -18,9 +17,12 @@ def _leer_json(ruta):
 
 
 def _cargar_reglas():
-    if RUTA_REGLAS_APRENDIDAS.exists():
-        return _leer_json(RUTA_REGLAS_APRENDIDAS)
-    return _leer_json(RUTA_REGLAS_MANUALES)
+    """Carga reglas aprendidas por RIPPER. Lanza error si no existen — ejecutar ripper.py primero."""
+    if not RUTA_REGLAS_APRENDIDAS.exists():
+        raise FileNotFoundError(
+            f"No se encontraron reglas aprendidas en {RUTA_REGLAS_APRENDIDAS}."
+        )
+    return _leer_json(RUTA_REGLAS_APRENDIDAS)
 
 
 # REGLAS es lo que consume el resto del sistema (motor.py, service.py).

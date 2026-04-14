@@ -18,19 +18,13 @@ class SistemaDifusoMamdani:
     """
 
     def __init__(self, membresias_entrada):
+        """Inicializa el motor con las membresias dadas, construye universos, curvas trapezoidales y compila reglas."""
         self.membresias_entrada = membresias_entrada
         self.puntaje_neutro = 50.0
-        
-        # Recordar: universo -> posibles valores de una variable
         self.universos_entrada = self._crear_universos_entrada()
         self.universo_salida = self._crear_universo_salida()
-
-        # Las funciones de pertenencai son la definicion maetmatica minima de la curva.
-        # Las curvas son el mecanismo real que convierte numeros exactso en significados difusos.
         self.curvas_entrada = self._crear_curvas_entrada()
         self.curvas_salida = self._crear_curvas_salida()
-        
-        # Pre-compilar reglas para evaluacion rapida
         self._reglas_compiladas = self._compilar_reglas()
 
     # -- Inferencia (vectorizada para velocidad) --
@@ -38,9 +32,7 @@ class SistemaDifusoMamdani:
         """Clasifica un lote de casos de forma vectorizada."""
         n = len(next(iter(entradas.values())))
 
-        # Paso 1: fusificar todas las variables de golpe
-        # pertenencias["edad"]["avanzada"] = [0.3]
-        
+        # Paso 1: fusificar — calcular grado de pertenencia de cada valor en cada categoria
         pertenencias = {}  # pertenencias[var][cat] = array de n floats
         for variable in VARIABLES_ENTRADA:
             pertenencias[variable] = {}
@@ -52,8 +44,7 @@ class SistemaDifusoMamdani:
                     dtype=float,
                 )
         
-        # Paso 2: evaluar reglas vectorizadamente
-        # Activacion; que tan fuerte quedo actividad esta salida despues de aplicar reglas.
+        # Paso 2: evaluar reglas — AND=minimo acumulativo, OR=maximo entre reglas
         act_bajo = np.zeros(n, dtype=float)
         act_medio = np.zeros(n, dtype=float)
         act_alto = np.zeros(n, dtype=float)
@@ -69,12 +60,15 @@ class SistemaDifusoMamdani:
 
         # Paso 3: desfusificar cada caso
         puntajes = np.empty(n, dtype=float)
+        sin_activacion = np.zeros(n, dtype=bool)
         for i in range(n):
             activaciones_i = {
                 "bajo": float(act_bajo[i]),
                 "medio": float(act_medio[i]),
                 "alto": float(act_alto[i]),
             }
+            # Si ninguna regla activo nada, todas las activaciones son 0
+            sin_activacion[i] = (act_bajo[i] == 0.0 and act_medio[i] == 0.0 and act_alto[i] == 0.0)
             puntajes[i] = self._desfusificar(activaciones_i)
 
         riesgos = np.array([puntaje_a_riesgo(p) for p in puntajes], dtype=object)
@@ -88,6 +82,7 @@ class SistemaDifusoMamdani:
             "puntajes": puntajes,
             "riesgos": riesgos,
             "activaciones": activaciones,
+            "sin_activacion": sin_activacion,
         }
 
     def inferir_con_explicacion(self, entradas):
@@ -145,12 +140,16 @@ class SistemaDifusoMamdani:
         # Paso 3: desfusificacion — centroide del area resultante
         puntaje = self._desfusificar(activaciones)
 
+        # Ninguna regla se activo si todas las activaciones son 0 — puntaje=50 es neutro, no clinico
+        sin_activacion = all(v == 0.0 for v in activaciones.values())
+
         return {
             "pertenencias":     pertenencias,
             "reglas_activadas": reglas_activadas,
             "activaciones":     activaciones,
             "puntaje":          float(puntaje),
             "riesgo":           puntaje_a_riesgo(puntaje),
+            "sin_activacion":   sin_activacion,
         }
 
     # -- Desfusificacion --
@@ -178,17 +177,20 @@ class SistemaDifusoMamdani:
 
     # -- Construccion de universos y curvas --
     def _crear_universos_entrada(self):
+        """Genera un array lineal de PUNTOS_GRAFICA valores entre los limites de cada variable de entrada."""
         universos = {}
         for variable, espec in ESPECIFICACIONES_VARIABLES.items():
-            minimo,  maximo = espec["limites"]
+            minimo, maximo = espec["limites"]
             universos[variable] = np.linspace(minimo, maximo, PUNTOS_GRAFICA)
         return universos
 
     def _crear_universo_salida(self):
+        """Genera el universo de la salida con PUNTOS_SALIDA valores — mas puntos para mejor precision en centroide."""
         minimo, maximo = SALIDA_DIFUSA["universo"]
         return np.linspace(minimo, maximo, PUNTOS_SALIDA)
 
     def _crear_curvas_entrada(self):
+        """Aplica trapmf a cada categoria de cada variable usando las membresias actuales para obtener curvas Y."""
         curvas = {}
         for variable, categorias in self.membresias_entrada.items():
             universo = self.universos_entrada[variable]
@@ -198,6 +200,7 @@ class SistemaDifusoMamdani:
         return curvas
 
     def _crear_curvas_salida(self):
+        """Genera las curvas trapezoidales de la salida — definidas manualmente, el AG no las optimiza."""
         curvas = {}
         for categoria, puntos in SALIDA_DIFUSA["categorias"].items():
             curvas[categoria] = fuzz.trapmf(self.universo_salida, puntos)

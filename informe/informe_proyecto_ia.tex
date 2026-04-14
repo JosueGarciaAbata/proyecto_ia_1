@@ -297,6 +297,22 @@ donde:
 
 La funci\'on trapezoidal fue elegida porque permite representar de forma natural rangos cl\'inicos con zonas de certeza plena (el n\'ucleo, donde la presi\'on es definitivamente ``alta'' sin ambig\"uedad) y zonas de transici\'on gradual (las rampas laterales, donde el cl\'inico puede no tener certeza absoluta).
 
+\paragraph{Por qué trapezoidal y no gaussiana o triangular}
+
+Las tres formas de funci\'on de membres\'ia m\'as usadas son triangular, gaussiana y trapezoidal. Se descartaron las dos primeras por las siguientes razones:
+
+\begin{itemize}
+    \item \textbf{Gaussiana $\mu(x) = e^{-\frac{(x-c)^2}{2\sigma^2}}$:} Su soporte es \textit{infinito}: nunca alcanza exactamente cero, por lo que cualquier valor ---incluso uno cl\'inicamente imposible--- contribuir\'ia con una membres\'ia no nula. Por ejemplo, una temperatura de 200~\textdegree{}F activar\'ia ligeramente la categor\'ia ``fiebre''. En un sistema m\'edico esto es inadmisible. Adem\'as, la gaussiana solo tiene 2 par\'ametros (centro y desviaci\'on est\'andar), lo que no permite representar una zona plana de certeza m\'axima: el n\'ucleo siempre colapsa a un \'unico punto.
+
+    \item \textbf{Triangular:} Es un caso especial del trapezoide con $b = c$, es decir, el n\'ucleo es un solo punto y la membri\'ia m\'axima (1.0) se alcanza solo en ese punto exacto. Los rangos cl\'inicos normales o patol\'ogicos son \textit{intervalos}, no valores puntuales: la presi\'on diast\'olica ``alta'' no es exactamente 95 mmHg sino cualquier valor entre 90 y 100 mmHg. La funci\'on triangular no puede representar este hecho sin perder informaci\'on.
+
+    \item \textbf{Trapezoidal:} Tiene \textbf{soporte finito} $[a, d]$ ---fuera de ese intervalo la membres\'ia es exactamente 0, lo que garantiza que valores imposibles no activen ninguna regla--- y un \textbf{n\'ucleo plano} $[b, c]$ que codifica directamente el rango cl\'inico de certeza m\'axima. Sus 4 par\'ametros ofrecen al algoritmo gen\'etico m\'as grados de libertad que las 2 de la gaussiana o las 3 del tri\'angulo, permitiendo un ajuste m\'as fino a la distribuci\'on del dataset.
+\end{itemize}
+
+\paragraph{Sistema difuso de tipo 1}
+
+El sistema implementado es un \textbf{sistema difuso de tipo~1} (T1-FLS, \textit{Type-1 Fuzzy Logic System}): los grados de membres\'ia son n\'umeros reales precisos en $[0, 1]$, sin incertidumbre de segundo orden. Existen sistemas de tipo~2 (T2-FLS) donde cada membres\'ia es a su vez un conjunto difuso (intervalo o distribuci\'on), m\'as adecuados cuando la incertidumbre sobre los propios par\'ametros del experto es significativa. Se opt\'o por tipo~1 por tres razones: (1)~el algoritmo gen\'etico ya optimiza autom\'aticamente los par\'ametros, reduciendo la necesidad de modelar incertidumbre sobre ellos; (2)~la interpretabilidad del sistema es mayor con membres\'ias escalares, que los m\'edicos pueden leer directamente como porcentajes de pertenencia; y (3)~la complejidad computacional de tipo~2 habr\'ia encarecido significativamente cada evaluaci\'on de fitness durante las miles de iteraciones del AG.
+
 \begin{figure}[H]
     \centering
     \fbox{\parbox{0.85\textwidth}{\centering\vspace{2.5cm}
@@ -498,6 +514,10 @@ PRISM (\textit{Programmed Rule Induction Systematically in Modules}) es un algor
 
 En una primera fase se aplic\'o la l\'ogica de PRISM de forma manual sobre el dataset discretizado, usando los umbrales cl\'inicos como puntos de corte. Se obtuvieron conjuntos de 25--30 reglas, la mayor\'ia con tres o cuatro antecedentes. Al evaluar el sistema difuso con estas reglas sobre el conjunto de validaci\'on, el MacroF1 fue \textbf{inferior a 0.50}, umbral inaceptable para un sistema de apoyo cl\'inico. Las reglas eran demasiado espec\'ificas: la coincidencia simult\'anea de tres o cuatro condiciones ocurr\'ia en muy pocos casos reales, dejando muchas instancias sin consecuente activado con fuerza suficiente.
 
+\paragraph{Discretizaci\'on previa al aprendizaje de reglas}
+
+RIPPER ---al igual que PRISM--- opera sobre atributos \textbf{categ\'oricos}, no sobre valores continuos. Antes de entrenar el clasificador, cada variable num\'erica fue convertida a su etiqueta ling\"u\'istica usando los mismos umbrales cl\'inicos con que se definieron las funciones de membres\'ia: por ejemplo, una edad de 17 se etiqueta ``joven'', una presi\'on diast\'olica de 93 mmHg se etiqueta ``alta''. Esta discretizaci\'on fue determinista (si el valor supera el umbral del n\'ucleo del trapezoide, se asigna esa categor\'ia) y se aplic\'o sobre el subconjunto de entrenamiento antes de alimentar los datos a RIPPER. El resultado es que las reglas aprendidas trabajan directamente con t\'erminos ling\"u\'isticos (``si az\'ucar = alta'') que luego pueden trasladarse sin ambig\"uedad al sistema difuso como antecedentes de las reglas.
+
 \paragraph{Segunda Etapa: Inducci\'on Asistida con RIPPER}
 
 En la segunda fase se emple\'o la biblioteca Python \texttt{wittgenstein}, que implementa el algoritmo \textbf{RIPPER} (\textit{Repeated Incremental Pruning to Produce Error Reduction}) de Cohen \cite{cohen1995}. RIPPER extiende PRISM con una fase de \textbf{poda} que elimina condiciones redundantes y reduce el sobreajuste: (1)~\textit{Fase de crecimiento:} igual que PRISM, construye una regla a\~nadiendo condiciones que maximizan la cobertura. (2)~\textit{Fase de poda:} evalúa qu\'e condiciones pueden eliminarse sin degradar el error en un conjunto de validaci\'on interno, produciendo reglas m\'as cortas y generalizables. (3)~\textit{Iteraci\'on:} repite construcci\'on-poda hasta que no se obtengan mejoras. La aplicaci\'on de RIPPER produjo reglas con mayor cobertura y menor especificidad, que fueron revisadas cl\'inicamente para verificar coherencia m\'edica y depuradas para eliminar las sin justificaci\'on independiente. El resultado son las \textbf{15 reglas} finales.
@@ -588,7 +608,7 @@ Finalmente, el \textbf{centroide} (centro de gravedad) del \'area agregada propo
 
 Se eligi\'o el m\'etodo del centroide sobre otras alternativas (bisecci\'on, MOM --- Mean Of Maximum) porque es el m\'as utilizado en la pr\'actica, produce resultados suaves y continuos ante peque\~nas variaciones en la entrada, y tiene una interpretaci\'on geom\'etrica intuitiva como el ``centro de peso'' de la distribuci\'on difusa resultante.
 
-Si todos los conjuntos de salida tienen activaci\'on cero (ning\'una regla se dispara), el sistema retorna un puntaje neutro de 50.0 como valor de respaldo.
+Si todos los conjuntos de salida tienen activaci\'on cero (ninguna regla se dispara), el sistema retorna un puntaje neutro de \textbf{50.0} como valor de respaldo. Este caso ---denominado internamente \texttt{sin\_activaci\'on}--- ocurre cuando el perfil de la paciente no coincide con ninguno de los antecedentes de las 15 reglas. El puntaje 50.0 cae en la zona de riesgo medio por los umbrales de clasificaci\'on, pero \textbf{no debe interpretarse como un resultado cl\'inico}: el sistema no tuvo informaci\'on suficiente para emitir un juicio. La interfaz web detecta esta condici\'on y muestra un aviso expl\'icito al usuario indicando que el perfil no activ\'o ninguna regla y que el resultado no constituye una clasificaci\'on fiable.
 
 \begin{figure}[H]
     \centering
@@ -730,11 +750,7 @@ A continuaci\'on se justifica cada t\'ermino:
 Para cada clase $c$, se definen primero \textbf{Precisi\'on} y \textbf{Recall} a partir de la matriz de confusi\'on:
 
 \begin{equation}
-<<<<<<< HEAD
 \text{Precision}_c = \frac{TP_c}{TP_c + FP_c}, \qquad \text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
-=======
-    F_1^{macro} = \frac{1}{3}\sum_{c \in \{bajo, medio, alto\}} \frac{2 \cdot \text{Precision}_c \cdot \text{Recall}_c}{\text{Precision}_c + \text{Recall}_c}
->>>>>>> a9337484268012da3622eb46139c728bc4fcbbf8
 \end{equation}
 
 donde $TP_c$ son los verdaderos positivos (casos de clase~$c$ correctamente clasificados), $FP_c$ los falsos positivos (otras clases predichas como~$c$) y $FN_c$ los falsos negativos (casos de clase~$c$ predichos como otra). El \textbf{F1-Score por clase} es la media arm\'onica de ambas m\'etricas, que penaliza severamente cuando cualquiera de las dos es baja:
@@ -1125,7 +1141,6 @@ Cuando az\'ucar en sangre = 19 mmol/L (m\'aximo del rango), la regla 8 se activa
         \bibitem{mamdani1975}
         E. H. Mamdani and S. Assilian, ``An Experiment in Linguistic Synthesis with a Fuzzy Logic Controller,'' \textit{Int. J. Man-Mach. Stud.}, vol. 7, no. 1, pp. 1--13, 1975.
 
-<<<<<<< HEAD
 \bibitem{whelton2018}
 P. K. Whelton et al., ``2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults,'' \textit{J. Am. Coll. Cardiol.}, vol. 71, no. 19, pp. e127--e248, 2018. DOI: 10.1016/j.jacc.2017.11.006.
 
@@ -1169,9 +1184,6 @@ J. Cendrowska, ``PRISM: An Algorithm for Inducing Modular Rules,'' \textit{Int. 
 W. W. Cohen, ``Fast Effective Rule Induction,'' in \textit{Proc. 12th Int. Conf. Mach. Learn. (ICML 1995)}, Tahoe City, CA, USA, Jul. 1995, pp. 115--123.
 
 \end{thebibliography}
-=======
-    \end{thebibliography}
->>>>>>> a9337484268012da3622eb46139c728bc4fcbbf8
 }
 
 \end{document}

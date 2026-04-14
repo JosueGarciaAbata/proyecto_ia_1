@@ -46,7 +46,7 @@ def reparar_trapecio(trapecio, limite_inferior, limite_superior, epsilon):
     )
     a, b, c, d = trapecio
 
-    ancho_minimo = max(epsilon * 0.5, 1e-6)
+    ancho_minimo = max(epsilon * 0.5,0.000001)
 
     if d - a < ancho_minimo:
         # Si el soporte es muy pequeno, se abre un poco desde el centro.
@@ -149,7 +149,9 @@ def reparar_bloque_variable(bloque, limite_inferior, limite_superior, epsilon):
     ordenar categorias, ajustar vecinas y reparar otra vez.
     """
     bloque = np.clip(np.asarray(bloque, dtype=float), limite_inferior, limite_superior)
+    
     bloque = np.sort(bloque, axis=1)
+    
     bloque = np.asarray(
         [reparar_trapecio(fila, limite_inferior, limite_superior, epsilon) for fila in bloque],
         dtype=float,

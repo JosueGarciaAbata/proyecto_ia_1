@@ -16,7 +16,7 @@ MAX_FRACCION_SOLAPAMIENTO = 0.30
 # ---------------------------------------------------------------------------
 
 def _penalizacion_hueco(izquierda, derecha, rango_variable):
-    """Mide si hay espacio vacio entre dos trapecios vecinos.
+    """Mide el hueco entre dos trapecios vecinos normalizado por el rango — zona sin pertenencia activa.
 
     Hay hueco cuando el trapecio izquierdo termina antes de que empiece el derecho.
     Si se tocan o se solapan, la penalizacion es 0.
@@ -29,7 +29,7 @@ def _penalizacion_hueco(izquierda, derecha, rango_variable):
 
 
 def _penalizacion_solapamiento_excesivo(izquierda, derecha, rango_variable):
-    """Mide si dos trapecios vecinos se montan mas de lo permitido.
+    """Mide el exceso de solapamiento sobre el maximo permitido (30%) normalizado por el rango.
 
     Un poco de solapamiento es util porque evita cortes bruscos entre categorias.
     El problema aparece cuando se superponen demasiado y dejan de distinguirse bien.
@@ -49,7 +49,7 @@ def _penalizacion_solapamiento_excesivo(izquierda, derecha, rango_variable):
 # ---------------------------------------------------------------------------
 
 def calcular_penalizacion_interpretabilidad(cromosoma):
-    """Resume que tan claras y ordenadas quedaron las funciones de membresia.
+    """Calcula penalizacion por huecos y solapamiento excesivo entre categorias vecinas — penaliza trapecios poco interpretables.
 
     Para cada variable revisa pares de trapecios vecinos y calcula dos cosas:
     si hay huecos y si hay demasiado solapamiento.
@@ -95,7 +95,7 @@ def calcular_penalizacion_interpretabilidad(cromosoma):
 
 # Desviacion: cuanto se alejo del diseno experto original.
 def calcular_penalizacion_desviacion(cromosoma, cromosoma_base, rangos_genes):
-    """Mide que tan distinto es el cromosoma frente al cromosoma base.
+    """Mide desviacion promedio gen a gen respecto al cromosoma base — penaliza alejarse del diseno clinico original.
 
     Compara gen por gen, toma la diferencia absoluta y la divide por el rango
     de cada gen para que todos aporten en la misma escala.

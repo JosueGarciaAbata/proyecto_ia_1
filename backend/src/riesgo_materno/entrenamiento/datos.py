@@ -10,6 +10,7 @@ from .modelo import (
 
 
 def cargar_datos(ruta_csv):
+    """Lee el CSV, renombra columnas al formato interno y valida que no falten datos."""
     tabla = pd.read_csv(ruta_csv)
     columnas_necesarias = list(MAPA_COLUMNAS_CSV.values()) + [COLUMNA_RIESGO_CSV]
     faltantes = [columna for columna in columnas_necesarias if columna not in tabla.columns]
@@ -34,6 +35,7 @@ def cargar_datos(ruta_csv):
 
 
 def dividir_datos_estratificados(tabla):
+    """Divide el dataset en entrenamiento/validacion/prueba manteniendo proporciones de clase en cada split."""
     validar_proporciones()
     proporcion_temporal = PROPORCIONES_SPLIT["validacion"] + PROPORCIONES_SPLIT["prueba"]
 
@@ -58,6 +60,7 @@ def dividir_datos_estratificados(tabla):
 
 
 def convertir_split_a_diccionario(tabla_split):
+    """Convierte un DataFrame de split a dict {entradas: arrays por variable, riesgos: array de etiquetas}."""
     return {
         "entradas": {
             variable: tabla_split[variable].to_numpy(dtype=float)
@@ -68,6 +71,7 @@ def convertir_split_a_diccionario(tabla_split):
 
 
 def resumir_splits(splits):
+    """Genera una tabla con el tamaño y conteo por clase de cada split."""
     filas = []
     for nombre_split, tabla_split in splits.items():
         conteos = tabla_split["riesgo"].value_counts().reindex(ETIQUETAS_RIESGO, fill_value=0)
@@ -84,12 +88,14 @@ def resumir_splits(splits):
 
 
 def validar_proporciones():
+    """Verifica que las proporciones de split sumen exactamente 1.0."""
     total = sum(PROPORCIONES_SPLIT.values())
     if abs(total - 1.0) > 1e-9:
         raise ValueError("Las proporciones de entrenamiento, validacion y prueba deben sumar 1.")
 
 
 def quitar_registros_con_frecuencia_cardiaca_erronea(datos):
+    """Elimina las 2 filas del dataset con frecuencia cardiaca=7, valor erroneo del CSV original."""
     # Limpieza puntual del dataset original:
     # existen 2 filas con frecuencia cardiaca igual a 7, valor que no debe
     # participar en el entrenamiento ni en la optimizacion.

@@ -51,6 +51,7 @@ class Individuo:
 
 
 def ejecutar_algoritmo_genetico(datos_validacion, parametros_override=None, progress_callback=None):
+    """Corre el AG sobre datos de validacion y devuelve el mejor individuo y el historial por generacion."""
     parametros = {**PARAMETROS_AG, **(parametros_override or {})}
     evaluaciones_cache = {}
     historial = []
@@ -158,6 +159,7 @@ def ejecutar_algoritmo_genetico(datos_validacion, parametros_override=None, prog
 
 
 def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE):
+    """Repara el cromosoma, infiere sobre validacion y calcula fitness = macro_f1 + recall_alto - penalizaciones."""
     cromosoma_reparado = reparar_cromosoma(cromosoma)
     if np.isnan(cromosoma_reparado).any():
         return Individuo(cromosoma_reparado, FITNESS_INVALIDO, 0.0, 0.0, 1.0, 1.0)
@@ -176,6 +178,10 @@ def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE
         RANGOS_GENES,
     )
 
+    # macro_f1: promedio del F1 de las 3 clases (bajo/medio/alto) con igual peso
+    # recall_alto: fraccion de casos reales de alto riesgo que el sistema detecto — tiene peso propio por asimetria de costos clinicos
+    # penalizacion_interpretabilidad: penaliza trapecios con huecos o solapamiento excesivo — funciones dificiles de explicar
+    # penalizacion_desviacion: penaliza alejarse demasiado del diseno clinico original (cromosoma base)
     fitness = (
         PESOS_FITNESS["macro_f1"] * macro_f1
         + PESOS_FITNESS["recall_alto"] * recall_alto
@@ -194,6 +200,7 @@ def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE
 
 
 def inicializar_poblacion(tamano=None):
+    """Genera poblacion inicial: 1 cromosoma base + 65% perturbados con ruido gaussiano + 35% aleatorios."""
     if tamano is None:
         tamano = PARAMETROS_AG["tamano_poblacion"]
 
@@ -217,6 +224,7 @@ def inicializar_poblacion(tamano=None):
 
 
 def cruce_aritmetico(padres, tamano_descendencia, instancia_ga):
+    """Combina pares de padres con mezcla ponderada aleatoria por gen (lambda en [0.25, 0.75]) para generar hijos."""
     descendencia = []
     cantidad_genes = padres.shape[1]
     indice_padre = 0
@@ -246,6 +254,7 @@ def cruce_aritmetico(padres, tamano_descendencia, instancia_ga):
 
 
 def mutacion_gaussiana(descendencia, instancia_ga):
+    """Agrega ruido gaussiano escalado por el rango de cada gen a los genes seleccionados por la mascara de mutacion."""
     descendencia_mutada = np.asarray(descendencia, dtype=float).copy()
     sigma = SIGMA_MUTACION * RANGOS_GENES
 
@@ -267,4 +276,5 @@ def mutacion_gaussiana(descendencia, instancia_ga):
 
 
 def crear_clave_solucion(solucion):
+    """Convierte un cromosoma a bytes para usarlo como clave en el cache de evaluaciones."""
     return np.asarray(solucion, dtype=np.float64).round(8).tobytes()

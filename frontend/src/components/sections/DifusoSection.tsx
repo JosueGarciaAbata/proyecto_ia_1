@@ -1,7 +1,7 @@
 import ReactECharts from "echarts-for-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { BookOpen, LoaderCircle } from "lucide-react";
+import { AlertTriangle, BookOpen, List, LoaderCircle } from "lucide-react";
 import {
   buildClinicalNarrative,
   buildRuleNarrative,
@@ -9,8 +9,10 @@ import {
   getFieldLabel,
   getRiskUi,
   obtenerDefinicionesDifusas,
+  obtenerReglasDifusas,
   type ExplicacionResponse,
   type FuzzyDefinicionesResponse,
+  type FuzzyReglasResponse,
 } from "../../lib/riesgoMaterno";
 import { generateMembershipSeries } from "../../lib/membership";
 import { ChartPanel } from "../ui/ChartPanel";
@@ -41,6 +43,8 @@ export function DifusoSection({ explanationResult }: DifusoSectionProps) {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const variableNames = definitions ? Object.keys(definitions.variables) : [];
   const [selectedVariable, setSelectedVariable] = useState<string>("");
+  const [reglasData, setReglasData] = useState<FuzzyReglasResponse | null>(null);
+  const [showReglas, setShowReglas] = useState(false);
 
   useEffect(() => {
     obtenerDefinicionesDifusas()
@@ -52,6 +56,14 @@ export function DifusoSection({ explanationResult }: DifusoSectionProps) {
       .catch((e: Error) => setFetchError(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (showReglas && !reglasData) {
+      obtenerReglasDifusas()
+        .then(setReglasData)
+        .catch(() => {});
+    }
+  }, [showReglas, reglasData]);
 
   return (
     <section className="section-anchor pt-10" id="difuso">
@@ -80,11 +92,84 @@ export function DifusoSection({ explanationResult }: DifusoSectionProps) {
             explanationResult={explanationResult}
           />
 
+          {/* Tabla de todas las reglas aprendidas por RIPPER */}
+          <div className="mt-6">
+            <button
+              onClick={() => setShowReglas((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-cyan-300 hover:bg-cyan-50"
+            >
+              <List className="h-4 w-4 text-cyan-600" />
+              {showReglas ? "Ocultar reglas RIPPER" : "Ver todas las reglas RIPPER"}
+              {reglasData && (
+                <span className="rounded-full bg-cyan-100 px-2 py-0.5 text-xs font-semibold text-cyan-700">
+                  {reglasData.total}
+                </span>
+              )}
+            </button>
+
+            {showReglas && reglasData && (
+              <GlassPanel className="mt-3 p-5 sm:p-6">
+                <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80 mb-4">
+                  Reglas aprendidas por RIPPER — {reglasData.total} reglas IF-THEN
+                </div>
+                <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
+                  {reglasData.reglas.map((regla) => {
+                    const riskUi = getRiskUi(regla.consecuente);
+                    return (
+                      <div
+                        key={regla.numero}
+                        className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200/70 bg-white/90 px-4 py-3 text-sm"
+                      >
+                        <span className="shrink-0 rounded-full border border-cyan-300/30 bg-cyan-50 px-2.5 py-0.5 text-xs font-semibold text-cyan-700">
+                          #{regla.numero}
+                        </span>
+                        <span className="text-slate-500 text-xs">IF</span>
+                        {regla.antecedentes.map((ant, i) => (
+                          <span key={i} className="flex items-center gap-1 text-xs">
+                            <span className="font-medium text-slate-700">{getFieldLabel(ant.variable)}</span>
+                            <span className="text-slate-400">=</span>
+                            <span className="rounded-full bg-sky-50 px-2 py-0.5 font-mono text-sky-700">{ant.categoria}</span>
+                            {i < regla.antecedentes.length - 1 && (
+                              <span className="text-slate-400 ml-1">AND</span>
+                            )}
+                          </span>
+                        ))}
+                        <span className="text-slate-500 text-xs ml-1">THEN</span>
+                        <span
+                          className="rounded-full border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide"
+                          style={{
+                            borderColor: `${riskUi.accent}55`,
+                            color: riskUi.accent,
+                            backgroundColor: `${riskUi.accent}18`,
+                          }}
+                        >
+                          {riskUi.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </GlassPanel>
+            )}
+          </div>
+
           {explanationResult ? (
             <>
+              {explanationResult.sin_activacion && (
+                <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+                  <div>
+                    <p className="font-semibold">Ninguna regla se activo para este perfil</p>
+                    <p className="mt-1 text-amber-700">
+                      Los valores ingresados no coincidieron con ninguna regla aprendida.
+                      El puntaje de 50 es un valor neutro por defecto, no una clasificacion clinica real.
+                    </p>
+                  </div>
+                </div>
+              )}
               <FuzzificationPanel result={explanationResult} />
-              <AggregacionPanel result={explanationResult} />
               <RulesPanel result={explanationResult} />
+              <AggregacionPanel result={explanationResult} />
             </>
           ) : (
             <GlassPanel className="mt-6 p-6 text-sm text-slate-500">
@@ -408,6 +493,35 @@ function AggregacionPanel({ result }: { result: ExplicacionResponse }) {
             }}
           >
             {getRiskUi(result.riesgo).label}
+          </div>
+
+          {/* Barra visual del centroide sobre el universo de salida 0-100 */}
+          <div className="mt-2">
+            <div className="mb-1 flex justify-between text-xs text-slate-400">
+              <span>0</span>
+              <span>40</span>
+              <span>65</span>
+              <span>100</span>
+            </div>
+            {/* Zonas coloreadas: bajo=verde, medio=ambar, alto=rojo */}
+            <div className="relative h-4 w-full overflow-hidden rounded-full flex">
+              <div className="h-full bg-emerald-200" style={{ width: "40%" }} />
+              <div className="h-full bg-amber-200" style={{ width: "25%" }} />
+              <div className="h-full bg-rose-200" style={{ width: "35%" }} />
+              {/* Marcador del centroide */}
+              <motion.div
+                className="absolute top-0 h-full w-1 rounded-full bg-slate-800 shadow"
+                style={{ left: `${result.puntaje}%` }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+              />
+            </div>
+            <div className="mt-1 flex justify-between text-xs text-slate-400">
+              <span>Bajo</span>
+              <span>Medio</span>
+              <span>Alto</span>
+            </div>
           </div>
         </div>
       </div>
