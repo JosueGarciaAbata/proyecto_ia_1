@@ -28,6 +28,7 @@
 *.ilg
 *.ind
 *.dvi
+*.pdf
 
 # ── Archivos temporales del editor ─────────────────────────────────────────
 *~
@@ -36,5 +37,3 @@
 texput.log
 history.txt
 
-# ── PDFs de referencia / descargados (no son salidas del proyecto) ──────────
-bussiness-case/Informe_del_Proyecto*.pdf
