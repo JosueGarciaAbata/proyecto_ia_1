@@ -418,7 +418,7 @@ export function OptimizationSection() {
             <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">Evaluacion comparativa</div>
             <h2 className="mt-1 text-xl font-semibold text-slate-900">Base vs optimizado</h2>
             <p className="mt-1 text-sm text-slate-500">
-              Comparacion de metricas entre el cromosoma base y el optimizado — ambos ya persistidos en disco. El optimizado corresponde al ultimo entrenamiento guardado.
+              Comparacion de metricas entre el cromosoma base y el optimizado sobre el split de validacion. El optimizado corresponde al ultimo entrenamiento guardado.
             </p>
           </GlassPanel>
           <div className="relative">
@@ -737,7 +737,7 @@ function ComparisonPanel({ comparacion }: { comparacion: GAComparacionResponse }
       {/* Gráfica agrupada */}
       <ChartPanel
         title="Macro F1, Recall alto y Fitness"
-        subtitle="Cromosoma base (gris) vs modelo optimizado (azul) — split de prueba."
+        subtitle="Cromosoma base (gris) vs modelo optimizado (azul) - split de validacion."
       >
         <div className="h-[300px]">
           <ReactECharts notMerge={true} lazyUpdate={false} option={chartOption} style={{ height: "100%", width: "100%" }} />
@@ -831,3 +831,4 @@ function ChromosomeTable({
     </GlassPanel>
   );
 }
+

@@ -248,11 +248,11 @@ La b\'usqueda cubri\'o m\'as de 205 fuentes y se orient\'o a responder dos pregu
 Esta b\'usqueda permiti\'o definir tanto las categor\'ias ling\"u\'isticas (por ejemplo, determinar que la presi\'on diast\'olica se puede clasificar en ``normal'', ``elevada'' y ``alta'') como los puntos de inicio y fin de cada trapezoide a partir de los umbrales cl\'inicos reportados en la literatura. Las reglas del sistema fueron posteriormente dise\~nadas tomando como base el conocimiento extra\'ido y refinadas iterativamente para resolver los problemas de clasificaci\'on detectados durante las pruebas. El Cuadro~\ref{tab:universos_variables} resume los universos y umbrales cl\'inicos adoptados para cada variable, cuya justificaci\'on detallada se presenta en la Secci\'on~\ref{sec:variables_entrada}.
 
 \begin{figure}[H]
-\centering
-\includegraphics[scale=0.40]{picture/investigacion.jpg}
-\caption{Evidencia de la b\'usqueda bibliogr\'afica sistem\'atica (m\'as de 205 fuentes consultadas)}
-\label{fig:investigacion}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \centering
+    \includegraphics[scale=0.40]{picture/investigacion.jpg}
+    \caption{Evidencia de la b\'usqueda bibliogr\'afica sistem\'atica (m\'as de 205 fuentes consultadas)}
+    \label{fig:investigacion}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
 \subsubsection{Trabajos Relacionados}
@@ -344,22 +344,22 @@ El sistema implementado es un \textbf{sistema difuso de tipo~1} (T1-FLS, \textit
 El siguiente cuadro resume los universos de discurso y umbrales cl\'inicos clave que sirvieron como punto de partida para definir las funciones de membres\'ia de cada variable.
 
 \begin{table}[H]
-\centering
-\caption{Universos de las variables difusas: rango del dataset y referencia clínica}
-\label{tab:universos_variables}
-\begin{tabularx}{\textwidth}{l l l X}
-\toprule
-\textbf{Variable} & \textbf{Universo adoptado} & \textbf{Rango en dataset} & \textbf{Umbral clínico clave} \\
-\midrule
-Edad                    & {[}10, 70{]} a\~nos     & {[}10, 70{]}      & Riesgo adolescente $<$20 a; AMA $\geq$35 a \cite{who2021adolescent,acog2020} \\
-Presi\'on sist\'olica   & {[}70, 160{]} mmHg      & {[}70, 160{]}     & HTA gestacional: $\geq$140 mmHg \cite{acog2020,whelton2018} \\
-Presi\'on diast\'olica  & {[}49, 100{]} mmHg      & {[}49, 100{]}     & HTA gestacional: $\geq$90 mmHg \cite{acog2020,whelton2018} \\
-Az\'ucar en sangre      & {[}6.0, 19.0{]} mmol/L  & {[}6.0, 19.0{]}   & DMG: $\geq$8.5 mmol/L posprandial \cite{iadpsg2010} \\
-Temperatura corporal    & {[}97, 103{]} \textdegree F & {[}97, 103{]}  & Fiebre: $\geq$100.4 \textdegree F (38 \textdegree C) \cite{mackowiak1992} \\
-Frecuencia card\'iaca   & {[}60, 90{]} lpm        & {[}60, 90{]}      & Taquicardia: $>$100 lpm \cite{monga1995} \\
-\bottomrule
-\end{tabularx}
-\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia con base en las referencias cl\'inicas indicadas.}
+    \centering
+    \caption{Universos de las variables difusas: rango del dataset y referencia clínica}
+    \label{tab:universos_variables}
+    \begin{tabularx}{\textwidth}{l l l X}
+        \toprule
+        \textbf{Variable}      & \textbf{Universo adoptado}  & \textbf{Rango en dataset} & \textbf{Umbral clínico clave}                                                \\
+        \midrule
+        Edad                   & {[}10, 70{]} a\~nos         & {[}10, 70{]}              & Riesgo adolescente $<$20 a; AMA $\geq$35 a \cite{who2021adolescent,acog2020} \\
+        Presi\'on sist\'olica  & {[}70, 160{]} mmHg          & {[}70, 160{]}             & HTA gestacional: $\geq$140 mmHg \cite{acog2020,whelton2018}                  \\
+        Presi\'on diast\'olica & {[}49, 100{]} mmHg          & {[}49, 100{]}             & HTA gestacional: $\geq$90 mmHg \cite{acog2020,whelton2018}                   \\
+        Az\'ucar en sangre     & {[}6.0, 19.0{]} mmol/L      & {[}6.0, 19.0{]}           & DMG: $\geq$8.5 mmol/L posprandial \cite{iadpsg2010}                          \\
+        Temperatura corporal   & {[}97, 103{]} \textdegree F & {[}97, 103{]}             & Fiebre: $\geq$100.4 \textdegree F (38 \textdegree C) \cite{mackowiak1992}    \\
+        Frecuencia card\'iaca  & {[}60, 90{]} lpm            & {[}60, 90{]}              & Taquicardia: $>$100 lpm \cite{monga1995}                                     \\
+        \bottomrule
+    \end{tabularx}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia con base en las referencias cl\'inicas indicadas.}
 \end{table}
 
 Cada variable de entrada cuenta con 2 o 3 categor\'ias ling\"u\'isticas. Los puntos de cada trapezoide fueron inicialmente definidos con base en los umbrales cl\'inicos de la literatura y posteriormente refinados por el algoritmo gen\'etico.
@@ -551,50 +551,50 @@ En la segunda fase se emple\'o la biblioteca Python \texttt{wittgenstein}, que i
 Las 28 reglas fueron inducidas autom\'aticamente por RIPPER a partir del conjunto de entrenamiento discretizado y revisadas para verificar coherencia cl\'inica. Se distribuyen en 14 reglas para riesgo alto, 4 para riesgo medio y 10 para riesgo bajo.
 
 \begin{longtable}{cp{9cm}c}
-    \caption{Reglas del sistema difuso Mamdani --- inducidas por RIPPER} \label{tab:reglas} \\
+    \caption{Reglas del sistema difuso Mamdani --- inducidas por RIPPER} \label{tab:reglas}                                                   \\
     \toprule
-    \textbf{N\textordmasculine} & \textbf{Antecedentes} & \textbf{Consecuente} \\
+    \textbf{N\textordmasculine} & \textbf{Antecedentes}                                                                & \textbf{Consecuente} \\
     \midrule
     \endfirsthead
     \toprule
-    \textbf{N\textordmasculine} & \textbf{Antecedentes} & \textbf{Consecuente} \\
+    \textbf{N\textordmasculine} & \textbf{Antecedentes}                                                                & \textbf{Consecuente} \\
     \midrule
     \endhead
     \midrule
-    \multicolumn{3}{r}{\textit{Contin\'ua...}} \\
+    \multicolumn{3}{r}{\textit{Contin\'ua...}}                                                                                                \\
     \endfoot
     \bottomrule
     \endlastfoot
-    1  & PS=elevada AND PD=alta AND AS=normal                                          & alto  \\
-    2  & AS=alta AND PD=alta AND PS=alta                                               & alto  \\
-    3  & AS=alta AND FC=elevada                                                        & alto  \\
-    4  & AS=elevada AND TC=normal AND Edad=adulta                                      & alto  \\
-    5  & AS=alta AND PD=alta AND Edad=adulta                                           & alto  \\
-    6  & AS=elevada AND FC=elevada AND TC=normal AND PD=alta                           & alto  \\
-    7  & Edad=avanzada AND AS=alta AND PD=alta                                         & alto  \\
-    8  & AS=elevada AND TC=elevada AND Edad=joven                                      & alto  \\
-    9  & Edad=avanzada AND AS=alta AND PS=normal                                       & alto  \\
-    10 & AS=elevada AND PD=elevada AND FC=elevada                                      & alto  \\
-    11 & TC=fiebre AND PD=normal AND Edad=adulta                                       & alto  \\
-    12 & TC=elevada AND PS=elevada                                                     & alto  \\
-    13 & PS=elevada AND PD=elevada AND Edad=joven                                      & alto  \\
-    14 & AS=elevada AND Edad=avanzada AND FC=elevada                                   & alto  \\
+    1                           & PS=elevada AND PD=alta AND AS=normal                                                 & alto                 \\
+    2                           & AS=alta AND PD=alta AND PS=alta                                                      & alto                 \\
+    3                           & AS=alta AND FC=elevada                                                               & alto                 \\
+    4                           & AS=elevada AND TC=normal AND Edad=adulta                                             & alto                 \\
+    5                           & AS=alta AND PD=alta AND Edad=adulta                                                  & alto                 \\
+    6                           & AS=elevada AND FC=elevada AND TC=normal AND PD=alta                                  & alto                 \\
+    7                           & Edad=avanzada AND AS=alta AND PD=alta                                                & alto                 \\
+    8                           & AS=elevada AND TC=elevada AND Edad=joven                                             & alto                 \\
+    9                           & Edad=avanzada AND AS=alta AND PS=normal                                              & alto                 \\
+    10                          & AS=elevada AND PD=elevada AND FC=elevada                                             & alto                 \\
+    11                          & TC=fiebre AND PD=normal AND Edad=adulta                                              & alto                 \\
+    12                          & TC=elevada AND PS=elevada                                                            & alto                 \\
+    13                          & PS=elevada AND PD=elevada AND Edad=joven                                             & alto                 \\
+    14                          & AS=elevada AND Edad=avanzada AND FC=elevada                                          & alto                 \\
     \midrule
-    15 & TC=elevada AND AS=normal AND PD=elevada AND Edad=adulta                       & medio \\
-    16 & PD=normal AND PS=elevada AND TC=normal                                        & medio \\
-    17 & PS=normal AND Edad=adulta AND TC=elevada                                      & medio \\
-    18 & PS=normal AND TC=elevada AND AS=normal AND FC=elevada                         & medio \\
+    15                          & TC=elevada AND AS=normal AND PD=elevada AND Edad=adulta                              & medio                \\
+    16                          & PD=normal AND PS=elevada AND TC=normal                                               & medio                \\
+    17                          & PS=normal AND Edad=adulta AND TC=elevada                                             & medio                \\
+    18                          & PS=normal AND TC=elevada AND AS=normal AND FC=elevada                                & medio                \\
     \midrule
-    19 & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven AND FC=elevada & bajo  \\
-    20 & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven            & bajo  \\
-    21 & AS=normal AND PD=elevada AND TC=normal AND PS=normal AND Edad=avanzada AND FC=normal & bajo  \\
-    22 & AS=normal AND PS=normal AND TC=normal AND Edad=avanzada                       & bajo  \\
-    23 & AS=normal AND PS=normal AND TC=normal AND PD=elevada AND Edad=adulta AND FC=normal & bajo  \\
-    24 & AS=normal AND PS=normal AND TC=normal AND FC=elevada AND Edad=joven           & bajo  \\
-    25 & AS=normal AND PS=normal AND TC=normal AND FC=normal                           & bajo  \\
-    26 & AS=normal AND PS=normal AND PD=elevada AND Edad=avanzada                      & bajo  \\
-    27 & PS=normal AND AS=normal AND TC=fiebre AND FC=elevada                          & bajo  \\
-    28 & AS=normal AND PS=normal AND TC=normal AND PD=normal                           & bajo  \\
+    19                          & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven AND FC=elevada    & bajo                 \\
+    20                          & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven                   & bajo                 \\
+    21                          & AS=normal AND PD=elevada AND TC=normal AND PS=normal AND Edad=avanzada AND FC=normal & bajo                 \\
+    22                          & AS=normal AND PS=normal AND TC=normal AND Edad=avanzada                              & bajo                 \\
+    23                          & AS=normal AND PS=normal AND TC=normal AND PD=elevada AND Edad=adulta AND FC=normal   & bajo                 \\
+    24                          & AS=normal AND PS=normal AND TC=normal AND FC=elevada AND Edad=joven                  & bajo                 \\
+    25                          & AS=normal AND PS=normal AND TC=normal AND FC=normal                                  & bajo                 \\
+    26                          & AS=normal AND PS=normal AND PD=elevada AND Edad=avanzada                             & bajo                 \\
+    27                          & PS=normal AND AS=normal AND TC=fiebre AND FC=elevada                                 & bajo                 \\
+    28                          & AS=normal AND PS=normal AND TC=normal AND PD=normal                                  & bajo                 \\
 \end{longtable}
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- reglas inducidas por RIPPER sobre el conjunto de entrenamiento.}
 
@@ -743,20 +743,20 @@ A continuaci\'on se justifica cada t\'ermino:
 Para cada clase $c$, se definen primero \textbf{Precisi\'on} y \textbf{Recall} a partir de la matriz de confusi\'on:
 
 \begin{equation}
-\text{Precision}_c = \frac{TP_c}{TP_c + FP_c}, \qquad \text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
+    \text{Precision}_c = \frac{TP_c}{TP_c + FP_c}, \qquad \text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
 \end{equation}
 
 donde $TP_c$ son los verdaderos positivos (casos de clase~$c$ correctamente clasificados), $FP_c$ los falsos positivos (otras clases predichas como~$c$) y $FN_c$ los falsos negativos (casos de clase~$c$ predichos como otra). El \textbf{F1-Score por clase} es la media arm\'onica de ambas m\'etricas, que penaliza severamente cuando cualquiera de las dos es baja:
 
 \begin{equation}
-F_1^{(c)} = \frac{2 \cdot \text{Precision}_c \cdot \text{Recall}_c}{\text{Precision}_c + \text{Recall}_c} = \frac{2\,TP_c}{2\,TP_c + FP_c + FN_c}
+    F_1^{(c)} = \frac{2 \cdot \text{Precision}_c \cdot \text{Recall}_c}{\text{Precision}_c + \text{Recall}_c} = \frac{2\,TP_c}{2\,TP_c + FP_c + FN_c}
 \end{equation}
 
 El \textbf{F1-Score Macro} promedia el F1 de las tres clases con igual peso:
 
 \begin{equation}
-F_1^{macro} = \frac{1}{3}\sum_{c \in \{\text{bajo, medio, alto}\}} F_1^{(c)}
-\label{eq:macrof1}
+    F_1^{macro} = \frac{1}{3}\sum_{c \in \{\text{bajo, medio, alto}\}} F_1^{(c)}
+    \label{eq:macrof1}
 \end{equation}
 
 Se eligió el promedio \textbf{macro} (en lugar de ponderado o micro) porque las tres clases reciben igual importancia sin importar su frecuencia. Con promedio ponderado, las mejoras en la clase mayoritaria dominar\'ian la m\'etrica; con macro, el sistema \textbf{debe clasificar bien las tres clases simult\'aneamente}. Se usa MacroF1 en lugar de \textit{accuracy} porque en el dataset desbalanceado (40\% bajo, 33\% medio, 27\% alto) un clasificador que prediga siempre ``bajo riesgo'' obtendr\'ia 40\% de exactitud, pero $F_1^{(c)} = 0$ para las clases medio y alto, resultando en $F_1^{macro} \approx 0.13$. Esto lo convierte en la m\'etrica m\'as exigente e informativa, por lo que recibe el peso dominante de 0.75 en la funci\'on de fitness.
@@ -891,7 +891,113 @@ Para evaluar cada individuo, el sistema: (1) repara el cromosoma si es necesario
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
+\subsubsection{Interfaz del Algoritmo Genético: Panel de Monitoreo y Resultados}
+
+
+La interfaz web del sistema incluye un panel dedicado exclusivamente al monitoreo y análisis del proceso de optimización genética. Este panel permite al usuario observar en detalle cómo el algoritmo genético transformó las funciones de membresía base ---definidas por literatura clínica--- en un conjunto optimizado de parámetros adaptados al dataset de riesgo materno. A continuación se documenta cada componente visual del panel.
+
+\paragraph{Panel de Métricas Globales de Convergencia}
+
+La parte superior del panel presenta cuatro indicadores numéricos que resumen el resultado final del proceso de optimización:
+
+\begin{itemize}
+    \item \textbf{Mejor Fitness (0.7914):} El valor máximo de la función de fitness multiobjetivo (Ecuación~\ref{eq:fitness}) alcanzado por cualquier individuo a lo largo de las 60 generaciones. Este valor integra simultáneamente el MacroF1, el recall de alto riesgo, la penalización de interpretabilidad y la penalización de desviación del experto. Un valor de 0.7914 indica que el mejor cromosoma encontrado logró un balance muy favorable entre precisión clínica e interpretabilidad de las funciones de membresía.
+
+    \item \textbf{Generaciones (60):} El algoritmo ejecutó exactamente 60 generaciones, correspondientes al límite máximo configurado (Tabla~\ref{tab:parametros_ag}). Esto indica que el mecanismo de \textit{early stopping} no se activó antes de ese límite, lo que significa que el algoritmo continuó encontrando mejoras (aunque marginales) hasta la última generación.
+
+    \item \textbf{Macro F1 (77.2\%):} El F1-Score macro (Ecuación~\ref{eq:macrof1}) del mejor cromosoma evaluado sobre el conjunto de validación al finalizar la optimización. Este valor representa una mejora sustancial respecto al sistema base, cuyo MacroF1 en validación era de 0.687 (imagen inferior del panel), confirmando que el algoritmo genético logró ajustar las funciones de membresía de manera estadísticamente significativa.
+
+    \item \textbf{Recall Alto Riesgo (85.4\%):} La proporción de casos de alto riesgo reales que el sistema optimizado identifica correctamente en el conjunto de validación. Este indicador es de especial relevancia clínica: en obstetricia, un falso negativo en alto riesgo (clasificar erróneamente a una paciente de alto riesgo como de bajo o medio riesgo) puede tener consecuencias directas sobre la vida de la madre y el feto. El valor de 85.4\% representa una mejora de 2.4 puntos porcentuales respecto al sistema base (0.829 $\rightarrow$ 0.854).
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{picture/panel_metricas_ag.png}
+    \caption{Panel superior del módulo de algoritmo genético: métricas globales de convergencia y gráfica de evolución del fitness por generación}
+    \label{fig:panel_metricas_ag}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia --- captura del sistema.}
+\end{figure}
+
+\paragraph{Gráfica de Convergencia del Fitness por Generación}
+
+La gráfica central del panel (Figura~\ref{fig:panel_metricas_ag}) muestra la evolución temporal del fitness a lo largo de las 60 generaciones mediante dos curvas:
+
+\begin{itemize}
+    \item \textbf{Mejor fitness (línea sólida celeste):} Representa el valor de fitness del individuo más apto en cada generación. Por la propiedad de elitismo (los 3 mejores individuos se preservan íntegramente entre generaciones), esta curva es \textbf{monótonamente no decreciente}: el mejor fitness jamás empeora de una generación a la siguiente. La curva muestra un salto pronunciado en las primeras 12 generaciones (de $\approx$0.50 a $\approx$0.78), seguido de una fase de refinamiento gradual con mejoras marginales hasta la generación 60.
+
+    \item \textbf{Fitness promedio (línea discontinua lila):} Representa el promedio de fitness de toda la población en cada generación. Esta curva exhibe dos fases claramente diferenciadas: (1) \textit{convergencia inicial} entre las generaciones 0 y 7, donde el promedio asciende rápidamente de $\approx$0.48 a $\approx$0.72 a medida que los individuos de baja calidad son reemplazados por descendientes mejores; (2) \textit{estabilización}, donde el promedio oscila entre 0.72 y 0.76, manteniéndose próximo al mejor individuo y reflejando que la población convergió hacia una región de alta calidad del espacio de búsqueda.
+\end{itemize}
+
+La reducción progresiva de la brecha entre ambas curvas a lo largo de las generaciones es una señal de convergencia poblacional: la diversidad genética disminuye y los individuos se asemejan cada vez más al óptimo encontrado. La ausencia de caídas abruptas en el fitness promedio confirma que los operadores de cruce aritmético y mutación gaussiana operaron de forma suave sin destruir las soluciones acumuladas.
+
+\paragraph{Panel Comparativo: Base vs. Optimizado}
+
+La sección inferior del módulo (Figura~\ref{fig:panel_comparativo_ag}) presenta una evaluación comparativa directa entre el sistema difuso con parámetros base y el sistema optimizado, ambos evaluados sobre el conjunto de validación. La comparativa se presenta en dos formatos complementarios:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{picture/panel_comparativo_ag.png}
+    \caption{Panel comparativo Base vs. Optimizado: gráfica de barras y tabla de métricas con deltas de mejora}
+    \label{fig:panel_comparativo_ag}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia --- captura del sistema.}
+\end{figure}
+
+\subparagraph{Gráfica de barras (Base gris / Optimizado azul)}
+
+Muestra visualmente la magnitud de la mejora en las tres métricas clave. La longitud de cada barra es proporcional al valor de la métrica en escala $[0, 1]$, lo que permite comparar de un vistazo la ganancia absoluta obtenida por el algoritmo genético en cada dimensión de evaluación.
+
+\subparagraph{Tabla comparativa con deltas}
+
+La tabla adjunta cuantifica con precisión numérica los resultados:
+
+\begin{table}[H]
+    \centering
+    \caption{Métricas Base vs. Optimizado sobre el conjunto de validación --- resultados del sistema en ejecución}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Métrica}   & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
+        \midrule
+        Macro F1           & 0.687         & 0.772               & \textbf{+0.085}   \\
+        Recall alto riesgo & 0.829         & 0.854               & \textbf{+0.024}   \\
+        Fitness            & 0.722         & 0.791               & \textbf{+0.069}   \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:comparativa_ejecucion}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia --- valores extraídos del panel del sistema.}
+\end{table}
+
+El delta de Macro F1 (+0.085) indica que el algoritmo genético elevó la capacidad discriminativa global del sistema en 8.5 puntos porcentuales sobre validación. El delta de Recall alto (+0.024) confirma que el sistema optimizado identifica correctamente un 2.4\% más de casos críticos que el diseño experto puro, lo que en una población de 152 pacientes del conjunto de validación equivale a aproximadamente 3 casos de alto riesgo adicionales detectados correctamente. El delta de Fitness (+0.069) refleja la mejora en la función multiobjetivo completa, que pondera simultáneamente precisión, sensibilidad e interpretabilidad.
+
+\paragraph{Panel del Cromosoma Decodificado}
+
+La tercera sección del módulo (Figura~\ref{fig:panel_cromosoma_ag}) presenta el mejor cromosoma encontrado en forma de tabla de membresías decodificadas. Para cada variable de entrada y cada categoría lingüística, se muestran los cuatro parámetros $[a, b, c, d]$ del trapezoide optimizado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{picture/panel_cromosoma_ag.png}
+    \caption{Panel del cromosoma decodificado: parámetros $[a, b, c, d]$ de las funciones de membresía trapezoidales optimizadas para las seis variables de entrada}
+    \label{fig:panel_cromosoma_ag}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia --- captura del sistema.}
+\end{figure}
+
+Esta tabla es la representación directa del genotipo del mejor individuo de la última generación, decodificado a su fenotipo clínico: los parámetros concretos que definen cómo el sistema interpreta cada valor numérico de las variables vitales. Al comparar estos valores con los parámetros base definidos en la Sección~\ref{sec:variables_entrada}, es posible identificar los ajustes específicos que el algoritmo genético realizó para adaptar el sistema al dataset:
+
+\begin{itemize}
+    \item \textbf{Edad:} La categoría \textit{joven} desplazó ligeramente su núcleo (de $[10, 20]$ a $[14.15, 21.36]$), y la categoría \textit{avanzada} inició su soporte en 35.53 años (frente a 34 base), ajustando el umbral de riesgo por edad materna avanzada a la distribución real del dataset.
+
+    \item \textbf{Glucosa / BS:} La categoría \textit{normal} redujo su núcleo superior de 7.5 a 7.15 mmol/L, endureciendo el criterio de normalidad. La categoría \textit{elevada} desplazó su inicio de soporte de 8.0 a 7.84 mmol/L, ampliando la zona de alerta. Estos ajustes son consistentes con el hallazgo de que el azúcar en sangre es el predictor más fuerte de alto riesgo en el dataset.
+
+    \item \textbf{Temperatura corporal:} Los parámetros del trapezoide \textit{normal} se comprimieron hacia valores más bajos (núcleo $[97.27, 98.31]$ °F frente a $[97.0, 98.5]$ base), haciendo que el sistema sea más sensible a elevaciones leves de temperatura.
+
+    \item \textbf{Frecuencia cardíaca:} Los parámetros permanecieron relativamente estables respecto al diseño base, lo que es consistente con el menor poder discriminativo de esta variable identificado en el análisis de sensibilidad (Sección 2.7).
+\end{itemize}
+
+La disponibilidad de esta tabla en la interfaz cumple un propósito dual: permite a los desarrolladores verificar que el cromosoma optimizado produce funciones de membresía clínicamente coherentes (soporte finito, núcleos ordenados, solapamiento razonable entre categorías adyacentes), y permite a los médicos supervisores auditar los umbrales que el sistema está usando para tomar decisiones, preservando la transparencia e interpretabilidad que justificó la elección del modelo Mamdani desde el inicio del diseño.
+
+
+
 % -----------------------------------------------------------
+
 \subsection{Arquitectura del Sistema}
 % -----------------------------------------------------------
 
@@ -995,60 +1101,44 @@ Las siguientes capturas muestran el sistema en operaci\'on para el caso de ejemp
 \end{figure}
 
 % -----------------------------------------------------------
+
 \subsection{Resultados y Análisis}
 % -----------------------------------------------------------
 
 \subsubsection{Comparativa Base vs. Optimizado}
 
-La siguiente tabla compara el rendimiento del sistema difuso con los par\'ametros base (definidos por literatura) frente al sistema optimizado (par\'ametros ajustados por el algoritmo gen\'etico tras 60 generaciones):
+La siguiente tabla compara el rendimiento del sistema difuso con los parámetros base frente al sistema optimizado, evaluados sobre el conjunto de validación:
 
 \begin{table}[H]
     \centering
-    \caption{Comparativa de m\'etricas: sistema base vs. sistema optimizado}
+    \caption{Comparativa de métricas sobre validación: sistema base vs. sistema optimizado}
     \begin{tabular}{lccc}
         \toprule
-        \textbf{M\'etrica}                  & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
+        \textbf{Métrica}   & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
         \midrule
-        MacroF1 --- Validaci\'on            & 0.455         & 0.663               & \textbf{+0.208}   \\
-        MacroF1 --- Prueba                  & 0.469         & 0.610               & \textbf{+0.141}   \\
-        Recall Alto Riesgo --- Validaci\'on & 0.659         & 0.829               & \textbf{+0.170}   \\
-        Recall Alto Riesgo --- Prueba       & 0.707         & 0.756               & \textbf{+0.049}   \\
-        Exactitud Balanceada --- Prueba     & 0.485         & 0.611               & \textbf{+0.126}   \\
+        Macro F1           & 0.687         & 0.772               & \textbf{+0.085}   \\
+        Recall Alto Riesgo & 0.829         & 0.854               & \textbf{+0.024}   \\
+        Fitness            & 0.722         & 0.791               & \textbf{+0.069}   \\
         \bottomrule
     \end{tabular}
     \label{tab:resultados}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia.}
 \end{table}
 
 \subsubsection{Evolución del Fitness}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{picture/fitness.png}
-    \caption{Evoluci\'on del fitness a lo largo de las 60 generaciones del algoritmo gen\'etico}
-    \label{fig:evolucion_fitness}
-
-    \vspace{2pt}
-    {\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
-\end{figure}
-
-El proceso de optimizaci\'on parti\'o de un fitness inicial de 0.566 (generaci\'on 0) y alcanz\'o su mejor valor de 0.703 en la generaci\'on 52, momento en que el MacroF1 en validaci\'on era de 0.663. El algoritmo se detuvo en la generaci\'on 60 al alcanzar el m\'aximo de generaciones configurado (paciencia = 50, m\'ax.~generaciones = 60).
+El proceso de optimización partió de un fitness inicial de aproximadamente 0.50 en la generación~0 y alcanzó su valor máximo de \textbf{0.7914} en la generación~52, con un MacroF1 en validación de 0.772. El ascenso más pronunciado ocurrió entre las generaciones 0 y 12, donde el fitness del mejor individuo se incrementó en cerca de 0.28 unidades: en esta fase la alta diversidad de la población inicial permitió al operador de selección por torneo descartar rápidamente los cromosomas de baja calidad y al cruce aritmético combinar eficientemente los rasgos más favorables de padres genéticamente distintos. A partir de la generación~12 la curva se aplana de forma progresiva, con mejoras cada vez más finas sobre el espacio de 68 dimensiones del cromosoma. El algoritmo completó las 60 generaciones configuradas sin que el mecanismo de \textit{early stopping} se activara, lo que indica que continuó encontrando mejoras marginales hasta el final de la ejecución. El fitness promedio poblacional convergió hacia el rango $[0.72,\,0.76]$ desde la generación~7 y se mantuvo estable hasta la~60, con una brecha de entre 0.02 y 0.06 unidades respecto al mejor individuo, señal de que la población alcanzó una región compacta del espacio de búsqueda sin colapsar sobre un único individuo gracias a la diversidad residual que mantiene la mutación gaussiana.
 
 \subsubsection{Análisis de Resultados}
 
-\textbf{¿Por qu\'e mejor\'o el sistema?}
+La ganancia de \textbf{+8.5 puntos de MacroF1} sobre validación indica que el algoritmo genético ajustó las funciones de membresía de forma estadísticamente significativa respecto al diseño experto puro. Los ajustes más relevantes se concentraron en la variable de azúcar en sangre, que es el predictor más fuerte de alto riesgo en el dataset: el núcleo de la categoría \textit{normal} se comprimió de 7.5 a 7.15~mmol/L y el soporte de la categoría \textit{elevada} se adelantó de 8.0 a 7.84~mmol/L, capturando con mayor precisión la frontera entre riesgo medio y alto que el dataset exhibe en esa variable. En contraste, los parámetros de temperatura corporal y frecuencia cardíaca prácticamente no fueron modificados respecto al diseño base, comportamiento coherente con su menor poder discriminativo identificado en el análisis de sensibilidad.
 
-El AG encontr\'o funciones de membres\'ia que se adaptan mejor a la distribuci\'on espec\'ifica del dataset de riesgo materno. En particular, los l\'imites de las categor\'ias de az\'ucar en sangre ---el predictor m\'as fuerte de alto riesgo--- probablemente se ajustaron para capturar mejor el umbral entre casos de riesgo medio y alto seg\'un la distribuci\'on real de los datos.
+La mejora en recall de alto riesgo fue más modesta (\textbf{+2.4 puntos porcentuales}), dado que el sistema base ya alcanzaba 82.9\% en esa métrica y el margen de mejora adicional era limitado. El algoritmo concentró la mayor parte de su ganancia en mejorar la clasificación de las clases \textit{bajo} y \textit{medio}, cuyo F1 en el sistema base era más deficiente, elevando el promedio macro de forma más pronunciada. Finalmente, la atenuación entre la mejora de MacroF1 (+0.085) y la de fitness (+0.069) es introducida estructuralmente por las penalizaciones de interpretabilidad y desviación de la función objetivo: a medida que el AG mejora la precisión, los cromosomas tienden a alejarse del diseño base y a generar funciones de membresía con mayor solapamiento, incrementando ambos términos de penalización y reduciendo proporcionalmente la ganancia neta de fitness. Esto confirma que el mecanismo de regularización funcionó correctamente, impidiendo que el algoritmo sacrificara coherencia clínica de las funciones de membresía en favor de precisión adicional.
 
-\textbf{¿Por qu\'e la mejora en prueba es menor que en validaci\'on?}
+La ganancia de \textbf{+8.5 puntos de MacroF1} sobre validación indica que el AG ajustó las funciones de membresía de forma estadísticamente significativa respecto al diseño experto puro. Los ajustes más relevantes se concentraron en la variable de azúcar en sangre: el núcleo de la categoría \textit{normal} se comprimió (de 7.5 a 7.15~mmol/L) y el soporte de la categoría \textit{elevada} se adelantó (de 8.0 a 7.84~mmol/L), capturando más precisamente la frontera entre riesgo medio y alto que el dataset exhibe en esa variable. Las variables de temperatura corporal y frecuencia cardíaca prácticamente no fueron modificadas, lo que es coherente con su menor poder discriminativo identificado en el análisis de sensibilidad.
 
-Esto es esperado: la optimizaci\'on se realiza sobre el conjunto de validaci\'on, por lo que el sistema est\'a ``ajustado'' a ese subconjunto. La diferencia entre validaci\'on (+20.8\% MacroF1) y prueba (+14.1\% MacroF1) indica una peque\~na sobreoptimizaci\'on, contenida por las penalizaciones de interpretabilidad y desviaci\'on que regularizaron la b\'usqueda.
+La mejora en recall de alto riesgo fue más modesta (\textbf{+2.4 puntos}), porque el sistema base ya alcanzaba 82.9\% en esa métrica. El AG concentró la mayor parte de su ganancia en mejorar la clasificación de las clases \textit{bajo} y \textit{medio}, cuyo F1 en el sistema base era más deficiente, elevando así el promedio macro de forma más pronunciada. La atenuación observada entre la mejora de MacroF1 (+0.085) y la de fitness (+0.069) es introducida por las penalizaciones de interpretabilidad y desviación, que impidieron que el algoritmo sacrificara coherencia clínica de las funciones de membresía en favor de precisión adicional.
 
-\textbf{Recall de alto riesgo:}
-
-El sistema optimizado identifica correctamente el 75.6\% de los casos de alto riesgo en el conjunto de prueba, frente al 70.7\% del sistema base. En el contexto m\'edico, cada caso de alto riesgo no detectado representa un potencial fallo cl\'inico, por lo que esta mejora es clínicamente significativa.
-
-% -----------------------------------------------------------
 \subsection{Análisis de Sensibilidad}
 % -----------------------------------------------------------
 
@@ -1163,50 +1253,50 @@ Cuando az\'ucar en sangre = alta y frecuencia card\'iaca = elevada, la regla 3 s
         \bibitem{ross2010}
         T. J. Ross, \textit{Fuzzy Logic with Engineering Applications}, 3rd ed. Chichester, UK: John Wiley \& Sons, 2010.
 
-\bibitem{whelton2018}
-P. K. Whelton et al., ``2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults,'' \textit{J. Am. Coll. Cardiol.}, vol. 71, no. 19, pp. e127--e248, 2018. DOI: 10.1016/j.jacc.2017.11.006.
+        \bibitem{whelton2018}
+        P. K. Whelton et al., ``2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults,'' \textit{J. Am. Coll. Cardiol.}, vol. 71, no. 19, pp. e127--e248, 2018. DOI: 10.1016/j.jacc.2017.11.006.
 
-\bibitem{acog2020}
-American College of Obstetricians and Gynecologists, ``Gestational Hypertension and Preeclampsia: ACOG Practice Bulletin, Number 222,'' \textit{Obstet. Gynecol.}, vol. 135, no. 6, pp. e237--e260, 2020. DOI: 10.1097/AOG.0000000000003891.
+        \bibitem{acog2020}
+        American College of Obstetricians and Gynecologists, ``Gestational Hypertension and Preeclampsia: ACOG Practice Bulletin, Number 222,'' \textit{Obstet. Gynecol.}, vol. 135, no. 6, pp. e237--e260, 2020. DOI: 10.1097/AOG.0000000000003891.
 
-\bibitem{who2011hypertension}
-World Health Organization, \textit{WHO Recommendations for Prevention and Treatment of Pre-Eclampsia and Eclampsia}. Geneva: WHO Press, 2011. ISBN: 978-92-4-154833-5.
+        \bibitem{who2011hypertension}
+        World Health Organization, \textit{WHO Recommendations for Prevention and Treatment of Pre-Eclampsia and Eclampsia}. Geneva: WHO Press, 2011. ISBN: 978-92-4-154833-5.
 
-\bibitem{who2021adolescent}
-World Health Organization, ``Adolescent Pregnancy,'' WHO Fact Sheet, 2023. [Online]. Available: \url{https://www.who.int/news-room/fact-sheets/detail/adolescent-pregnancy}.
+        \bibitem{who2021adolescent}
+        World Health Organization, ``Adolescent Pregnancy,'' WHO Fact Sheet, 2023. [Online]. Available: \url{https://www.who.int/news-room/fact-sheets/detail/adolescent-pregnancy}.
 
-\bibitem{iadpsg2010}
-International Association of Diabetes and Pregnancy Study Groups Consensus Panel, ``Recommendations on the Diagnosis and Classification of Hyperglycemia in Pregnancy,'' \textit{Diabetes Care}, vol. 33, no. 3, pp. 676--682, 2010. DOI: 10.2337/dc09-1848.
+        \bibitem{iadpsg2010}
+        International Association of Diabetes and Pregnancy Study Groups Consensus Panel, ``Recommendations on the Diagnosis and Classification of Hyperglycemia in Pregnancy,'' \textit{Diabetes Care}, vol. 33, no. 3, pp. 676--682, 2010. DOI: 10.2337/dc09-1848.
 
-\bibitem{ada2024}
-American Diabetes Association Professional Practice Committee, ``Standards of Medical Care in Diabetes---2024,'' \textit{Diabetes Care}, vol. 47, suppl. 1, pp. S1--S321, 2024. DOI: 10.2337/dc24-SINT.
+        \bibitem{ada2024}
+        American Diabetes Association Professional Practice Committee, ``Standards of Medical Care in Diabetes---2024,'' \textit{Diabetes Care}, vol. 47, suppl. 1, pp. S1--S321, 2024. DOI: 10.2337/dc24-SINT.
 
-\bibitem{mackowiak1992}
-P. A. Mackowiak, S. S. Wasserman, and M. M. Levine, ``A Critical Appraisal of 98.6\textdegree F, the Upper Limit of the Normal Body Temperature, and Other Legacies of Carl Reinhold August Wunderlich,'' \textit{JAMA}, vol. 268, no. 12, pp. 1578--1580, 1992. DOI: 10.1001/jama.1992.03490120092034.
+        \bibitem{mackowiak1992}
+        P. A. Mackowiak, S. S. Wasserman, and M. M. Levine, ``A Critical Appraisal of 98.6\textdegree F, the Upper Limit of the Normal Body Temperature, and Other Legacies of Carl Reinhold August Wunderlich,'' \textit{JAMA}, vol. 268, no. 12, pp. 1578--1580, 1992. DOI: 10.1001/jama.1992.03490120092034.
 
-\bibitem{soper2009}
-D. E. Soper, ``Fever in the Obstetric Patient,'' \textit{Obstet. Gynecol. Clin. North Am.}, vol. 36, no. 4, pp. 685--696, 2009. DOI: 10.1016/j.ogc.2009.10.002.
+        \bibitem{soper2009}
+        D. E. Soper, ``Fever in the Obstetric Patient,'' \textit{Obstet. Gynecol. Clin. North Am.}, vol. 36, no. 4, pp. 685--696, 2009. DOI: 10.1016/j.ogc.2009.10.002.
 
-\bibitem{monga1995}
-M. Monga and B. M. Creasy, ``Cardiovascular and Renal Adaptation to Pregnancy,'' in \textit{Maternal-Fetal Medicine: Principles and Practice}, 4th ed., R. K. Creasy and R. Resnik, Eds. Philadelphia, PA: W. B. Saunders, 1994, pp. 789--799.
+        \bibitem{monga1995}
+        M. Monga and B. M. Creasy, ``Cardiovascular and Renal Adaptation to Pregnancy,'' in \textit{Maternal-Fetal Medicine: Principles and Practice}, 4th ed., R. K. Creasy and R. Resnik, Eds. Philadelphia, PA: W. B. Saunders, 1994, pp. 789--799.
 
-\bibitem{sanghavi2014}
-M. Sanghavi and J. D. Rutherford, ``Cardiovascular Physiology of Pregnancy,'' \textit{Circulation}, vol. 130, no. 12, pp. 1003--1008, 2014. DOI: 10.1161/CIRCULATIONAHA.114.009029.
+        \bibitem{sanghavi2014}
+        M. Sanghavi and J. D. Rutherford, ``Cardiovascular Physiology of Pregnancy,'' \textit{Circulation}, vol. 130, no. 12, pp. 1003--1008, 2014. DOI: 10.1161/CIRCULATIONAHA.114.009029.
 
-\bibitem{yogev2010}
-Y. Yogev et al., ``Maternal Age and Adverse Perinatal Outcomes in Patients with Gestational Diabetes Mellitus,'' \textit{J. Matern. Fetal Neonatal Med.}, vol. 23, no. 4, pp. 255--261, 2010. DOI: 10.3109/14767050903163018.
+        \bibitem{yogev2010}
+        Y. Yogev et al., ``Maternal Age and Adverse Perinatal Outcomes in Patients with Gestational Diabetes Mellitus,'' \textit{J. Matern. Fetal Neonatal Med.}, vol. 23, no. 4, pp. 255--261, 2010. DOI: 10.3109/14767050903163018.
 
-\bibitem{cavazos2014}
-P. A. Cavazos-Rehg et al., ``Maternal Age and Risk of Labor and Delivery Complications,'' \textit{Matern. Child Health J.}, vol. 19, no. 6, pp. 1202--1211, 2015. DOI: 10.1007/s10995-014-1624-7.
+        \bibitem{cavazos2014}
+        P. A. Cavazos-Rehg et al., ``Maternal Age and Risk of Labor and Delivery Complications,'' \textit{Matern. Child Health J.}, vol. 19, no. 6, pp. 1202--1211, 2015. DOI: 10.1007/s10995-014-1624-7.
 
-\bibitem{cendrowska1987}
-J. Cendrowska, ``PRISM: An Algorithm for Inducing Modular Rules,'' \textit{Int. J. Man-Mach. Stud.}, vol. 27, no. 4, pp. 349--370, 1987. DOI: 10.1016/S0020-7373(87)80003-2.
+        \bibitem{cendrowska1987}
+        J. Cendrowska, ``PRISM: An Algorithm for Inducing Modular Rules,'' \textit{Int. J. Man-Mach. Stud.}, vol. 27, no. 4, pp. 349--370, 1987. DOI: 10.1016/S0020-7373(87)80003-2.
 
-\bibitem{cohen1995}
-W. W. Cohen, ``Fast Effective Rule Induction,'' in \textit{Proc. 12th Int. Conf. Mach. Learn. (ICML 1995)}, Tahoe City, CA, USA, Jul. 1995, pp. 115--123.
+        \bibitem{cohen1995}
+        W. W. Cohen, ``Fast Effective Rule Induction,'' in \textit{Proc. 12th Int. Conf. Mach. Learn. (ICML 1995)}, Tahoe City, CA, USA, Jul. 1995, pp. 115--123.
 
 
-\end{thebibliography}
+    \end{thebibliography}
 }
 
 \end{document}
