@@ -174,10 +174,12 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
               </div>
               <div>
                 <h3 className="text-2xl font-semibold text-slate-900 sm:text-[1.9rem]">
-                  {risk.label}
+                  {result.sin_activacion ? "Sin clasificacion" : risk.label}
                 </h3>
                 <p className="mt-1 text-sm text-slate-500">
-                  Clasificacion final del caso analizado.
+                  {result.sin_activacion
+                    ? "El perfil no activo ninguna regla del sistema."
+                    : "Clasificacion final del caso analizado."}
                 </p>
               </div>
             </div>
@@ -243,23 +245,25 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
         ) : null}
       </GlassPanel>
 
-      <GlassPanel className="p-6 sm:p-8">
-        <div className="flex items-start gap-4">
-          <div className="shrink-0 rounded-2xl border border-cyan-300/30 bg-cyan-50 p-3 text-cyan-700">
-            <BookOpen className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
-              Por que el sistema tomo esta decision
+      {!result.sin_activacion && (
+        <GlassPanel className="p-6 sm:p-8">
+          <div className="flex items-start gap-4">
+            <div className="shrink-0 rounded-2xl border border-cyan-300/30 bg-cyan-50 p-3 text-cyan-700">
+              <BookOpen className="h-5 w-5" />
             </div>
-            <p className="mt-3 text-base font-semibold leading-relaxed text-slate-900">
-              {narrative.intro}
-            </p>
-            <p className="mt-2 text-sm leading-7 text-slate-600">{narrative.details}</p>
-            <p className="mt-2 text-sm leading-7 text-slate-600">{narrative.conclusion}</p>
+            <div>
+              <div className="text-xs uppercase tracking-[0.22em] text-cyan-700/80">
+                Por que el sistema tomo esta decision
+              </div>
+              <p className="mt-3 text-base font-semibold leading-relaxed text-slate-900">
+                {narrative.intro}
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600">{narrative.details}</p>
+              <p className="mt-2 text-sm leading-7 text-slate-600">{narrative.conclusion}</p>
+            </div>
           </div>
-        </div>
-      </GlassPanel>
+        </GlassPanel>
+      )}
 
       <GlassPanel className="p-5 sm:p-6">
         <div className="flex items-start gap-4">
@@ -277,6 +281,15 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
         </div>
 
         <div className="mt-5 space-y-4">
+          {sortedRules.length === 0 && (
+            <div className="flex items-start gap-3 rounded-2xl border border-amber-100 bg-amber-50/60 px-4 py-3 text-sm text-amber-700">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+              <span>
+                Ninguna regla se activo para este perfil. El puntaje de 50 es un valor neutro de
+                respaldo, no el resultado de una inferencia clinica real.
+              </span>
+            </div>
+          )}
           {sortedRules.map((rule, index) => {
             const ruleRisk = getRiskUi(rule.consecuente);
             const ruleNarrative = buildRuleNarrative(rule);

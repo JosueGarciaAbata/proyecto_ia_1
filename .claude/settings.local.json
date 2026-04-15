@@ -3,7 +3,14 @@
     "allow": [
       "Bash(find:*)",
       "Bash(del:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(python -c ':*)",
+      "Bash(python:*)",
+      "Bash(mv \"Captura de pantalla 2026-04-14 160733.png\" interfaz_ingreso_paciente.png)",
+      "Bash(mv \"Captura de pantalla 2026-04-14 161021.png\" resultado_riesgo_alto.png)",
+      "Bash(mv \"Captura de pantalla 2026-04-14 161031.png\" explicacion_reglas_activadas.png)",
+      "Bash(mv \"Captura de pantalla 2026-04-14 161051.png\" curvas_membresia_edad.png)",
+      "Bash(mv \"Captura de pantalla 2026-04-14 161059.png\" panel_reglas_ripper.png)"
     ]
   }
 }

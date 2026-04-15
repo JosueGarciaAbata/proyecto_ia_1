@@ -311,9 +311,20 @@ export interface ClinicalNarrative {
 }
 
 export function buildClinicalNarrative(result: ExplicacionResponse): ClinicalNarrative {
+  // Caso sin activacion: ninguna regla se disparo — puntaje 50 es fallback neutro, no clasificacion real
+  if (result.sin_activacion) {
+    return {
+      intro: "El perfil ingresado no coincidio con ninguna regla aprendida por el sistema.",
+      details:
+        "Ninguna combinacion de indicadores activo reglas del sistema difuso. El puntaje de 50 es un valor neutro de respaldo, no el resultado de una inferencia clinica.",
+      conclusion:
+        "Verifique que los valores ingresados sean correctos. Si los valores son validos, el caso puede requerir evaluacion medica directa ya que el sistema no tiene evidencia suficiente para clasificarlo.",
+    };
+  }
+
   const riskLabel = getRiskUi(result.riesgo).label.toLowerCase();
   const score = Math.round(result.puntaje);
-  const intro = `El sistema clasificó este caso como ${riskLabel} con un puntaje de ${score} sobre 100.`;
+  const intro = `El sistema clasifico este caso como ${riskLabel} con un puntaje de ${score} sobre 100.`;
 
   const alerts: string[] = [];
   for (const [variable, categories] of Object.entries(result.pertenencias)) {
@@ -327,8 +338,8 @@ export function buildClinicalNarrative(result: ExplicacionResponse): ClinicalNar
 
   const details =
     alerts.length > 0
-      ? `Los indicadores que más influyeron: ${alerts.join(", ")}.`
-      : "Los indicadores clínicos se encuentran dentro de los rangos esperados.";
+      ? `Los indicadores que mas influyeron: ${alerts.join(", ")}.`
+      : "Los indicadores clinicos se encuentran dentro de los rangos esperados.";
 
   const high = result.activaciones["alto"] ?? 0;
   const mid = result.activaciones["medio"] ?? 0;
@@ -349,7 +360,7 @@ export function buildClinicalNarrative(result: ExplicacionResponse): ClinicalNar
 }
 
 export function buildResultSummary(
-  result: Pick<ExplicacionResponse, "reglas_activadas" | "ajustes_entrada">,
+  result: Pick<ExplicacionResponse, "reglas_activadas" | "ajustes_entrada" | "sin_activacion">,
 ) {
   const adj = result.ajustes_entrada.length;
   const rulesCount = result.reglas_activadas.length;
@@ -357,6 +368,13 @@ export function buildResultSummary(
     adj > 0
       ? `Se normalizaron ${adj} valor${adj === 1 ? "" : "es"} antes del analisis para mantener la entrada dentro del rango esperado.`
       : "La entrada se evaluo sin ajustes previos.";
+
+  if (result.sin_activacion) {
+    return {
+      headline: "Perfil sin coincidencia en las reglas aprendidas.",
+      description: adjustmentText,
+    };
+  }
 
   return {
     headline: `${rulesCount} regla${rulesCount === 1 ? "" : "s"} aportaron evidencia directa al resultado final.`,
