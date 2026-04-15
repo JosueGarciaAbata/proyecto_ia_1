@@ -10,7 +10,10 @@
       "Bash(mv \"Captura de pantalla 2026-04-14 161021.png\" resultado_riesgo_alto.png)",
       "Bash(mv \"Captura de pantalla 2026-04-14 161031.png\" explicacion_reglas_activadas.png)",
       "Bash(mv \"Captura de pantalla 2026-04-14 161051.png\" curvas_membresia_edad.png)",
-      "Bash(mv \"Captura de pantalla 2026-04-14 161059.png\" panel_reglas_ripper.png)"
+      "Bash(mv \"Captura de pantalla 2026-04-14 161059.png\" panel_reglas_ripper.png)",
+      "Bash(python3 *)",
+      "Bash(grep -n \"\\\\\\\\\\\\\\\\subsection\\\\|\\\\\\\\\\\\\\\\subsubsection\\\\|\\\\\\\\\\\\\\\\section\\\\|\\\\\\\\\\\\\\\\paragraph\" \"C:/Users/Joel/Desktop/Universidad/Septimo Semestre/Inteligencia Artificial/Proyecto/proyecto_ia_1/informe/informe_proyecto_ia.tex\")",
+      "Bash(grep *)"
     ]
   }
 }

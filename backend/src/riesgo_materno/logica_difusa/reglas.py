@@ -17,7 +17,7 @@ def _leer_json(ruta):
 
 
 def _cargar_reglas():
-    """Carga reglas aprendidas por RIPPER. Lanza error si no existen — ejecutar ripper.py primero."""
+    """Carga reglas aprendidas"""
     if not RUTA_REGLAS_APRENDIDAS.exists():
         raise FileNotFoundError(
             f"No se encontraron reglas aprendidas en {RUTA_REGLAS_APRENDIDAS}."

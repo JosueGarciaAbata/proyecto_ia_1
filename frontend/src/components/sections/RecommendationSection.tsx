@@ -213,7 +213,6 @@ function ResultContent({ result }: { result: ExplicacionResponse }) {
             <p className="mt-3 text-base font-semibold leading-6 text-slate-900">
               {summary.headline}
             </p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">{summary.description}</p>
           </div>
         </div>
 

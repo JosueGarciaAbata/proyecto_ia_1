@@ -66,6 +66,8 @@
 
 \titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
 \renewcommand{\thesection}{\Roman{section}}
+\titleformat{\paragraph}[block]{\normalfont\bfseries}{}{0em}{}
+\titlespacing*{\paragraph}{0pt}{1.2ex plus 0.5ex}{0.3ex}
 \begin{center}
     \textbf{\underline{\normalsize PROYECTO PRIMER PARCIAL DE INTELIGENCIA ARTIFICIAL}}\\[0.5cm]
 \end{center}
@@ -89,51 +91,118 @@
 \end{tabbing}
 
 % ============================================================
-\section{INFORME DEL PROYECTO}
+
+% ============================================================
+\section{INFORME DE GUÍA PRÁCTICA}
 % ============================================================
 
 \titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
 \renewcommand{\thesection}{\arabic{section}}
 
 % -----------------------------------------------------------
-\subsection{Introducción y Objetivos}
+\subsection{Objetivos}
 % -----------------------------------------------------------
 
-\subsubsection{Contexto}
+\subsubsection*{Objetivo General}
+
+Aplicar t\'ecnicas de aprendizaje basado en reglas, l\'ogica difusa y algoritmos gen\'eticos para desarrollar una simulaci\'on que d\'e soluci\'on a un problema identificado, documentando de manera sustentada el dise\~no de las funciones de membres\'ia, la inducci\'on de reglas y la optimizaci\'on autom\'atica de par\'ametros.
+
+\subsubsection*{Objetivos Específicos}
+
+\begin{itemize}
+    \item Dise\~nar las variables ling\"u\'isticas y funciones de membres\'ia del sistema difuso sustentadas en literatura m\'edica especializada.
+    \item Inducir un conjunto de reglas de clasificaci\'on mediante aprendizaje basado en reglas aplicado al dataset de riesgo materno.
+    \item Implementar el motor de inferencia difusa Mamdani que integre fuzzificaci\'on, evaluaci\'on de reglas y defuzzificaci\'on.
+    \item Optimizar los par\'ametros del sistema difuso mediante un algoritmo gen\'etico multiobjetivo que equilibre precisi\'on e interpretabilidad cl\'inica.
+    \item Desarrollar un sistema web interactivo que permita simular y visualizar el funcionamiento del modelo desarrollado.
+\end{itemize}
+
+% -----------------------------------------------------------
+\subsection{Modalidad}
+% -----------------------------------------------------------
+
+Presencial.
+
+% -----------------------------------------------------------
+\subsection{Tiempo de Duración}
+% -----------------------------------------------------------
+
+Presenciales: 8
+
+No presenciales: 0
+
+% -----------------------------------------------------------
+\subsection{Instrucciones}
+% -----------------------------------------------------------
+
+\begin{itemize}
+    \item Identificar un problema que pueda resolverse mediante l\'ogica difusa articulado con algoritmos gen\'eticos
+    \item Generar un modelo del sistema para poder dar una soluci\'on al problema
+    \item Aplicar l\'ogica difusa dentro del modelo para aplicar una soluci\'on
+    \item Aplicar algoritmos gen\'eticos dentro del modelo para encontrar una soluci\'on adecuada para el problema
+    \item Implementar la soluci\'on del sistema en un lenguaje de programaci\'on adecuado
+    \item Generar una simulaci\'on del funcionamiento del sistema
+\end{itemize}
+
+% -----------------------------------------------------------
+\subsection{Listado de Equipos, Materiales y Recursos}
+% -----------------------------------------------------------
+
+Listado de equipos y materiales generales empleados en la gu\'ia pr\'actica:
+
+\begin{itemize}
+    \item Computador
+    \item Internet
+\end{itemize}
+
+TAC (Tecnolog\'ias para el Aprendizaje y Conocimiento) empleados en la gu\'ia pr\'actica:
+
+\begin{itemize}[label=$\square$]
+    \item Plataformas educativas
+    \item Simuladores y laboratorios virtuales
+    \item Aplicaciones educativas
+    \item Recursos audiovisuales
+    \item Gamificaci\'on
+    \item[$\boxtimes$] Inteligencia Artificial
+    \item Otros (Especifique): \underline{\hspace{5cm}}
+\end{itemize}
+
+% -----------------------------------------------------------
+\subsection{Actividades por Desarrollar}
+% -----------------------------------------------------------
+
+\begin{itemize}
+    \item Realizar una simulaci\'on en la que se aplique aprendizaje basado en reglas, l\'ogica difusa y algoritmos gen\'eticos
+    \item Generar una simulaci\'on para evidenciar la aplicaci\'on de aprendizaje basado en reglas, l\'ogica difusa y algoritmos gen\'eticos
+    \item Documentar de una manera sustentada los valores utilizados para las funciones de membres\'ia
+    \item Documentar de una manera clara la utilidad y el desarrollo de algoritmos gen\'eticos
+    \item Presentar los resultados de la simulaci\'on
+\end{itemize}
+
+% -----------------------------------------------------------
+\subsection{Resultados Obtenidos}
+% -----------------------------------------------------------
+
+\subsubsection*{Contexto}
 
 La mortalidad materna representa uno de los indicadores de salud p\'ublica m\'as cr\'iticos a nivel mundial. Seg\'un la Organizaci\'on Mundial de la Salud, aproximadamente 287.000 mujeres mueren cada a\~no por complicaciones relacionadas con el embarazo o el parto, siendo la gran mayor\'ia de estas muertes prevenibles con una detecci\'on y atenci\'on oportuna del riesgo \cite{who2023}. En pa\'ises en v\'ias de desarrollo, la escasez de personal m\'edico especializado y el acceso limitado a centros de salud agravan esta problem\'atica, haciendo necesario el desarrollo de herramientas de apoyo cl\'inico que puedan asistir a m\'edicos generales y personal de enfermer\'ia en la identificaci\'on temprana de pacientes en situaci\'on de riesgo.
 
 Ante esta necesidad surge la propuesta de un \textbf{Sistema de Soporte a la Toma de Decisiones M\'edicas} centrado en la clasificaci\'on del nivel de riesgo durante el embarazo. El sistema analiza seis par\'ametros cl\'inicos b\'asicos ---edad, presi\'on arterial sist\'olica, presi\'on arterial diast\'olica, az\'ucar en sangre, temperatura corporal y frecuencia card\'iaca--- y determina si la paciente se encuentra en una categor\'ia de \textit{bajo riesgo}, \textit{riesgo medio} o \textit{alto riesgo}.
 
-\subsubsection{Por qué Lógica Difusa}
+\subsubsection*{Por qué Lógica Difusa}
 
 La l\'ogica difusa \cite{zadeh1965} permite codificar el conocimiento m\'edico experto en la forma de reglas ling\"u\'isticas comprensibles y auditables, por ejemplo: \textit{``SI la presi\'on es alta Y la edad es avanzada, ENTONCES el riesgo es alto''}. Un m\'edico puede leer, verificar y cuestionar cada regla del sistema. Esta \textbf{interpretabilidad} es fundamental en entornos cl\'inicos donde las decisiones tienen consecuencias directas sobre la vida de las pacientes.
 
 Adicionalmente, la l\'ogica difusa maneja de forma natural la incertidumbre inherente a las mediciones m\'edicas y la transici\'on gradual entre estados cl\'inicos (por ejemplo, la frontera entre presi\'on ``normal'' y presi\'on ``elevada'' no es una l\'inea abrupta).
 
-\subsubsection{Por qué un Algoritmo Genético}
+\subsubsection*{Por qué un Algoritmo Genético}
 
 Los par\'ametros de las funciones de membres\'ia deben ajustarse al dataset espec\'ifico de riesgo materno. Este es un problema de optimizaci\'on en espacio continuo de alta dimensi\'on con funci\'on objetivo no diferenciable, para el cual los algoritmos gen\'eticos \cite{holland1975} son la herramienta adecuada. La justificaci\'on t\'ecnica detallada se presenta en la Secci\'on~\ref{sec:ag_motivacion}.
 
-\subsubsection{Objetivo General}
 
-Desarrollar un sistema web de soporte a la toma de decisiones cl\'inicas que, a partir de seis variables vitales b\'asicas de una paciente embarazada, clasifique autom\'aticamente su nivel de riesgo materno en tres categor\'ias (bajo, medio, alto) utilizando un motor de inferencia basado en l\'ogica difusa Mamdani, cuyas funciones de membres\'ia han sido optimizadas mediante un algoritmo gen\'etico.
+\subsubsection{Dataset y Selección}
 
-\subsubsection{Objetivos Específicos}
-
-\begin{itemize}
-    \item Definir las variables ling\"u\'isticas y las funciones de membres\'ia trapezoidales del sistema difuso con base en literatura m\'edica especializada.
-    \item Dise\~nar un conjunto de reglas difusas cl\'inicamente justificadas para la clasificaci\'on de riesgo materno.
-    \item Implementar el motor de inferencia Mamdani con fuzzificaci\'on, evaluaci\'on de reglas y defuzzificaci\'on por centroide.
-    \item Optimizar las funciones de membres\'ia mediante un algoritmo gen\'etico multiobjetivo que equilibre precisi\'on, sensibilidad al alto riesgo e interpretabilidad.
-    \item Exponer el sistema como una API REST (FastAPI) integrada con una interfaz web (React) que permita la consulta interactiva y la visualizaci\'on de las curvas de membres\'ia.
-\end{itemize}
-
-% -----------------------------------------------------------
-\subsection{Dataset y Selección}
-% -----------------------------------------------------------
-
-\subsubsection{Fuente y Descripción del Dataset}
+\paragraph{Fuente y Descripción del Dataset}
 
 El dataset utilizado es el \textbf{Maternal Health Risk Data Set}, disponible en el repositorio UCI Machine Learning Repository \cite{ahmed2020}. Fue recolectado de hospitales, cl\'inicas y centros de atenci\'on primaria rurales de Bangladesh mediante un sistema de monitoreo del Internet de las Cosas (IoT).
 
@@ -141,6 +210,7 @@ El dataset contiene \textbf{1.014 registros} de pacientes embarazadas, cada uno 
 
 \begin{table}[H]
     \centering
+    \caption{Variables del dataset Maternal Health Risk y sus rangos}
     \small\begin{tabular}{llll}
         \toprule
         \textbf{Variable (CSV)} & \textbf{Nombre interno} & \textbf{Unidad} & \textbf{Rango} \\
@@ -161,6 +231,7 @@ La variable objetivo \texttt{RiskLevel} toma tres valores: \textit{low risk}, \t
 
 \begin{table}[H]
     \centering
+    \caption{Distribuci\'on de clases en el dataset}
     \begin{tabular}{lcc}
         \toprule
         \textbf{Clase} & \textbf{Registros} & \textbf{Porcentaje} \\
@@ -176,21 +247,19 @@ La variable objetivo \texttt{RiskLevel} toma tres valores: \textit{low risk}, \t
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-\subsubsection{Justificación de la Elección del Dataset}
+\paragraph{Justificación de la Elección del Dataset}
 
-La elecci\'on de este dataset sobre otras alternativas estuvo motivada por tres razones principales:
+La elecci\'on de este dataset sobre otras alternativas estuvo motivada por cuatro razones principales:
 
 \begin{enumerate}
     \item \textbf{Variables continuas fuzzificables:} Todas las variables de entrada son valores num\'ericos continuos dentro de rangos bien definidos. Esto es ideal para la l\'ogica difusa, que requiere definir curvas de membres\'ia sobre un universo continuo. Un dataset con variables categ\'oricas o binarias no se presta naturalmente a este enfoque.
 
     \item \textbf{Dominio m\'edico con conocimiento experto disponible:} Existe abundante literatura cl\'inica sobre los rangos normales y patol\'ogicos de cada una de las seis variables, lo que permiti\'o definir las categor\'ias ling\"u\'isticas y sus par\'ametros por evidencia cient\'ifica y no de manera arbitraria.
 
-    \item \textbf{Tama\~no adecuado para validaci\'on:} Con 1.014 registros es posible realizar una partici\'on estratificada entrenamiento/validaci\'on/prueba que permita evaluar el desempe\~no del sistema y del proceso de optimizaci\'on de manera confiable.
-
     \item \textbf{Variables cl\'inicamente validadas:} Un estudio independiente posterior (Hossain et al., 2026 \cite{hossain2026}) que replica el mismo dominio con 6.058 registros de 9 centros hospitalarios de Bangladesh confirm\'o mediante an\'alisis ANOVA que las mismas seis variables presentan diferencias estad\'isticamente significativas entre niveles de riesgo ($p < 0.001$). El an\'alisis de importancia de variables con XGBoost en ese estudio identific\'o exactamente las mismas variables como los principales predictores, validando de forma independiente la selecci\'on realizada.
 \end{enumerate}
 
-\subsubsection{Contexto de Recolección: Infraestructura IoT}
+\paragraph{Contexto de Recolección: Infraestructura IoT}
 
 El dataset UCI fue recolectado en hospitales, cl\'inicas comunitarias y centros de atenci\'on primaria de zonas rurales de Bangladesh mediante un sistema de monitoreo basado en Internet de las Cosas (IoT) \cite{ahmed2020}. Hossain et al. \cite{hossain2026} documentan en detalle la infraestructura t\'ecnica de recoleci\'on empleada en el mismo contexto geogr\'afico e institucional: sensores IoT controlados por Raspberry Pi 4 que capturan lecturas autom\'aticas cada 30 minutos, incluyendo tens\'iometro (OMRON HEM-7120), sensor de temperatura (DS18B20), gluc\'ometro (ACCU-CHEK) y ox\'imetro de pulso. Los datos son transmitidos con cifrado TLS 1.3 a almacenamiento en la nube, con sincronizaci\'on cada 5 minutos.
 
@@ -201,32 +270,14 @@ El dataset UCI fue recolectado en hospitales, cl\'inicas comunitarias y centros 
     \label{fig:obtencion_datos}
 \end{figure}
 
-\subsubsection{Preprocesamiento}
+\paragraph{Preprocesamiento}
 
-Se identificaron y eliminaron 2 registros con valores de frecuencia card\'iaca igual a 7 lpm, claramente inconsistentes con cualquier medici\'on vital posible en una persona viva. El dataset resultante de 1.012 registros fue dividido en tres subconjuntos usando partici\'on \textbf{estratificada} (preservando la distribuci\'on de clases en cada subconjunto):
+Se identificaron y eliminaron 2 registros con valores de frecuencia card\'iaca igual a 7 lpm, claramente inconsistentes con cualquier medici\'on vital posible en una persona viva.
 
-\begin{table}[H]
-    \centering
-    \begin{tabular}{lcc}
-        \toprule
-        \textbf{Subconjunto} & \textbf{Proporción} & \textbf{Registros aprox.} \\
-        \midrule
-        Entrenamiento        & 70\%                & 708                       \\
-        Validación           & 15\%                & 152                       \\
-        Prueba               & 15\%                & 152                       \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:split}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
-\end{table}
 
-El subconjunto de validaci\'on se usa durante la optimizaci\'on gen\'etica para evaluar el fitness de cada individuo. El subconjunto de prueba se reserva exclusivamente para la evaluaci\'on final del sistema optimizado, garantizando que los resultados reportados no est\'en sesgados por el proceso de optimizaci\'on.
+\subsubsection{Revisión de Literatura y Definición de Variables Difusas}
 
-% -----------------------------------------------------------
-\subsection{Revisión de Literatura y Definición de Variables Difusas}
-% -----------------------------------------------------------
-
-\subsubsection{Proceso de Investigación}
+\paragraph{Proceso de Investigación}
 
 La definici\'on de las categor\'ias ling\"u\'isticas y de los rangos de las funciones de membres\'ia no fue arbitraria. Se realiz\'o una b\'usqueda sistem\'atica en las siguientes fuentes de literatura cient\'ifica:
 
@@ -243,19 +294,18 @@ La definici\'on de las categor\'ias ling\"u\'isticas y de los rangos de las func
     \item Elsevier / ScienceDirect (\texttt{elsevier.com})
 \end{itemize}
 
-La b\'usqueda cubri\'o m\'as de 205 fuentes y se orient\'o a responder dos preguntas concretas: (1) \textit{¿Cu\'ales son los rangos cl\'inicamente aceptados como normales, elevados y patol\'ogicos para cada una de las seis variables en mujeres embarazadas?} y (2) \textit{¿Qu\'e combinaciones de variables constituyen indicadores de riesgo en obstetricia seg\'un la evidencia publicada?}
+La b\'usqueda cubri\'o m\'as de 200 fuentes y se orient\'o a responder dos preguntas concretas: (1) \textit{¿Cu\'ales son los rangos cl\'inicamente aceptados como normales, elevados y patol\'ogicos para cada una de las seis variables en mujeres embarazadas?} y (2) \textit{¿Qu\'e combinaciones de variables constituyen indicadores de riesgo en obstetricia seg\'un la evidencia publicada?}
 
 Esta b\'usqueda permiti\'o definir tanto las categor\'ias ling\"u\'isticas (por ejemplo, determinar que la presi\'on diast\'olica se puede clasificar en ``normal'', ``elevada'' y ``alta'') como los puntos de inicio y fin de cada trapezoide a partir de los umbrales cl\'inicos reportados en la literatura. Las reglas del sistema fueron posteriormente dise\~nadas tomando como base el conocimiento extra\'ido y refinadas iterativamente para resolver los problemas de clasificaci\'on detectados durante las pruebas. El Cuadro~\ref{tab:universos_variables} resume los universos y umbrales cl\'inicos adoptados para cada variable, cuya justificaci\'on detallada se presenta en la Secci\'on~\ref{sec:variables_entrada}.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.40]{picture/investigacion.jpg}
-    \caption{Evidencia de la b\'usqueda bibliogr\'afica sistem\'atica (m\'as de 205 fuentes consultadas)}
-    \label{fig:investigacion}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+\centering
+\includegraphics[scale=0.40]{picture/investigacion.jpg}
+\caption{Evidencia de la b\'usqueda bibliogr\'afica sistem\'atica}
+\label{fig:investigacion}
 \end{figure}
 
-\subsubsection{Trabajos Relacionados}
+\paragraph{Trabajos Relacionados}
 
 \textbf{Apriceno et al. (2025)} --- \textit{A Trustworthy Evolutionary Fuzzy Neural Network Framework for Maternal Health Risk Classification} \cite{apriceno2025}. Trabajo publicado en AIME 2025 que propone una red neuronal difusa evolutiva que combina un algoritmo gen\'etico con un sistema difuso para el mismo dataset Maternal Health Risk de UCI. Sus resultados en t\'erminos de precisi\'on y transparencia son comparables al enfoque de este proyecto, validando la aplicabilidad de los m\'etodos evolutivos para este tipo de clasificaci\'on m\'edica.
 
@@ -269,11 +319,10 @@ Esta b\'usqueda permiti\'o definir tanto las categor\'ias ling\"u\'isticas (por 
 
 \textbf{Hossain et al. (2026)} --- \textit{A comprehensive maternal health risk prediction dataset from IoT-enabled medical cyber-physical systems in developing countries} \cite{hossain2026}. Art\'iculo de datos publicado en \textit{BMC Medical Informatics and Decision Making} que describe un dataset ampliado de 6.058 registros de embarazadas recolectados en 9 centros de salud de Bangladesh mediante sensores IoT (Raspberry Pi 4, tens\'iometro OMRON HEM-7120, gluc\'ometro, sensor de temperatura, ox\'imetro). El dataset incluye 8 caracter\'isticas cl\'inicas; 6 de ellas coinciden exactamente con las variables del dataset UCI utilizado en este proyecto. An\'alisis ANOVA confirm\'o que todas las caracter\'isticas presentan diferencias estad\'isticamente significativas entre niveles de riesgo ($p < 0.001$), validando de forma independiente la selecci\'on de variables del sistema desarrollado. Adicionalmente, el an\'alisis de importancia de variables con XGBoost identific\'o presi\'on diast\'olica (18.1\%), temperatura corporal (17.7\%) y presi\'on sist\'olica (17.0\%) como los tres predictores principales, consistente con la jerarqu\'ia de variables establecida en las reglas del sistema difuso de este proyecto.
 
-% -----------------------------------------------------------
-\subsection{Sistema de Lógica Difusa (Motor Mamdani)}
-% -----------------------------------------------------------
 
-\subsubsection{El Modelo de Inferencia Mamdani}
+\subsubsection{Sistema de Lógica Difusa (Motor Mamdani)}
+
+\paragraph{El Modelo de Inferencia Mamdani}
 
 Existen dos grandes familias de sistemas de inferencia difusa: \textbf{Mamdani} y \textbf{Takagi-Sugeno}. La diferencia principal est\'a en la forma de la salida:
 
@@ -284,7 +333,7 @@ Existen dos grandes familias de sistemas de inferencia difusa: \textbf{Mamdani} 
 
 Se eligi\'o el modelo \textbf{Mamdani} \cite{mamdani1975} por su interpretabilidad: las reglas del sistema describen directamente la relaci\'on cl\'inica entre los s\'intomas y el nivel de riesgo en lenguaje natural, y la salida es tambi\'en una categor\'ia ling\"u\'istica (bajo/medio/alto) antes de ser convertida a un puntaje num\'erico.
 
-\subsubsection{Funciones de Membresía Trapezoidales}
+\paragraph{Funciones de Membresía Trapezoidales}
 
 Una \textbf{funci\'on de membres\'ia} $\mu_A(x)$ describe el grado con que un valor $x$ pertenece al conjunto difuso $A$. El grado de membres\'ia var\'ia entre 0 (no pertenece) y 1 (pertenece completamente), con valores intermedios representando pertenencia parcial.
 
@@ -328,45 +377,34 @@ Las tres formas de funci\'on de membres\'ia m\'as usadas son triangular, gaussia
 
 El sistema implementado es un \textbf{sistema difuso de tipo~1} (T1-FLS, \textit{Type-1 Fuzzy Logic System}): los grados de membres\'ia son n\'umeros reales precisos en $[0, 1]$, sin incertidumbre de segundo orden. Existen sistemas de tipo~2 (T2-FLS) donde cada membres\'ia es a su vez un conjunto difuso (intervalo o distribuci\'on), m\'as adecuados cuando la incertidumbre sobre los propios par\'ametros del experto es significativa. Se opt\'o por tipo~1 por tres razones: (1)~el algoritmo gen\'etico ya optimiza autom\'aticamente los par\'ametros, reduciendo la necesidad de modelar incertidumbre sobre ellos; (2)~la interpretabilidad del sistema es mayor con membres\'ias escalares, que los m\'edicos pueden leer directamente como porcentajes de pertenencia; y (3)~la complejidad computacional de tipo~2 habr\'ia encarecido significativamente cada evaluaci\'on de fitness durante las miles de iteraciones del AG.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{picture/rectangular.png}
-    \caption{Funci\'on de membres\'ia trapezoidal: par\'ametros $[a, b, c, d]$}
-    \label{fig:trapmf}
 
-    \vspace{2pt}
-    {\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
-\end{figure}
-
-\subsubsection{Variables de Entrada: Categorías y Parámetros}
+\paragraph{Variables de Entrada: Categorías y Parámetros}
 \label{sec:variables_entrada}
 
 El siguiente cuadro resume los universos de discurso y umbrales cl\'inicos clave que sirvieron como punto de partida para definir las funciones de membres\'ia de cada variable.
 
 \begin{table}[H]
-    \centering
-    \caption{Universos de las variables difusas: rango del dataset y referencia clínica}
-    \label{tab:universos_variables}
-    \begin{tabularx}{\textwidth}{l l l X}
-        \toprule
-        \textbf{Variable}      & \textbf{Universo adoptado}  & \textbf{Rango en dataset} & \textbf{Umbral clínico clave}                                                \\
-        \midrule
-        Edad                   & {[}10, 70{]} a\~nos         & {[}10, 70{]}              & Riesgo adolescente $<$20 a; AMA $\geq$35 a \cite{who2021adolescent,acog2020} \\
-        Presi\'on sist\'olica  & {[}70, 160{]} mmHg          & {[}70, 160{]}             & HTA gestacional: $\geq$140 mmHg \cite{acog2020,whelton2018}                  \\
-        Presi\'on diast\'olica & {[}49, 100{]} mmHg          & {[}49, 100{]}             & HTA gestacional: $\geq$90 mmHg \cite{acog2020,whelton2018}                   \\
-        Az\'ucar en sangre     & {[}6.0, 19.0{]} mmol/L      & {[}6.0, 19.0{]}           & DMG: $\geq$8.5 mmol/L posprandial \cite{iadpsg2010}                          \\
-        Temperatura corporal   & {[}97, 103{]} \textdegree F & {[}97, 103{]}             & Fiebre: $\geq$100.4 \textdegree F (38 \textdegree C) \cite{mackowiak1992}    \\
-        Frecuencia card\'iaca  & {[}60, 90{]} lpm            & {[}60, 90{]}              & Taquicardia: $>$100 lpm \cite{monga1995}                                     \\
-        \bottomrule
-    \end{tabularx}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia con base en las referencias cl\'inicas indicadas.}
+\centering
+\caption{Universos de las variables difusas: rango del dataset y referencia clínica}
+\label{tab:universos_variables}
+\begin{tabularx}{\textwidth}{l l l X}
+\toprule
+\textbf{Variable} & \textbf{Universo adoptado} & \textbf{Rango en dataset} & \textbf{Umbral clínico clave} \\
+\midrule
+Edad                    & {[}10, 70{]} a\~nos     & {[}10, 70{]}      & Riesgo adolescente $<$20 a; AMA $\geq$35 a \cite{who2021adolescent,acog2020} \\
+Presi\'on sist\'olica   & {[}70, 160{]} mmHg      & {[}70, 160{]}     & HTA gestacional: $\geq$140 mmHg \cite{acog2020,whelton2018} \\
+Presi\'on diast\'olica  & {[}49, 100{]} mmHg      & {[}49, 100{]}     & HTA gestacional: $\geq$90 mmHg \cite{acog2020,whelton2018} \\
+Az\'ucar en sangre      & {[}6.0, 19.0{]} mmol/L  & {[}6.0, 19.0{]}   & DMG: $\geq$8.5 mmol/L posprandial \cite{iadpsg2010} \\
+Temperatura corporal    & {[}97, 103{]} \textdegree F & {[}97, 103{]}  & Fiebre: $\geq$100.4 \textdegree F (38 \textdegree C) \cite{mackowiak1992} \\
+Frecuencia card\'iaca   & {[}60, 90{]} lpm        & {[}60, 90{]}      & Taquicardia: $>$100 lpm \cite{monga1995} \\
+\bottomrule
+\end{tabularx}
+\par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 Cada variable de entrada cuenta con 2 o 3 categor\'ias ling\"u\'isticas. Los puntos de cada trapezoide fueron inicialmente definidos con base en los umbrales cl\'inicos de la literatura y posteriormente refinados por el algoritmo gen\'etico.
 
 \paragraph{Variable 1: Edad (años)}
-
-Justificaci\'on: La literatura obst\'etrica considera ``edad materna avanzada'' a partir de los 35 a\~nos como factor de riesgo independiente para hipertensi\'on gestacional, diabetes gestacional y complicaciones del parto. La categor\'ia ``joven'' (menor de 20 a\~nos) tambi\'en representa riesgo por inmadurez biol\'ogica y socioecon\'omica.
 
 \begin{table}[H]
     \centering
@@ -384,9 +422,8 @@ Justificaci\'on: La literatura obst\'etrica considera ``edad materna avanzada'' 
 \end{table}
 
 Justificaci\'on: El rango del dataset [10, 70] a\~nos \cite{ahmed2020} cubre el espectro completo de edad reproductiva documentado. La Organizaci\'on Mundial de la Salud define el embarazo adolescente (menores de 20 a\~nos) como situaci\'on de alto riesgo obst\'etrico por inmadurez biol\'ogica del canal del parto, mayor prevalencia de desnutrici\'on materna y acceso limitado a atenci\'on prenatal \cite{who2021adolescent}. En el extremo opuesto, la ``edad materna avanzada'' (AMA), definida convencionalmente como $\geq 35$ a\~nos por el ACOG, se asocia de forma independiente con mayor riesgo de hipertensi\'on gestacional, diabetes gestacional, parto prematuro y anomal\'ias cromosómicas \cite{acog2020}. Estudios epidemiol\'ogicos de gran escala confirman que la morbilidad materna perinatal es m\'inima entre los 20 y 34 a\~nos, ventana que abarca la categor\'ia ``adulta'' del sistema \cite{cavazos2014,yogev2010}. Los puntos del trapezoide ``avanzada'' comienzan en 34 a\~nos para capturar el riesgo creciente en los a\~nos previos al umbral oficial de AMA, cuya relevancia cl\'inica est\'a bien documentada \cite{acog2020}.
-\paragraph{Variable 2: Presión Sistólica (mmHg)}
 
-Justificaci\'on: El criterio cl\'inico de hipertensi\'on gestacional establece presi\'on sist\'olica $\geq 140$ mmHg como umbral de alerta. La zona ``elevada'' (120--145 mmHg) corresponde a la hipertensi\'on estadio 1 seg\'un las gu\'ias de la Asociaci\'on Americana del Coraz\'on (AHA).
+\paragraph{Variable 2: Presión Sistólica (mmHg)}
 
 \begin{table}[H]
     \centering
@@ -404,9 +441,8 @@ Justificaci\'on: El criterio cl\'inico de hipertensi\'on gestacional establece p
 \end{table}
 
 Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on sist\'olica en: normal ($<$120 mmHg), elevada (120--129 mmHg), estadio~1 (130--139 mmHg) y estadio~2 ($\geq$140 mmHg) \cite{whelton2018}. En obstetricia, el ACOG y la OMS establecen $\geq$140 mmHg como umbral diagn\'ostico de hipertensi\'on gestacional y criterio de sospecha de preeclampsia \cite{acog2020,who2011hypertension}; a partir de $\geq$160 mmHg se considera hipertensi\'on gestacional grave que exige tratamiento farmacol\'ogico inmediato \cite{acog2020}. La categor\'ia ``alta'' del sistema arranca en 140 mmHg (plena certeza desde 148 mmHg) para replicar estos umbrales; la ``elevada'' (120--145 mmHg) cubre el estadio~1 de la AHA, zona de vigilancia intensificada; y la ``normal'' con n\'ucleo hasta 110 mmHg refleja que por debajo de ese valor la presi\'on sist\'olica aislada no constituye factor de riesgo gestacional \cite{whelton2018}.
-\paragraph{Variable 3: Presión Diastólica (mmHg)}
 
-Justificaci\'on: El umbral cl\'inico de hipertensi\'on gestacional se fija en presi\'on diast\'olica $\geq 90$ mmHg seg\'un la OMS. La zona ``elevada'' (76--95 mmHg) cubre la transici\'on hacia ese umbral de riesgo, mientras que valores $\geq 90$ mmHg requieren intervenci\'on cl\'inica inmediata.
+\paragraph{Variable 3: Presión Diastólica (mmHg)}
 
 \begin{table}[H]
     \centering
@@ -427,8 +463,6 @@ Justificaci\'on: La gu\'ia ACC/AHA 2017 clasifica la presi\'on diast\'olica en: 
 
 \paragraph{Variable 4: Azúcar en Sangre (mmol/L)}
 
-Justificaci\'on: El criterio diagn\'ostico de diabetes gestacional (IADPSG) establece que la glucemia en ayunas $\geq 5.1$ mmol/L (92 mg/dL) y la glucemia postprandial $\geq 8.5$ mmol/L (153 mg/dL) indican diabetes gestacional. El nivel ``alto'' ($\geq 14$ mmol/L) corresponde a hiperglucemia severa asociada con riesgo de cetoacidosis.
-
 \begin{table}[H]
     \centering
     \caption{Funciones de membres\'ia --- Az\'ucar en Sangre [6, 19] mmol/L}
@@ -445,9 +479,8 @@ Justificaci\'on: El criterio diagn\'ostico de diabetes gestacional (IADPSG) esta
 \end{table}
 
 Justificaci\'on: Los valores del dataset [6.0--19.0] mmol/L corresponden a mediciones de glucemia aleatoria (no en ayunas) \cite{ahmed2020}. El grupo IADPSG establece como criterios diagn\'osticos de diabetes mellitus gestacional (DMG): glucemia en ayunas $\geq$5.1 mmol/L, a la hora $\geq$10.0 mmol/L y a las dos horas $\geq$8.5 mmol/L en la prueba de tolerancia oral a la glucosa \cite{iadpsg2010}. La Asociaci\'on Americana de Diabetes (ADA) define glucemia aleatoria $\geq$11.1 mmol/L (200 mg/dL) como criterio diagn\'ostico de diabetes en presencia de s\'intomas, y glucemia en ayunas $\geq$7.0 mmol/L como umbral de confirmaci\'on \cite{ada2024}. Con base en estos criterios: la categor\'ia ``normal'' [6.0--8.5] mmol/L abarca el rango por debajo del umbral postprandial IADPSG; la ``elevada'' [8.0--14.0] mmol/L cubre desde la zona de riesgo de DMG hasta hiperglucemia notable; y la ``alta'' [$\geq$12 mmol/L, certeza plena desde 14 mmol/L] representa hiperglucemia severa ($>$200 mg/dL) asociada con riesgo de cetoacidosis diab\'etica y complicaciones perinatales graves \cite{ada2024}.
-\paragraph{Variable 5: Temperatura Corporal (\textdegree F)}
 
-Justificaci\'on: La temperatura normal en el embarazo oscila entre 97.0 y 99.0 \textdegree F. La fiebre ($\geq 100.4$ \textdegree F $= 38$ \textdegree C) durante el embarazo es indicativa de infecci\'on o sepsis, condici\'on potencialmente letal para la madre y el feto.
+\paragraph{Variable 5: Temperatura Corporal (\textdegree F)}
 
 \begin{table}[H]
     \centering
@@ -465,9 +498,8 @@ Justificaci\'on: La temperatura normal en el embarazo oscila entre 97.0 y 99.0 \
 \end{table}
 
 Justificaci\'on: Un estudio de referencia cl\'asico de Mackowiak et al.\ estableci\'o que la temperatura corporal normal en adultos oscila entre 36.1 y 37.2 \textdegree C (97.0--99.0 \textdegree F), con media de 36.8 \textdegree C \cite{mackowiak1992}. El umbral de fiebre cl\'inica universalmente aceptado es $\geq$38.0 \textdegree C ($\geq$100.4 \textdegree F) \cite{mackowiak1992}. En obstetricia, la fiebre es un signo de alarma de primer orden: puede indicar corioamnionitis, infecci\'on del tracto urinario ascendente o sepsis puerperal, condiciones asociadas con mortalidad materna y neonatal elevada \cite{soper2009}. La categor\'ia ``fiebre'' del sistema parte desde 101 \textdegree F con soporte desde 100.4 \textdegree F, garantizando que ning\'un caso febril quede sin clasificar. La categor\'ia ``elevada'' (99.0--101.5 \textdegree F) corresponde al rango subfebril (37.2--38.6 \textdegree C), zona de alerta incipiente con vigilancia estrecha recomendada en gestantes. El universo [97, 103] \textdegree F reproduce exactamente el rango del dataset \cite{ahmed2020}.
-\paragraph{Variable 6: Frecuencia Cardíaca (lpm)}
 
-Justificaci\'on: La frecuencia card\'iaca normal en reposo es inferior a 80 lpm durante el embarazo. La taquicardia ($\geq 90$ lpm) puede indicar anemia, infecci\'on o insuficiencia card\'iaca gestacional, condiciones asociadas a mayor morbimortalidad materna.
+\paragraph{Variable 6: Frecuencia Cardíaca (lpm)}
 
 \begin{table}[H]
     \centering
@@ -485,18 +517,9 @@ Justificaci\'on: La frecuencia card\'iaca normal en reposo es inferior a 80 lpm 
 
 Justificaci\'on: La frecuencia card\'iaca en reposo normal para adultos es de 60--100 lpm \cite{monga1995}. Durante el embarazo se produce un incremento fisiol\'ogico de 10--20 lpm respecto al valor basal, con valores medios de 80--90 lpm en el tercer trimestre \cite{monga1995,sanghavi2014}. El dataset presenta valores exclusivamente en el rango [60--90] lpm \cite{ahmed2020}, lo que refleja mediciones tomadas en condiciones de reposo relativo y la ausencia de casos de taquicardia franca ($>$100 lpm) en la poblaci\'on estudiada. Por ello el universo se acota al rango observado sin extrapolaci\'on. La categor\'ia ``normal'' [60--80] lpm abarca los valores de reposo habituales en el embarazo; la ``elevada'' [76--90] lpm corresponde a frecuencia alta pero fisiol\'ogicamente posible en gestantes (asociada con anemia, deshidrataci\'on o estr\'es) sin llegar a taquicardia patol\'ogica \cite{sanghavi2014}. Esta variable tiene menor poder discriminativo en el dataset, lo que justifica sus solo dos categor\'ias y la ausencia de reglas de alto riesgo aut\'onomas para ella.
 
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-            \textbf{[IMAGEN: Gr\'afica con 6 subplots (uno por variable) mostrando las funciones de membres\'ia trapezoidales de cada categor\'ia. Por ejemplo, para edad: tres curvas solapadas (joven/adulta/avanzada) sobre el eje X de 10 a 70.]}
-            \vspace{3cm}}}
-    \caption{Funciones de membres\'ia de las seis variables de entrada}
-    \label{fig:membresias_entrada}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
-\end{figure}
-\subsubsection{Variable de Salida: Puntaje de Riesgo}
+\paragraph{Variable de Salida: Puntaje de Riesgo}
 
-La salida del sistema difuso es la variable \textbf{puntaje\_riesgo} con universo $[0, 100]$ y tres conjuntos difusos:
+La salida del sistema difuso es la variable \textbf{puntaje\_riesgo} con universo $[0, 100]$ y tres conjuntos difusos trapezoidales que cubren el universo completo con solapamiento entre regiones adyacentes:
 
 \begin{table}[H]
     \centering
@@ -510,7 +533,7 @@ La salida del sistema difuso es la variable \textbf{puntaje\_riesgo} con univers
         alto               & 62  & 75  & 100 & 100 \\
         \bottomrule
     \end{tabular}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia, siguiendo criterios de dise\~no de \cite{ross2010}.}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
 La partici\'on del universo de discurso de salida sigue los criterios de dise\~no de variables ling\"u\'isticas en sistemas Mamdani descritos por Ross \cite{ross2010}: los conjuntos deben (1) cubrir el universo completo sin gaps, (2) solaparse lo suficiente para que la defuzzificaci\'on por centroide produzca transiciones suaves entre niveles de riesgo, y (3) mantener una interpretaci\'on ling\"u\'istica inequ\'ivoca. Los par\'ametros concretos se determinaron de forma experta dividiendo el universo $[0,100]$ en tres regiones aproximadamente proporcionales, con solapamiento de 7--17 puntos entre regiones adyacentes, garantizando que ning\'un valor de entrada quede sin cobertura.
@@ -526,7 +549,7 @@ El puntaje num\'erico resultante de la defuzzificaci\'on se convierte a etiqueta
     \end{cases}
 \end{equation}
 
-\subsubsection{M\'etodo de Inducci\'on de Reglas: PRISM y RIPPER}
+\paragraph{M\'etodo de Inducci\'on de Reglas: PRISM y RIPPER}
 
 La construcci\'on del conjunto de reglas no fue exclusivamente manual: se siguió una metodolog\'ia en dos etapas fundamentada en algoritmos de inducci\'on de reglas simb\'olicas, partiendo del algoritmo \textbf{PRISM} propuesto por Cendrowska \cite{cendrowska1987}.
 
@@ -536,7 +559,7 @@ PRISM (\textit{Programmed Rule Induction Systematically in Modules}) es un algor
 
 \paragraph{Primera Etapa: Aplicaci\'on Manual de PRISM}
 
-En una primera fase se aplic\'o la l\'ogica de PRISM de forma manual sobre el dataset discretizado, usando los umbrales cl\'inicos como puntos de corte. Se obtuvieron conjuntos de 25--30 reglas, la mayor\'ia con tres o cuatro antecedentes. Al evaluar el sistema difuso con estas reglas sobre el conjunto de validaci\'on, el MacroF1 fue \textbf{inferior a 0.50}, umbral inaceptable para un sistema de apoyo cl\'inico. Las reglas eran demasiado espec\'ificas: la coincidencia simult\'anea de tres o cuatro condiciones ocurr\'ia en muy pocos casos reales, dejando muchas instancias sin consecuente activado con fuerza suficiente.
+En una primera fase se aplic\'o la l\'ogica de PRISM de forma manual sobre el dataset discretizado, usando los umbrales cl\'inicos como puntos de corte. Se obtuvieron entre 4 y 15 reglas. Al evaluar el sistema difuso con estas reglas sobre el conjunto de validaci\'on, el MacroF1 fue \textbf{inferior a 0.50}, umbral inaceptable para un sistema de apoyo cl\'inico. Las reglas eran demasiado espec\'ificas: la coincidencia simult\'anea de tres o cuatro condiciones ocurr\'ia en muy pocos casos reales, dejando muchas instancias sin consecuente activado con fuerza suficiente.
 
 \paragraph{Discretizaci\'on previa al aprendizaje de reglas}
 
@@ -546,61 +569,61 @@ RIPPER ---al igual que PRISM--- opera sobre atributos \textbf{categ\'oricos}, no
 
 En la segunda fase se emple\'o la biblioteca Python \texttt{wittgenstein}, que implementa el algoritmo \textbf{RIPPER} (\textit{Repeated Incremental Pruning to Produce Error Reduction}) de Cohen \cite{cohen1995}. RIPPER extiende PRISM con una fase de \textbf{poda} que elimina condiciones redundantes y reduce el sobreajuste: (1)~\textit{Fase de crecimiento:} igual que PRISM, construye una regla a\~nadiendo condiciones que maximizan la cobertura. (2)~\textit{Fase de poda:} evalúa qu\'e condiciones pueden eliminarse sin degradar el error en un conjunto de validaci\'on interno, produciendo reglas m\'as cortas y generalizables. (3)~\textit{Iteraci\'on:} repite construcci\'on-poda hasta que no se obtengan mejoras. La aplicaci\'on de RIPPER produjo reglas con mayor cobertura y menor especificidad, que fueron revisadas cl\'inicamente para verificar coherencia m\'edica y depuradas para eliminar las sin justificaci\'on independiente. El resultado son las \textbf{28 reglas} finales.
 
-\subsubsection{Las 28 Reglas Difusas}
+\paragraph{Las 28 Reglas Difusas}
 
 Las 28 reglas fueron inducidas autom\'aticamente por RIPPER a partir del conjunto de entrenamiento discretizado y revisadas para verificar coherencia cl\'inica. Se distribuyen en 14 reglas para riesgo alto, 4 para riesgo medio y 10 para riesgo bajo.
 
 \begin{longtable}{cp{9cm}c}
-    \caption{Reglas del sistema difuso Mamdani --- inducidas por RIPPER} \label{tab:reglas}                                                   \\
+    \caption{Reglas del sistema difuso Mamdani --- inducidas por RIPPER} \label{tab:reglas} \\
     \toprule
-    \textbf{N\textordmasculine} & \textbf{Antecedentes}                                                                & \textbf{Consecuente} \\
+    \textbf{N\textordmasculine} & \textbf{Antecedentes} & \textbf{Consecuente} \\
     \midrule
     \endfirsthead
     \toprule
-    \textbf{N\textordmasculine} & \textbf{Antecedentes}                                                                & \textbf{Consecuente} \\
+    \textbf{N\textordmasculine} & \textbf{Antecedentes} & \textbf{Consecuente} \\
     \midrule
     \endhead
     \midrule
-    \multicolumn{3}{r}{\textit{Contin\'ua...}}                                                                                                \\
+    \multicolumn{3}{r}{\textit{Contin\'ua...}} \\
     \endfoot
     \bottomrule
     \endlastfoot
-    1                           & PS=elevada AND PD=alta AND AS=normal                                                 & alto                 \\
-    2                           & AS=alta AND PD=alta AND PS=alta                                                      & alto                 \\
-    3                           & AS=alta AND FC=elevada                                                               & alto                 \\
-    4                           & AS=elevada AND TC=normal AND Edad=adulta                                             & alto                 \\
-    5                           & AS=alta AND PD=alta AND Edad=adulta                                                  & alto                 \\
-    6                           & AS=elevada AND FC=elevada AND TC=normal AND PD=alta                                  & alto                 \\
-    7                           & Edad=avanzada AND AS=alta AND PD=alta                                                & alto                 \\
-    8                           & AS=elevada AND TC=elevada AND Edad=joven                                             & alto                 \\
-    9                           & Edad=avanzada AND AS=alta AND PS=normal                                              & alto                 \\
-    10                          & AS=elevada AND PD=elevada AND FC=elevada                                             & alto                 \\
-    11                          & TC=fiebre AND PD=normal AND Edad=adulta                                              & alto                 \\
-    12                          & TC=elevada AND PS=elevada                                                            & alto                 \\
-    13                          & PS=elevada AND PD=elevada AND Edad=joven                                             & alto                 \\
-    14                          & AS=elevada AND Edad=avanzada AND FC=elevada                                          & alto                 \\
+    1  & PS=elevada AND PD=alta AND AS=normal                                          & alto  \\
+    2  & AS=alta AND PD=alta AND PS=alta                                               & alto  \\
+    3  & AS=alta AND FC=elevada                                                        & alto  \\
+    4  & AS=elevada AND TC=normal AND Edad=adulta                                      & alto  \\
+    5  & AS=alta AND PD=alta AND Edad=adulta                                           & alto  \\
+    6  & AS=elevada AND FC=elevada AND TC=normal AND PD=alta                           & alto  \\
+    7  & Edad=avanzada AND AS=alta AND PD=alta                                         & alto  \\
+    8  & AS=elevada AND TC=elevada AND Edad=joven                                      & alto  \\
+    9  & Edad=avanzada AND AS=alta AND PS=normal                                       & alto  \\
+    10 & AS=elevada AND PD=elevada AND FC=elevada                                      & alto  \\
+    11 & TC=fiebre AND PD=normal AND Edad=adulta                                       & alto  \\
+    12 & TC=elevada AND PS=elevada                                                     & alto  \\
+    13 & PS=elevada AND PD=elevada AND Edad=joven                                      & alto  \\
+    14 & AS=elevada AND Edad=avanzada AND FC=elevada                                   & alto  \\
     \midrule
-    15                          & TC=elevada AND AS=normal AND PD=elevada AND Edad=adulta                              & medio                \\
-    16                          & PD=normal AND PS=elevada AND TC=normal                                               & medio                \\
-    17                          & PS=normal AND Edad=adulta AND TC=elevada                                             & medio                \\
-    18                          & PS=normal AND TC=elevada AND AS=normal AND FC=elevada                                & medio                \\
+    15 & TC=elevada AND AS=normal AND PD=elevada AND Edad=adulta                       & medio \\
+    16 & PD=normal AND PS=elevada AND TC=normal                                        & medio \\
+    17 & PS=normal AND Edad=adulta AND TC=elevada                                      & medio \\
+    18 & PS=normal AND TC=elevada AND AS=normal AND FC=elevada                         & medio \\
     \midrule
-    19                          & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven AND FC=elevada    & bajo                 \\
-    20                          & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven                   & bajo                 \\
-    21                          & AS=normal AND PD=elevada AND TC=normal AND PS=normal AND Edad=avanzada AND FC=normal & bajo                 \\
-    22                          & AS=normal AND PS=normal AND TC=normal AND Edad=avanzada                              & bajo                 \\
-    23                          & AS=normal AND PS=normal AND TC=normal AND PD=elevada AND Edad=adulta AND FC=normal   & bajo                 \\
-    24                          & AS=normal AND PS=normal AND TC=normal AND FC=elevada AND Edad=joven                  & bajo                 \\
-    25                          & AS=normal AND PS=normal AND TC=normal AND FC=normal                                  & bajo                 \\
-    26                          & AS=normal AND PS=normal AND PD=elevada AND Edad=avanzada                             & bajo                 \\
-    27                          & PS=normal AND AS=normal AND TC=fiebre AND FC=elevada                                 & bajo                 \\
-    28                          & AS=normal AND PS=normal AND TC=normal AND PD=normal                                  & bajo                 \\
+    19 & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven AND FC=elevada & bajo  \\
+    20 & AS=normal AND PS=normal AND TC=normal AND PD=normal AND Edad=joven            & bajo  \\
+    21 & AS=normal AND PD=elevada AND TC=normal AND PS=normal AND Edad=avanzada AND FC=normal & bajo  \\
+    22 & AS=normal AND PS=normal AND TC=normal AND Edad=avanzada                       & bajo  \\
+    23 & AS=normal AND PS=normal AND TC=normal AND PD=elevada AND Edad=adulta AND FC=normal & bajo  \\
+    24 & AS=normal AND PS=normal AND TC=normal AND FC=elevada AND Edad=joven           & bajo  \\
+    25 & AS=normal AND PS=normal AND TC=normal AND FC=normal                           & bajo  \\
+    26 & AS=normal AND PS=normal AND PD=elevada AND Edad=avanzada                      & bajo  \\
+    27 & PS=normal AND AS=normal AND TC=fiebre AND FC=elevada                          & bajo  \\
+    28 & AS=normal AND PS=normal AND TC=normal AND PD=normal                           & bajo  \\
 \end{longtable}
 \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- reglas inducidas por RIPPER sobre el conjunto de entrenamiento.}
 
 \textit{Nomenclatura: AS = az\'ucar en sangre, PS = presi\'on sist\'olica, PD = presi\'on diast\'olica, TC = temperatura corporal, FC = frecuencia card\'iaca.}
 
-\subsubsection{Proceso de Inferencia Mamdani: Paso a Paso}
+\paragraph{Proceso de Inferencia Mamdani: Paso a Paso}
 
 El motor de inferencia ejecuta los siguientes pasos para cada caso:
 
@@ -653,14 +676,15 @@ Se eligi\'o el m\'etodo del centroide sobre otras alternativas (bisecci\'on, MOM
 
 Si todos los conjuntos de salida tienen activaci\'on cero (ninguna regla se dispara), el sistema retorna un puntaje neutro de \textbf{50.0} como valor de respaldo. Este caso ocurre cuando el perfil de la paciente no coincide con ninguno de los antecedentes de las 28 reglas. El puntaje 50.0 cae en la zona de riesgo medio por los umbrales de clasificaci\'on, pero \textbf{no debe interpretarse como un resultado cl\'inico}: el sistema no tuvo informaci\'on suficiente para emitir un juicio. La interfaz web detecta esta condici\'on y muestra un aviso expl\'icito al usuario indicando que el perfil no activ\'o ninguna regla y que el resultado no constituye una clasificaci\'on fiable.
 
-\subsubsection{Motor de Inferencia Vectorizado}
+
+\paragraph{Motor de Inferencia Vectorizado}
 
 El motor de inferencia fue dise\~nado con \textbf{procesamiento vectorizado} para permitir la evaluaci\'on eficiente de lotes completos de pacientes. Esta capacidad es cr\'itica durante la fase de optimizaci\'on gen\'etica, donde el sistema difuso es evaluado cientos de veces por generaci\'on sobre el conjunto de validaci\'on completo. Para cada lote de casos, el motor ejecuta secuencialmente los tres pasos del proceso Mamdani: (1) fuzzificaci\'on de todas las variables de entrada, (2) evaluaci\'on de las 28 reglas aplicando AND-m\'inimo por regla y OR-m\'aximo por categor\'ia de salida, y (3) defuzzificaci\'on por centroide sobre el conjunto agregado de salida. El resultado para cada paciente es un puntaje num\'erico en $[0, 100]$, la etiqueta de riesgo correspondiente y las activaciones por nivel de riesgo.
-% -----------------------------------------------------------
-\subsection{Algoritmo Genético}
-% -----------------------------------------------------------
 
-\subsubsection{Motivación: Por qué Optimizar con un Algoritmo Genético}
+
+\subsubsection{Algoritmo Genético}
+
+\paragraph{Motivación: Por qué Optimizar con un Algoritmo Genético}
 \label{sec:ag_motivacion}
 
 Las funciones de membres\'ia base definidas por la literatura m\'edica representan el mejor conocimiento previo disponible sobre los rangos cl\'inicos de las variables. Sin embargo, el dataset espec\'ifico de riesgo materno tiene distribuciones particulares que pueden requerir ajustes en esos par\'ametros para maximizar la precisi\'on del clasificador.
@@ -681,7 +705,7 @@ Los algoritmos gen\'eticos son especialmente adecuados para estos problemas porq
     \item Permiten incorporar penalizaciones para m\'ultiples objetivos en una \'unica funci\'on escalar.
 \end{enumerate}
 
-\subsubsection{Codificación del Cromosoma}
+\paragraph{Codificación del Cromosoma}
 
 Cada \textbf{individuo} (soluci\'on candidata) en el algoritmo gen\'etico es un \textbf{cromosoma} --- un vector de n\'umeros reales que codifica todos los par\'ametros de las funciones de membres\'ia.
 
@@ -717,7 +741,7 @@ La codificaci\'on es directa: los cuatro puntos $[a, b, c, d]$ de cada trapezoid
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-\subsubsection{Población Inicial}
+\paragraph{Población Inicial}
 
 La poblaci\'on inicial de 50 individuos se genera mediante una estrategia mixta:
 
@@ -727,7 +751,7 @@ La poblaci\'on inicial de 50 individuos se genera mediante una estrategia mixta:
     \item \textbf{1 individuo exacto:} El cromosoma base sin perturbaci\'on, garantizando que el algoritmo nunca sea peor que el dise\~no experto inicial.
 \end{itemize}
 
-\subsubsection{Función de Fitness}
+\paragraph{Función de Fitness}
 
 La funci\'on de fitness define el criterio de evaluaci\'on de cada individuo. Se dise\~n\'o como una funci\'on \textbf{multiobjetivo ponderada}:
 
@@ -743,20 +767,20 @@ A continuaci\'on se justifica cada t\'ermino:
 Para cada clase $c$, se definen primero \textbf{Precisi\'on} y \textbf{Recall} a partir de la matriz de confusi\'on:
 
 \begin{equation}
-    \text{Precision}_c = \frac{TP_c}{TP_c + FP_c}, \qquad \text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
+\text{Precision}_c = \frac{TP_c}{TP_c + FP_c}, \qquad \text{Recall}_c = \frac{TP_c}{TP_c + FN_c}
 \end{equation}
 
 donde $TP_c$ son los verdaderos positivos (casos de clase~$c$ correctamente clasificados), $FP_c$ los falsos positivos (otras clases predichas como~$c$) y $FN_c$ los falsos negativos (casos de clase~$c$ predichos como otra). El \textbf{F1-Score por clase} es la media arm\'onica de ambas m\'etricas, que penaliza severamente cuando cualquiera de las dos es baja:
 
 \begin{equation}
-    F_1^{(c)} = \frac{2 \cdot \text{Precision}_c \cdot \text{Recall}_c}{\text{Precision}_c + \text{Recall}_c} = \frac{2\,TP_c}{2\,TP_c + FP_c + FN_c}
+F_1^{(c)} = \frac{2 \cdot \text{Precision}_c \cdot \text{Recall}_c}{\text{Precision}_c + \text{Recall}_c} = \frac{2\,TP_c}{2\,TP_c + FP_c + FN_c}
 \end{equation}
 
 El \textbf{F1-Score Macro} promedia el F1 de las tres clases con igual peso:
 
 \begin{equation}
-    F_1^{macro} = \frac{1}{3}\sum_{c \in \{\text{bajo, medio, alto}\}} F_1^{(c)}
-    \label{eq:macrof1}
+F_1^{macro} = \frac{1}{3}\sum_{c \in \{\text{bajo, medio, alto}\}} F_1^{(c)}
+\label{eq:macrof1}
 \end{equation}
 
 Se eligió el promedio \textbf{macro} (en lugar de ponderado o micro) porque las tres clases reciben igual importancia sin importar su frecuencia. Con promedio ponderado, las mejoras en la clase mayoritaria dominar\'ian la m\'etrica; con macro, el sistema \textbf{debe clasificar bien las tres clases simult\'aneamente}. Se usa MacroF1 en lugar de \textit{accuracy} porque en el dataset desbalanceado (40\% bajo, 33\% medio, 27\% alto) un clasificador que prediga siempre ``bajo riesgo'' obtendr\'ia 40\% de exactitud, pero $F_1^{(c)} = 0$ para las clases medio y alto, resultando en $F_1^{macro} \approx 0.13$. Esto lo convierte en la m\'etrica m\'as exigente e informativa, por lo que recibe el peso dominante de 0.75 en la funci\'on de fitness.
@@ -794,7 +818,7 @@ El peso alto (0.80) refleja que la interpretabilidad del sistema es una priorida
 
 Penaliza soluciones que se alejan mucho del dise\~no experto original, medido gen a gen como fracci\'on del rango de cada variable. Esto act\'ua como un regularizador que \textit{ancla} la b\'usqueda alrededor del conocimiento cl\'inico previo. El peso peque\~no (0.05) permite al AG alejarse del experto si la mejora en precisi\'on lo justifica, pero lo desincentiva sin raz\'on.
 
-\subsubsection{Selección por Torneo}
+\paragraph{Selección por Torneo}
 
 Se utiliz\'o \textbf{selecci\'on por torneo} con tama\~no $k = 3$. En cada torneo, se eligen aleatoriamente 3 individuos de la poblaci\'on y el de mayor fitness pasa a ser padre. Este proceso se repite hasta seleccionar todos los padres necesarios.
 
@@ -804,7 +828,7 @@ Se utiliz\'o \textbf{selecci\'on por torneo} con tama\~no $k = 3$. En cada torne
     \item \textit{Selecci\'on por rango:} M\'as justa que la ruleta pero ignora la magnitud de las diferencias. El torneo con $k=3$ ofrece un buen balance entre presi\'on selectiva y mantenimiento de diversidad.
 \end{itemize}
 
-\subsubsection{Cruce Aritmético}
+\paragraph{Cruce Aritmético}
 
 Se implement\'o \textbf{cruce aritm\'etico} con probabilidad de cruce $p_c = 0.85$. Dados dos padres $P_1$ y $P_2$, los hijos $H_1$ y $H_2$ se generan como:
 
@@ -821,7 +845,7 @@ donde $\lambda$ se genera aleatoriamente por gen desde una distribuci\'on unifor
     \item Restringir $\lambda \in [0.25, 0.75]$ evita producir hijos id\'enticos a uno de los padres ($\lambda = 0$ o $\lambda = 1$) y garantiza que cada hijo combine informaci\'on de ambos.
 \end{itemize}
 
-\subsubsection{Mutación Gaussiana}
+\paragraph{Mutación Gaussiana}
 
 Cada gen $g_i$ de cada individuo muta con probabilidad $p_m = 0.04$ (4\%). Cuando muta, se le suma ruido gaussiano:
 
@@ -836,17 +860,17 @@ Cada gen $g_i$ de cada individuo muta con probabilidad $p_m = 0.04$ (4\%). Cuand
     \item $\sigma = 5\%$ del rango de cada gen es suficiente para escapar m\'inimos locales sin destruir las soluciones buenas.
 \end{itemize}
 
-\subsubsection{Elitismo}
+\paragraph{Elitismo}
 
 Se preservan los \textbf{3 mejores individuos} de cada generaci\'on (elitismo = 3) que pasan directamente a la siguiente generaci\'on sin modificaci\'on. Esto garantiza que el fitness del mejor individuo \textbf{nunca decrece} a lo largo de las generaciones, previniendo la p\'erdida de buenas soluciones por efectos aleatorios del cruce y la mutaci\'on.
 
-\subsubsection{Early Stopping}
+\paragraph{Early Stopping}
 
 El algoritmo se detiene anticipadamente si transcurren \textbf{50 generaciones consecutivas} sin mejora en el fitness del mejor individuo (paciencia = 50).
 
 Esta estrategia evita el sobreentrenamiento (el AG sigue explorando mucho tiempo despu\'es de haber convergido, sin ganancia real) y reduce el tiempo de c\'omputo cuando la poblaci\'on ha convergido.
 
-\subsubsection{Mecanismo de Reparación del Cromosoma}
+\paragraph{Mecanismo de Reparación del Cromosoma}
 
 Despu\'es del cruce y la mutaci\'on, un cromosoma puede volverse \textbf{inv\'alido}: trapezoides con puntos desordenados ($a > b$), rangos fuera de los l\'imites de la variable, o categor\'ias con solapamiento excesivo. El mecanismo de reparaci\'on aplica las siguientes correcciones en hasta 5 iteraciones:
 
@@ -863,7 +887,7 @@ La reparaci\'on se aplica despu\'es de la inicializaci\'on, despu\'es del cruce 
 
 Para evaluar cada individuo, el sistema: (1) repara el cromosoma si es necesario, (2) decodifica los 68 genes a par\'ametros de funciones de membres\'ia, (3) construye el sistema difuso completo, (4) lo evalúa sobre el conjunto de validaci\'on y (5) calcula el fitness seg\'un la funci\'on definida en la ecuaci\'on~\eqref{eq:fitness}.
 
-\subsubsection{Parámetros del Algoritmo Genético}
+\paragraph{Parámetros del Algoritmo Genético}
 
 \begin{table}[H]
     \centering
@@ -891,117 +915,133 @@ Para evaluar cada individuo, el sistema: (1) repara el cromosoma si es necesario
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{table}
 
-\subsubsection{Interfaz del Algoritmo Genético: Panel de Monitoreo y Resultados}
+\paragraph{Interfaz del Algoritmo Gen\'etico: Panel de Monitoreo y Resultados}
 
+La interfaz web del sistema incluye un panel dedicado exclusivamente al monitoreo y an\'alisis del proceso de optimizaci\'on gen\'etica. Este panel permite al usuario observar en detalle c\'omo el algoritmo gen\'etico transform\'o las funciones de membres\'ia base ---definidas por literatura cl\'inica--- en un conjunto optimizado de par\'ametros adaptados al dataset de riesgo materno. A continuaci\'on se documenta cada componente visual del panel.
 
-La interfaz web del sistema incluye un panel dedicado exclusivamente al monitoreo y análisis del proceso de optimización genética. Este panel permite al usuario observar en detalle cómo el algoritmo genético transformó las funciones de membresía base ---definidas por literatura clínica--- en un conjunto optimizado de parámetros adaptados al dataset de riesgo materno. A continuación se documenta cada componente visual del panel.
+\subparagraph{Panel de M\'etricas Globales de Convergencia}
 
-\paragraph{Panel de Métricas Globales de Convergencia}
-
-La parte superior del panel presenta cuatro indicadores numéricos que resumen el resultado final del proceso de optimización:
+La parte superior del panel presenta cuatro indicadores num\'ericos que resumen el resultado final del proceso de optimizaci\'on:
 
 \begin{itemize}
-    \item \textbf{Mejor Fitness (0.7914):} El valor máximo de la función de fitness multiobjetivo (Ecuación~\ref{eq:fitness}) alcanzado por cualquier individuo a lo largo de las 60 generaciones. Este valor integra simultáneamente el MacroF1, el recall de alto riesgo, la penalización de interpretabilidad y la penalización de desviación del experto. Un valor de 0.7914 indica que el mejor cromosoma encontrado logró un balance muy favorable entre precisión clínica e interpretabilidad de las funciones de membresía.
+    \item \textbf{Mejor Fitness (0.7914):} El valor m\'aximo de la funci\'on de fitness multiobjetivo (Ecuaci\'on~\ref{eq:fitness}) alcanzado por cualquier individuo a lo largo de las 60 generaciones. Este valor integra simult\'aneamente el MacroF1, el recall de alto riesgo, la penalizaci\'on de interpretabilidad y la penalizaci\'on de desviaci\'on del experto. Un valor de 0.7914 indica que el mejor cromosoma encontrado logr\'o un balance muy favorable entre precisi\'on cl\'inica e interpretabilidad de las funciones de membres\'ia.
 
-    \item \textbf{Generaciones (60):} El algoritmo ejecutó exactamente 60 generaciones, correspondientes al límite máximo configurado (Tabla~\ref{tab:parametros_ag}). Esto indica que el mecanismo de \textit{early stopping} no se activó antes de ese límite, lo que significa que el algoritmo continuó encontrando mejoras (aunque marginales) hasta la última generación.
+    \item \textbf{Generaciones (60):} El algoritmo ejecut\'o exactamente 60 generaciones, correspondientes al l\'imite m\'aximo configurado (Tabla~\ref{tab:parametros_ag}). Esto indica que el mecanismo de \textit{early stopping} no se activ\'o antes de ese l\'imite, lo que significa que el algoritmo continu\'o encontrando mejoras (aunque marginales) hasta la \'ultima generaci\'on.
 
-    \item \textbf{Macro F1 (77.2\%):} El F1-Score macro (Ecuación~\ref{eq:macrof1}) del mejor cromosoma evaluado sobre el conjunto de validación al finalizar la optimización. Este valor representa una mejora sustancial respecto al sistema base, cuyo MacroF1 en validación era de 0.687 (imagen inferior del panel), confirmando que el algoritmo genético logró ajustar las funciones de membresía de manera estadísticamente significativa.
+    \item \textbf{Macro F1 (77.2\%):} El F1-Score macro (Ecuaci\'on~\ref{eq:macrof1}) del mejor cromosoma evaluado sobre el conjunto de validaci\'on al finalizar la optimizaci\'on. Este valor representa una mejora sustancial respecto al sistema base, cuyo MacroF1 en validaci\'on era de 0.687, confirmando que el algoritmo gen\'etico logr\'o ajustar las funciones de membres\'ia de manera estad\'isticamente significativa.
 
-    \item \textbf{Recall Alto Riesgo (85.4\%):} La proporción de casos de alto riesgo reales que el sistema optimizado identifica correctamente en el conjunto de validación. Este indicador es de especial relevancia clínica: en obstetricia, un falso negativo en alto riesgo (clasificar erróneamente a una paciente de alto riesgo como de bajo o medio riesgo) puede tener consecuencias directas sobre la vida de la madre y el feto. El valor de 85.4\% representa una mejora de 2.4 puntos porcentuales respecto al sistema base (0.829 $\rightarrow$ 0.854).
+    \item \textbf{Recall Alto Riesgo (85.4\%):} La proporci\'on de casos de alto riesgo reales que el sistema optimizado identifica correctamente en el conjunto de validaci\'on. El valor de 85.4\% representa una mejora de 2.4 puntos porcentuales respecto al sistema base (0.829 $\rightarrow$ 0.854).
 \end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{picture/panel_metricas_ag.png}
-    \caption{Panel superior del módulo de algoritmo genético: métricas globales de convergencia y gráfica de evolución del fitness por generación}
+    \caption{Panel superior del m\'odulo de algoritmo gen\'etico: m\'etricas globales de convergencia y gr\'afica de evoluci\'on del fitness por generaci\'on}
     \label{fig:panel_metricas_ag}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia --- captura del sistema.}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
 \end{figure}
 
-\paragraph{Gráfica de Convergencia del Fitness por Generación}
+\subparagraph{Gr\'afica de Convergencia del Fitness por Generaci\'on}
 
-La gráfica central del panel (Figura~\ref{fig:panel_metricas_ag}) muestra la evolución temporal del fitness a lo largo de las 60 generaciones mediante dos curvas:
+La gr\'afica central del panel (Figura~\ref{fig:panel_metricas_ag}) muestra la evoluci\'on temporal del fitness a lo largo de las 60 generaciones mediante dos curvas:
 
 \begin{itemize}
-    \item \textbf{Mejor fitness (línea sólida celeste):} Representa el valor de fitness del individuo más apto en cada generación. Por la propiedad de elitismo (los 3 mejores individuos se preservan íntegramente entre generaciones), esta curva es \textbf{monótonamente no decreciente}: el mejor fitness jamás empeora de una generación a la siguiente. La curva muestra un salto pronunciado en las primeras 12 generaciones (de $\approx$0.50 a $\approx$0.78), seguido de una fase de refinamiento gradual con mejoras marginales hasta la generación 60.
+    \item \textbf{Mejor fitness (l\'inea s\'olida celeste):} Representa el valor de fitness del individuo m\'as apto en cada generaci\'on. Por la propiedad de elitismo, esta curva es \textbf{mon\'otonamente no decreciente}. La curva muestra un salto pronunciado en las primeras 12 generaciones (de $\approx$0.50 a $\approx$0.78), seguido de una fase de refinamiento gradual hasta la generaci\'on 60.
 
-    \item \textbf{Fitness promedio (línea discontinua lila):} Representa el promedio de fitness de toda la población en cada generación. Esta curva exhibe dos fases claramente diferenciadas: (1) \textit{convergencia inicial} entre las generaciones 0 y 7, donde el promedio asciende rápidamente de $\approx$0.48 a $\approx$0.72 a medida que los individuos de baja calidad son reemplazados por descendientes mejores; (2) \textit{estabilización}, donde el promedio oscila entre 0.72 y 0.76, manteniéndose próximo al mejor individuo y reflejando que la población convergió hacia una región de alta calidad del espacio de búsqueda.
+    \item \textbf{Fitness promedio (l\'inea discontinua lila):} Representa el promedio de fitness de toda la poblaci\'on en cada generaci\'on. Esta curva exhibe dos fases: (1) \textit{convergencia inicial} entre las generaciones 0 y 7, donde el promedio asciende r\'apidamente de $\approx$0.48 a $\approx$0.72; (2) \textit{estabilizaci\'on}, donde el promedio oscila entre 0.72 y 0.76.
 \end{itemize}
 
-La reducción progresiva de la brecha entre ambas curvas a lo largo de las generaciones es una señal de convergencia poblacional: la diversidad genética disminuye y los individuos se asemejan cada vez más al óptimo encontrado. La ausencia de caídas abruptas en el fitness promedio confirma que los operadores de cruce aritmético y mutación gaussiana operaron de forma suave sin destruir las soluciones acumuladas.
+La reducci\'on progresiva de la brecha entre ambas curvas es una se\~nal de convergencia poblacional. La ausencia de ca\'idas abruptas en el fitness promedio confirma que los operadores de cruce aritm\'etico y mutaci\'on gaussiana operaron de forma suave.
 
-\paragraph{Panel Comparativo: Base vs. Optimizado}
+\subparagraph{Panel Comparativo: Base vs.\ Optimizado}
 
-La sección inferior del módulo (Figura~\ref{fig:panel_comparativo_ag}) presenta una evaluación comparativa directa entre el sistema difuso con parámetros base y el sistema optimizado, ambos evaluados sobre el conjunto de validación. La comparativa se presenta en dos formatos complementarios:
+La secci\'on inferior del m\'odulo (Figura~\ref{fig:panel_comparativo_ag}) presenta una evaluaci\'on comparativa directa entre el sistema difuso con par\'ametros base y el sistema optimizado, ambos evaluados sobre el conjunto de validaci\'on.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{picture/panel_comparativo_ag.png}
-    \caption{Panel comparativo Base vs. Optimizado: gráfica de barras y tabla de métricas con deltas de mejora}
+    \caption{Panel comparativo Base vs.\ Optimizado: gr\'afica de barras y tabla de m\'etricas con deltas de mejora}
     \label{fig:panel_comparativo_ag}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia --- captura del sistema.}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
 \end{figure}
-
-\subparagraph{Gráfica de barras (Base gris / Optimizado azul)}
-
-Muestra visualmente la magnitud de la mejora en las tres métricas clave. La longitud de cada barra es proporcional al valor de la métrica en escala $[0, 1]$, lo que permite comparar de un vistazo la ganancia absoluta obtenida por el algoritmo genético en cada dimensión de evaluación.
-
-\subparagraph{Tabla comparativa con deltas}
-
-La tabla adjunta cuantifica con precisión numérica los resultados:
 
 \begin{table}[H]
     \centering
-    \caption{Métricas Base vs. Optimizado sobre el conjunto de validación --- resultados del sistema en ejecución}
+    \caption{M\'etricas Base vs.\ Optimizado sobre el conjunto de validaci\'on}
     \begin{tabular}{lccc}
         \toprule
-        \textbf{Métrica}   & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
+        \textbf{M\'etrica}   & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
         \midrule
-        Macro F1           & 0.687         & 0.772               & \textbf{+0.085}   \\
-        Recall alto riesgo & 0.829         & 0.854               & \textbf{+0.024}   \\
-        Fitness            & 0.722         & 0.791               & \textbf{+0.069}   \\
+        Macro F1              & 0.687         & 0.772               & \textbf{+0.085}   \\
+        Recall alto riesgo    & 0.829         & 0.854               & \textbf{+0.024}   \\
+        Fitness               & 0.722         & 0.791               & \textbf{+0.069}   \\
         \bottomrule
     \end{tabular}
     \label{tab:comparativa_ejecucion}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia --- valores extraídos del panel del sistema.}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- valores extra\'idos del panel del sistema.}
 \end{table}
 
-El delta de Macro F1 (+0.085) indica que el algoritmo genético elevó la capacidad discriminativa global del sistema en 8.5 puntos porcentuales sobre validación. El delta de Recall alto (+0.024) confirma que el sistema optimizado identifica correctamente un 2.4\% más de casos críticos que el diseño experto puro, lo que en una población de 152 pacientes del conjunto de validación equivale a aproximadamente 3 casos de alto riesgo adicionales detectados correctamente. El delta de Fitness (+0.069) refleja la mejora en la función multiobjetivo completa, que pondera simultáneamente precisión, sensibilidad e interpretabilidad.
+El delta de Macro F1 (+0.085) indica que el algoritmo gen\'etico elev\'o la capacidad discriminativa global del sistema en 8.5 puntos porcentuales sobre validaci\'on. El delta de Recall alto (+0.024) confirma que el sistema optimizado identifica correctamente un 2.4\% m\'as de casos cr\'iticos, lo que en una poblaci\'on de 152 pacientes equivale a aproximadamente 3 casos de alto riesgo adicionales detectados correctamente.
 
-\paragraph{Panel del Cromosoma Decodificado}
+\subparagraph{Panel del Cromosoma Decodificado}
 
-La tercera sección del módulo (Figura~\ref{fig:panel_cromosoma_ag}) presenta el mejor cromosoma encontrado en forma de tabla de membresías decodificadas. Para cada variable de entrada y cada categoría lingüística, se muestran los cuatro parámetros $[a, b, c, d]$ del trapezoide optimizado.
+La tercera secci\'on del m\'odulo (Figura~\ref{fig:panel_cromosoma_ag}) presenta el mejor cromosoma encontrado en forma de tabla de membres\'ias decodificadas. Para cada variable de entrada y cada categor\'ia ling\"u\'istica, se muestran los cuatro par\'ametros $[a, b, c, d]$ del trapezoide optimizado.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{picture/panel_cromosoma_ag.png}
-    \caption{Panel del cromosoma decodificado: parámetros $[a, b, c, d]$ de las funciones de membresía trapezoidales optimizadas para las seis variables de entrada}
+    \caption{Panel del cromosoma decodificado: par\'ametros $[a, b, c, d]$ de las funciones de membres\'ia trapezoidales optimizadas}
     \label{fig:panel_cromosoma_ag}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia --- captura del sistema.}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
 \end{figure}
 
-Esta tabla es la representación directa del genotipo del mejor individuo de la última generación, decodificado a su fenotipo clínico: los parámetros concretos que definen cómo el sistema interpreta cada valor numérico de las variables vitales. Al comparar estos valores con los parámetros base definidos en la Sección~\ref{sec:variables_entrada}, es posible identificar los ajustes específicos que el algoritmo genético realizó para adaptar el sistema al dataset:
-
 \begin{itemize}
-    \item \textbf{Edad:} La categoría \textit{joven} desplazó ligeramente su núcleo (de $[10, 20]$ a $[14.15, 21.36]$), y la categoría \textit{avanzada} inició su soporte en 35.53 años (frente a 34 base), ajustando el umbral de riesgo por edad materna avanzada a la distribución real del dataset.
+    \item \textbf{Edad:} La categor\'ia \textit{joven} desplaz\'o ligeramente su n\'ucleo (de $[10, 20]$ a $[14.15, 21.36]$), y la categor\'ia \textit{avanzada} inici\'o su soporte en 35.53 a\~nos (frente a 34 base).
 
-    \item \textbf{Glucosa / BS:} La categoría \textit{normal} redujo su núcleo superior de 7.5 a 7.15 mmol/L, endureciendo el criterio de normalidad. La categoría \textit{elevada} desplazó su inicio de soporte de 8.0 a 7.84 mmol/L, ampliando la zona de alerta. Estos ajustes son consistentes con el hallazgo de que el azúcar en sangre es el predictor más fuerte de alto riesgo en el dataset.
+    \item \textbf{Glucosa / BS:} La categor\'ia \textit{normal} redujo su n\'ucleo superior de 7.5 a 7.15 mmol/L, endureciendo el criterio de normalidad. La categor\'ia \textit{elevada} desplaz\'o su inicio de soporte de 8.0 a 7.84 mmol/L.
 
-    \item \textbf{Temperatura corporal:} Los parámetros del trapezoide \textit{normal} se comprimieron hacia valores más bajos (núcleo $[97.27, 98.31]$ °F frente a $[97.0, 98.5]$ base), haciendo que el sistema sea más sensible a elevaciones leves de temperatura.
+    \item \textbf{Temperatura corporal:} Los par\'ametros del trapezoide \textit{normal} se comprimieron hacia valores m\'as bajos (n\'ucleo $[97.27, 98.31]$~\textdegree{}F frente a $[97.0, 98.5]$ base), haciendo que el sistema sea m\'as sensible a elevaciones leves de temperatura.
 
-    \item \textbf{Frecuencia cardíaca:} Los parámetros permanecieron relativamente estables respecto al diseño base, lo que es consistente con el menor poder discriminativo de esta variable identificado en el análisis de sensibilidad (Sección 2.7).
+    \item \textbf{Frecuencia card\'iaca:} Los par\'ametros permanecieron relativamente estables respecto al dise\~no base, consistente con el menor poder discriminativo de esta variable en el an\'alisis de sensibilidad.
 \end{itemize}
 
-La disponibilidad de esta tabla en la interfaz cumple un propósito dual: permite a los desarrolladores verificar que el cromosoma optimizado produce funciones de membresía clínicamente coherentes (soporte finito, núcleos ordenados, solapamiento razonable entre categorías adyacentes), y permite a los médicos supervisores auditar los umbrales que el sistema está usando para tomar decisiones, preservando la transparencia e interpretabilidad que justificó la elección del modelo Mamdani desde el inicio del diseño.
+La disponibilidad de esta tabla en la interfaz preserva la transparencia e interpretabilidad que justific\'o la elecci\'on del modelo Mamdani desde el inicio del dise\~no.
 
+\subsubsection{Resultados y Análisis}
 
+\paragraph{Comparativa Base vs. Optimizado}
 
-% -----------------------------------------------------------
+La siguiente tabla compara el rendimiento del sistema difuso con los par\'ametros base frente al sistema optimizado, evaluados sobre el conjunto de validaci\'on:
 
-\subsection{Arquitectura del Sistema}
-% -----------------------------------------------------------
+\begin{table}[H]
+    \centering
+    \caption{Comparativa de m\'etricas sobre validaci\'on: sistema base vs. sistema optimizado}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{M\'etrica}   & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
+        \midrule
+        Macro F1              & 0.687         & 0.772               & \textbf{+0.085}   \\
+        Recall Alto Riesgo    & 0.829         & 0.854               & \textbf{+0.024}   \\
+        Fitness               & 0.722         & 0.791               & \textbf{+0.069}   \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:resultados}
+    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
+\end{table}
 
-\subsubsection{Visión General}
+\paragraph{Evoluci\'on del Fitness}
+
+El proceso de optimizaci\'on parti\'o de un fitness inicial de aproximadamente 0.50 en la generaci\'on~0 y alcanz\'o su valor m\'aximo de \textbf{0.7914} en la generaci\'on~52, con un MacroF1 en validaci\'on de 0.772. El ascenso m\'as pronunciado ocurri\'o entre las generaciones 0 y 12, donde el fitness del mejor individuo se increment\'o en cerca de 0.28 unidades: en esta fase la alta diversidad de la poblaci\'on inicial permiti\'o al operador de selecci\'on por torneo descartar r\'apidamente los cromosomas de baja calidad y al cruce aritm\'etico combinar eficientemente los rasgos m\'as favorables de padres gen\'eticamente distintos. A partir de la generaci\'on~12 la curva se aplana de forma progresiva, con mejoras cada vez m\'as finas sobre el espacio de 68 dimensiones del cromosoma. El algoritmo complet\'o las 60 generaciones configuradas sin que el mecanismo de \textit{early stopping} se activara, lo que indica que continu\'o encontrando mejoras marginales hasta el final de la ejecuci\'on. El fitness promedio poblacional convergi\'o hacia el rango $[0.72,\,0.76]$ desde la generaci\'on~7 y se mantuvo estable hasta la~60, con una brecha de entre 0.02 y 0.06 unidades respecto al mejor individuo, se\~nal de que la poblaci\'on alcanz\'o una regi\'on compacta del espacio de b\'usqueda sin colapsar sobre un \'unico individuo gracias a la diversidad residual que mantiene la mutaci\'on gaussiana.
+
+\paragraph{An\'alisis de Resultados}
+
+La ganancia de \textbf{+8.5 puntos de MacroF1} sobre validaci\'on indica que el algoritmo gen\'etico ajust\'o las funciones de membres\'ia de forma estad\'isticamente significativa respecto al dise\~no experto puro. Los ajustes m\'as relevantes se concentraron en la variable de az\'ucar en sangre, que es el predictor m\'as fuerte de alto riesgo en el dataset: el n\'ucleo de la categor\'ia \textit{normal} se comprimi\'o de 7.5 a 7.15~mmol/L y el soporte de la categor\'ia \textit{elevada} se adelant\'o de 8.0 a 7.84~mmol/L, capturando con mayor precisi\'on la frontera entre riesgo medio y alto que el dataset exhibe en esa variable. En contraste, los par\'ametros de temperatura corporal y frecuencia card\'iaca pr\'acticamente no fueron modificados respecto al dise\~no base, comportamiento coherente con su menor poder discriminativo identificado en el an\'alisis de sensibilidad.
+
+La mejora en recall de alto riesgo fue m\'as modesta (\textbf{+2.4 puntos porcentuales}), dado que el sistema base ya alcanzaba 82.9\% en esa m\'etrica y el margen de mejora adicional era limitado. El algoritmo concentr\'o la mayor parte de su ganancia en mejorar la clasificaci\'on de las clases \textit{bajo} y \textit{medio}, cuyo F1 en el sistema base era m\'as deficiente, elevando el promedio macro de forma m\'as pronunciada. Finalmente, la atenuaci\'on entre la mejora de MacroF1 (+0.085) y la de fitness (+0.069) es introducida estructuralmente por las penalizaciones de interpretabilidad y desviaci\'on de la funci\'on objetivo: a medida que el AG mejora la precisi\'on, los cromosomas tienden a alejarse del dise\~no base y a generar funciones de membres\'ia con mayor solapamiento, incrementando ambos t\'erminos de penalizaci\'on y reduciendo proporcionalmente la ganancia neta de fitness. Esto confirma que el mecanismo de regularizaci\'on funcion\'o correctamente, impidiendo que el algoritmo sacrificara coherencia cl\'inica de las funciones de membres\'ia en favor de precisi\'on adicional.
+
+\subsubsection{Arquitectura del Sistema}
+
+\paragraph{Visión General}
 
 El sistema se compone de dos aplicaciones independientes que se comunican v\'ia HTTP:
 
@@ -1010,7 +1050,7 @@ El sistema se compone de dos aplicaciones independientes que se comunican v\'ia 
     \item \textbf{Frontend:} Aplicaci\'on web implementada en React con TypeScript, Vite y Tailwind CSS. Provee la interfaz de usuario para ingresar datos de pacientes, visualizar el nivel de riesgo y explorar las curvas de membres\'ia.
 \end{itemize}
 
-\subsubsection{Flujo Completo de una Predicción}
+\paragraph{Flujo Completo de una Predicción}
 
 \begin{figure}[H]
     \centering
@@ -1020,7 +1060,7 @@ El sistema se compone de dos aplicaciones independientes que se comunican v\'ia 
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia.}
 \end{figure}
 
-\subsubsection{Persistencia del Modelo}
+\paragraph{Persistencia del Modelo}
 
 El resultado del proceso de optimizaci\'on gen\'etica se almacena en \texttt{modelo\_optimizado.json}, que contiene:
 
@@ -1032,7 +1072,7 @@ El resultado del proceso de optimizaci\'on gen\'etica se almacena en \texttt{mod
 
 En tiempo de predicci\'on, el sistema carga este archivo y reconstruye el sistema difuso completo en memoria, sin necesidad de re-ejecutar el proceso de optimizaci\'on.
 
-\subsubsection{Sistema en Funcionamiento: Caso de Ejemplo}
+\paragraph{Sistema en Funcionamiento: Caso de Ejemplo}
 
 Las siguientes capturas muestran el sistema en operaci\'on para el caso de ejemplo: paciente de 25 a\~nos, PS = 130 mmHg, PD = 80 mmHg, glucosa = 15 mmol/L, temperatura = 98 \textdegree F, FC = 86 lpm. Las im\'agenes cubren el flujo completo desde el ingreso de datos hasta la explicaci\'on del resultado, incluyendo las curvas de membres\'ia, la fuzzificaci\'on, las reglas activadas y la defuzzificaci\'on.
 
@@ -1100,50 +1140,10 @@ Las siguientes capturas muestran el sistema en operaci\'on para el caso de ejemp
     \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboraci\'on propia --- captura del sistema.}
 \end{figure}
 
-% -----------------------------------------------------------
 
-\subsection{Resultados y Análisis}
-% -----------------------------------------------------------
+\subsubsection{Análisis de Sensibilidad}
 
-
-\subsubsection{Comparativa Base vs. Optimizado}
-
-La siguiente tabla compara el rendimiento del sistema difuso con los parámetros base frente al sistema optimizado, evaluados sobre el conjunto de validación:
-
-\begin{table}[H]
-    \centering
-    \caption{Comparativa de métricas sobre validación: sistema base vs. sistema optimizado}
-    \begin{tabular}{lccc}
-        \toprule
-        \textbf{Métrica}   & \textbf{Base} & \textbf{Optimizado} & \textbf{$\Delta$} \\
-        \midrule
-        Macro F1           & 0.687         & 0.772               & \textbf{+0.085}   \\
-        Recall Alto Riesgo & 0.829         & 0.854               & \textbf{+0.024}   \\
-        Fitness            & 0.722         & 0.791               & \textbf{+0.069}   \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:resultados}
-    \par\vspace{2pt}{\footnotesize\textit{Fuente:} Elaboración propia.}
-\end{table}
-
-\subsubsection{Evolución del Fitness}
-
-El proceso de optimización partió de un fitness inicial de aproximadamente 0.50 en la generación~0 y alcanzó su valor máximo de \textbf{0.7914} en la generación~52, con un MacroF1 en validación de 0.772. El ascenso más pronunciado ocurrió entre las generaciones 0 y 12, donde el fitness del mejor individuo se incrementó en cerca de 0.28 unidades: en esta fase la alta diversidad de la población inicial permitió al operador de selección por torneo descartar rápidamente los cromosomas de baja calidad y al cruce aritmético combinar eficientemente los rasgos más favorables de padres genéticamente distintos. A partir de la generación~12 la curva se aplana de forma progresiva, con mejoras cada vez más finas sobre el espacio de 68 dimensiones del cromosoma. El algoritmo completó las 60 generaciones configuradas sin que el mecanismo de \textit{early stopping} se activara, lo que indica que continuó encontrando mejoras marginales hasta el final de la ejecución. El fitness promedio poblacional convergió hacia el rango $[0.72,\,0.76]$ desde la generación~7 y se mantuvo estable hasta la~60, con una brecha de entre 0.02 y 0.06 unidades respecto al mejor individuo, señal de que la población alcanzó una región compacta del espacio de búsqueda sin colapsar sobre un único individuo gracias a la diversidad residual que mantiene la mutación gaussiana.
-
-\subsubsection{Análisis de Resultados}
-
-La ganancia de \textbf{+8.5 puntos de MacroF1} sobre validación indica que el algoritmo genético ajustó las funciones de membresía de forma estadísticamente significativa respecto al diseño experto puro. Los ajustes más relevantes se concentraron en la variable de azúcar en sangre, que es el predictor más fuerte de alto riesgo en el dataset: el núcleo de la categoría \textit{normal} se comprimió de 7.5 a 7.15~mmol/L y el soporte de la categoría \textit{elevada} se adelantó de 8.0 a 7.84~mmol/L, capturando con mayor precisión la frontera entre riesgo medio y alto que el dataset exhibe en esa variable. En contraste, los parámetros de temperatura corporal y frecuencia cardíaca prácticamente no fueron modificados respecto al diseño base, comportamiento coherente con su menor poder discriminativo identificado en el análisis de sensibilidad.
-
-La mejora en recall de alto riesgo fue más modesta (\textbf{+2.4 puntos porcentuales}), dado que el sistema base ya alcanzaba 82.9\% en esa métrica y el margen de mejora adicional era limitado. El algoritmo concentró la mayor parte de su ganancia en mejorar la clasificación de las clases \textit{bajo} y \textit{medio}, cuyo F1 en el sistema base era más deficiente, elevando el promedio macro de forma más pronunciada. Finalmente, la atenuación entre la mejora de MacroF1 (+0.085) y la de fitness (+0.069) es introducida estructuralmente por las penalizaciones de interpretabilidad y desviación de la función objetivo: a medida que el AG mejora la precisión, los cromosomas tienden a alejarse del diseño base y a generar funciones de membresía con mayor solapamiento, incrementando ambos términos de penalización y reduciendo proporcionalmente la ganancia neta de fitness. Esto confirma que el mecanismo de regularización funcionó correctamente, impidiendo que el algoritmo sacrificara coherencia clínica de las funciones de membresía en favor de precisión adicional.
-
-La ganancia de \textbf{+8.5 puntos de MacroF1} sobre validación indica que el AG ajustó las funciones de membresía de forma estadísticamente significativa respecto al diseño experto puro. Los ajustes más relevantes se concentraron en la variable de azúcar en sangre: el núcleo de la categoría \textit{normal} se comprimió (de 7.5 a 7.15~mmol/L) y el soporte de la categoría \textit{elevada} se adelantó (de 8.0 a 7.84~mmol/L), capturando más precisamente la frontera entre riesgo medio y alto que el dataset exhibe en esa variable. Las variables de temperatura corporal y frecuencia cardíaca prácticamente no fueron modificadas, lo que es coherente con su menor poder discriminativo identificado en el análisis de sensibilidad.
-
-La mejora en recall de alto riesgo fue más modesta (\textbf{+2.4 puntos}), porque el sistema base ya alcanzaba 82.9\% en esa métrica. El AG concentró la mayor parte de su ganancia en mejorar la clasificación de las clases \textit{bajo} y \textit{medio}, cuyo F1 en el sistema base era más deficiente, elevando así el promedio macro de forma más pronunciada. La atenuación observada entre la mejora de MacroF1 (+0.085) y la de fitness (+0.069) es introducida por las penalizaciones de interpretabilidad y desviación, que impidieron que el algoritmo sacrificara coherencia clínica de las funciones de membresía en favor de precisión adicional.
-
-\subsection{Análisis de Sensibilidad}
-% -----------------------------------------------------------
-
-\subsubsection{Variable m\'as Influyente}
+\paragraph{Variable m\'as Influyente}
 
 La estructura de las reglas (Tabla \ref{tab:reglas}) revela la jerarqu\'ia de importancia de las variables. El conjunto de reglas refinado es m\'as sensible a combinaciones de factores concurrentes, lo que permite detectar riesgo en escenarios cl\'inicos que el dise\~no original no cubr\'ia:
 
@@ -1154,13 +1154,12 @@ La estructura de las reglas (Tabla \ref{tab:reglas}) revela la jerarqu\'ia de im
     \item \textbf{Frecuencia card\'iaca:} Variable de impacto moderado. Aparece en 8 reglas, principalmente como factor agravante en combinaci\'on con az\'ucar o presi\'on elevadas.
 \end{itemize}
 
-\subsubsection{Casos Extremos}
+\paragraph{Casos Extremos}
 
 Cuando az\'ucar en sangre = alta y frecuencia card\'iaca = elevada, la regla 3 se activa con fuerza m\'axima y el sistema produce puntaje $\geq 75$ (alto riesgo). De forma similar, AS=alta combinada con presi\'on diast\'olica alta activa las reglas 2, 5 y 7 simult\'aneamente. Esto refleja el criterio cl\'inico de que la hiperglucemia severa, especialmente cuando coexiste con hipertensi\'on, constituye una emergencia obst\'etrica.
 
-% -----------------------------------------------------------
-\subsection{Limitaciones}
-% -----------------------------------------------------------
+
+\subsubsection{Limitaciones}
 
 \begin{enumerate}
     \item \textbf{Tama\~no del dataset:} 1.012 registros es un n\'umero modesto para el entrenamiento de un sistema cl\'inico. Un dataset mayor permitir\'ia un ajuste m\'as robusto y generalizable de las funciones de membres\'ia.
@@ -1174,9 +1173,30 @@ Cuando az\'ucar en sangre = alta y frecuencia card\'iaca = elevada, la regla 3 s
     \item \textbf{Variables no incluidas:} Condiciones relevantes como historial de preeclampsia, diabetes gestacional previa, o multiparidad no est\'an disponibles en el dataset y por tanto no son consideradas por el sistema.
 \end{enumerate}
 
+
+
+% -----------------------------------------------------------
+\subsection{Habilidades Blandas Desarrolladas}
+% -----------------------------------------------------------
+
+Habilidades blandas empleadas en la pr\'actica:
+
+\begin{itemize}[label=$\square$]
+    \item[$\boxtimes$] Liderazgo
+    \item[$\boxtimes$] Trabajo en equipo
+    \item Comunicaci\'on asertiva
+    \item La empat\'ia
+    \item Pensamiento cr\'itico
+    \item Flexibilidad
+    \item La resoluci\'on de conflictos
+    \item Adaptabilidad
+    \item[$\boxtimes$] Responsabilidad
+\end{itemize}
+
 % -----------------------------------------------------------
 \subsection{Conclusiones}
 % -----------------------------------------------------------
+
 
 \begin{enumerate}
     \item Se dise\~n\'o e implement\'o exitosamente un sistema de clasificaci\'on de riesgo materno basado en l\'ogica difusa Mamdani, capaz de clasificar pacientes embarazadas en tres niveles de riesgo a partir de seis par\'ametros cl\'inicos b\'asicos, con reglas transparentes y auditables.
@@ -1190,9 +1210,12 @@ Cuando az\'ucar en sangre = alta y frecuencia card\'iaca = elevada, la regla 3 s
     \item La arquitectura implementada (FastAPI + React) provee una plataforma funcional y extensible para la consulta interactiva del sistema, con potencial de despliegue en entornos de atenci\'on primaria de salud.
 \end{enumerate}
 
+
+
 % -----------------------------------------------------------
 \subsection{Recomendaciones}
 % -----------------------------------------------------------
+
 
 \begin{enumerate}
     \item Ampliar el dataset con registros de diversas regiones geogr\'aficas y grupos poblacionales para mejorar la generalizabilidad del sistema optimizado.
@@ -1206,9 +1229,12 @@ Cuando az\'ucar en sangre = alta y frecuencia card\'iaca = elevada, la regla 3 s
     \item Realizar una evaluaci\'on cl\'inica prospectiva del sistema en condiciones reales de uso, comparando sus predicciones con el criterio m\'edico especializado para cuantificar su utilidad pr\'actica.
 \end{enumerate}
 
+
+
 % -----------------------------------------------------------
 \subsection{Referencias Bibliográficas}
 % -----------------------------------------------------------
+
 
 {
     \renewcommand{\refname}{}
@@ -1254,50 +1280,56 @@ Cuando az\'ucar en sangre = alta y frecuencia card\'iaca = elevada, la regla 3 s
         \bibitem{ross2010}
         T. J. Ross, \textit{Fuzzy Logic with Engineering Applications}, 3rd ed. Chichester, UK: John Wiley \& Sons, 2010.
 
-        \bibitem{whelton2018}
-        P. K. Whelton et al., ``2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults,'' \textit{J. Am. Coll. Cardiol.}, vol. 71, no. 19, pp. e127--e248, 2018. DOI: 10.1016/j.jacc.2017.11.006.
+\bibitem{whelton2018}
+P. K. Whelton et al., ``2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults,'' \textit{J. Am. Coll. Cardiol.}, vol. 71, no. 19, pp. e127--e248, 2018. DOI: 10.1016/j.jacc.2017.11.006.
 
-        \bibitem{acog2020}
-        American College of Obstetricians and Gynecologists, ``Gestational Hypertension and Preeclampsia: ACOG Practice Bulletin, Number 222,'' \textit{Obstet. Gynecol.}, vol. 135, no. 6, pp. e237--e260, 2020. DOI: 10.1097/AOG.0000000000003891.
+\bibitem{acog2020}
+American College of Obstetricians and Gynecologists, ``Gestational Hypertension and Preeclampsia: ACOG Practice Bulletin, Number 222,'' \textit{Obstet. Gynecol.}, vol. 135, no. 6, pp. e237--e260, 2020. DOI: 10.1097/AOG.0000000000003891.
 
-        \bibitem{who2011hypertension}
-        World Health Organization, \textit{WHO Recommendations for Prevention and Treatment of Pre-Eclampsia and Eclampsia}. Geneva: WHO Press, 2011. ISBN: 978-92-4-154833-5.
+\bibitem{who2011hypertension}
+World Health Organization, \textit{WHO Recommendations for Prevention and Treatment of Pre-Eclampsia and Eclampsia}. Geneva: WHO Press, 2011. ISBN: 978-92-4-154833-5.
 
-        \bibitem{who2021adolescent}
-        World Health Organization, ``Adolescent Pregnancy,'' WHO Fact Sheet, 2023. [Online]. Available: \url{https://www.who.int/news-room/fact-sheets/detail/adolescent-pregnancy}.
+\bibitem{who2021adolescent}
+World Health Organization, ``Adolescent Pregnancy,'' WHO Fact Sheet, 2023. [Online]. Available: \url{https://www.who.int/news-room/fact-sheets/detail/adolescent-pregnancy}.
 
-        \bibitem{iadpsg2010}
-        International Association of Diabetes and Pregnancy Study Groups Consensus Panel, ``Recommendations on the Diagnosis and Classification of Hyperglycemia in Pregnancy,'' \textit{Diabetes Care}, vol. 33, no. 3, pp. 676--682, 2010. DOI: 10.2337/dc09-1848.
+\bibitem{iadpsg2010}
+International Association of Diabetes and Pregnancy Study Groups Consensus Panel, ``Recommendations on the Diagnosis and Classification of Hyperglycemia in Pregnancy,'' \textit{Diabetes Care}, vol. 33, no. 3, pp. 676--682, 2010. DOI: 10.2337/dc09-1848.
 
-        \bibitem{ada2024}
-        American Diabetes Association Professional Practice Committee, ``Standards of Medical Care in Diabetes---2024,'' \textit{Diabetes Care}, vol. 47, suppl. 1, pp. S1--S321, 2024. DOI: 10.2337/dc24-SINT.
+\bibitem{ada2024}
+American Diabetes Association Professional Practice Committee, ``Standards of Medical Care in Diabetes---2024,'' \textit{Diabetes Care}, vol. 47, suppl. 1, pp. S1--S321, 2024. DOI: 10.2337/dc24-SINT.
 
-        \bibitem{mackowiak1992}
-        P. A. Mackowiak, S. S. Wasserman, and M. M. Levine, ``A Critical Appraisal of 98.6\textdegree F, the Upper Limit of the Normal Body Temperature, and Other Legacies of Carl Reinhold August Wunderlich,'' \textit{JAMA}, vol. 268, no. 12, pp. 1578--1580, 1992. DOI: 10.1001/jama.1992.03490120092034.
+\bibitem{mackowiak1992}
+P. A. Mackowiak, S. S. Wasserman, and M. M. Levine, ``A Critical Appraisal of 98.6\textdegree F, the Upper Limit of the Normal Body Temperature, and Other Legacies of Carl Reinhold August Wunderlich,'' \textit{JAMA}, vol. 268, no. 12, pp. 1578--1580, 1992. DOI: 10.1001/jama.1992.03490120092034.
 
-        \bibitem{soper2009}
-        D. E. Soper, ``Fever in the Obstetric Patient,'' \textit{Obstet. Gynecol. Clin. North Am.}, vol. 36, no. 4, pp. 685--696, 2009. DOI: 10.1016/j.ogc.2009.10.002.
+\bibitem{soper2009}
+D. E. Soper, ``Fever in the Obstetric Patient,'' \textit{Obstet. Gynecol. Clin. North Am.}, vol. 36, no. 4, pp. 685--696, 2009. DOI: 10.1016/j.ogc.2009.10.002.
 
-        \bibitem{monga1995}
-        M. Monga and B. M. Creasy, ``Cardiovascular and Renal Adaptation to Pregnancy,'' in \textit{Maternal-Fetal Medicine: Principles and Practice}, 4th ed., R. K. Creasy and R. Resnik, Eds. Philadelphia, PA: W. B. Saunders, 1994, pp. 789--799.
+\bibitem{monga1995}
+M. Monga and B. M. Creasy, ``Cardiovascular and Renal Adaptation to Pregnancy,'' in \textit{Maternal-Fetal Medicine: Principles and Practice}, 4th ed., R. K. Creasy and R. Resnik, Eds. Philadelphia, PA: W. B. Saunders, 1994, pp. 789--799.
 
-        \bibitem{sanghavi2014}
-        M. Sanghavi and J. D. Rutherford, ``Cardiovascular Physiology of Pregnancy,'' \textit{Circulation}, vol. 130, no. 12, pp. 1003--1008, 2014. DOI: 10.1161/CIRCULATIONAHA.114.009029.
+\bibitem{sanghavi2014}
+M. Sanghavi and J. D. Rutherford, ``Cardiovascular Physiology of Pregnancy,'' \textit{Circulation}, vol. 130, no. 12, pp. 1003--1008, 2014. DOI: 10.1161/CIRCULATIONAHA.114.009029.
 
-        \bibitem{yogev2010}
-        Y. Yogev et al., ``Maternal Age and Adverse Perinatal Outcomes in Patients with Gestational Diabetes Mellitus,'' \textit{J. Matern. Fetal Neonatal Med.}, vol. 23, no. 4, pp. 255--261, 2010. DOI: 10.3109/14767050903163018.
+\bibitem{yogev2010}
+Y. Yogev et al., ``Maternal Age and Adverse Perinatal Outcomes in Patients with Gestational Diabetes Mellitus,'' \textit{J. Matern. Fetal Neonatal Med.}, vol. 23, no. 4, pp. 255--261, 2010. DOI: 10.3109/14767050903163018.
 
-        \bibitem{cavazos2014}
-        P. A. Cavazos-Rehg et al., ``Maternal Age and Risk of Labor and Delivery Complications,'' \textit{Matern. Child Health J.}, vol. 19, no. 6, pp. 1202--1211, 2015. DOI: 10.1007/s10995-014-1624-7.
+\bibitem{cavazos2014}
+P. A. Cavazos-Rehg et al., ``Maternal Age and Risk of Labor and Delivery Complications,'' \textit{Matern. Child Health J.}, vol. 19, no. 6, pp. 1202--1211, 2015. DOI: 10.1007/s10995-014-1624-7.
 
-        \bibitem{cendrowska1987}
-        J. Cendrowska, ``PRISM: An Algorithm for Inducing Modular Rules,'' \textit{Int. J. Man-Mach. Stud.}, vol. 27, no. 4, pp. 349--370, 1987. DOI: 10.1016/S0020-7373(87)80003-2.
+\bibitem{cendrowska1987}
+J. Cendrowska, ``PRISM: An Algorithm for Inducing Modular Rules,'' \textit{Int. J. Man-Mach. Stud.}, vol. 27, no. 4, pp. 349--370, 1987. DOI: 10.1016/S0020-7373(87)80003-2.
 
-        \bibitem{cohen1995}
-        W. W. Cohen, ``Fast Effective Rule Induction,'' in \textit{Proc. 12th Int. Conf. Mach. Learn. (ICML 1995)}, Tahoe City, CA, USA, Jul. 1995, pp. 115--123.
+\bibitem{cohen1995}
+W. W. Cohen, ``Fast Effective Rule Induction,'' in \textit{Proc. 12th Int. Conf. Mach. Learn. (ICML 1995)}, Tahoe City, CA, USA, Jul. 1995, pp. 115--123.
 
 
-    \end{thebibliography}
+\end{thebibliography}
 }
 
+
+
+% -----------------------------------------------------------
+\subsection{Anexos}
+% -----------------------------------------------------------
+No aplica
 \end{document}

@@ -159,7 +159,7 @@ class SistemaDifusoMamdani:
             salida_recortada = np.fmin(activaciones[categoria], curva_salida)
             salida_agregada = np.fmax(salida_agregada, salida_recortada)
 
-        # ---!!!
+        
         if float(np.max(salida_agregada)) == 0.0:
             return self.puntaje_neutro
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
+import React, { Component, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 import { ActivitySquare, AlertTriangle, FlaskConical, Microscope, Stethoscope } from "lucide-react";
 import { DifusoSection } from "./components/sections/DifusoSection";
@@ -183,11 +183,37 @@ export default function App() {
         </AnimatedSection>
 
         <AnimatedSection isActive={activeSection === "ga"}>
-          <OptimizationSection />
+          <SectionErrorBoundary>
+            <OptimizationSection />
+          </SectionErrorBoundary>
         </AnimatedSection>
       </main>
     </div>
   );
+}
+
+class SectionErrorBoundary extends Component<
+  { children: React.ReactNode },
+  { error: string | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error: unknown) {
+    return { error: error instanceof Error ? error.message : "Error inesperado." };
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="mt-6 flex items-start gap-3 rounded-[1.75rem] border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>{this.state.error}</span>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function getErrorMessage(error: unknown) {

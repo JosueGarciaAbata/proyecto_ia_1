@@ -112,10 +112,10 @@ def ejecutar_algoritmo_genetico(
             progress_callback({
                 "tipo": "generacion",
                 "generacion": int(instancia_ga.generations_completed),
-                "mejor_fitness": round(mejor_generacion.fitness, 4),
+                "fitness": round(mejor_generacion.fitness, 4),
                 "fitness_promedio": round(promedio_fitness_validacion, 4),
-                "macro_f1_validacion": round(mejor_generacion.macro_f1_validacion, 4),
-                "recall_alto_validacion": round(mejor_generacion.recall_alto_validacion, 4),
+                "macro_f1": round(mejor_generacion.macro_f1_validacion, 4),
+                "recall_alto": round(mejor_generacion.recall_alto_validacion, 4),
                 "membresias_decodificadas": membresias_serializables,
             })
 
