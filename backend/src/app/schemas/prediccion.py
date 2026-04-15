@@ -64,19 +64,19 @@ class MembresiasResponse(BaseModel):
 
 class GeneracionHistorial(BaseModel):
     generacion: int
-    mejor_fitness: float
+    fitness: float
     fitness_promedio: float
-    macro_f1_validacion: float
-    recall_alto_validacion: float
+    macro_f1: float
+    recall_alto: float
 
 
 class GAHistorialResponse(BaseModel):
     disponible: bool
     historial_generaciones: list[GeneracionHistorial]
-    mejor_fitness: float
+    fitness: float
     generaciones: int
-    macro_f1_validacion: float
-    recall_alto_validacion: float
+    macro_f1: float
+    recall_alto: float
 
 
 class ComparacionRow(BaseModel):
@@ -129,8 +129,8 @@ class ReentrenarResponse(BaseModel):
     exito: bool
     fitness: float
     generaciones: int
-    macro_f1_validacion: float
-    recall_alto_validacion: float
+    macro_f1: float
+    recall_alto: float
 
 
 # ── Logica difusa ─────────────────────────────────────────────────────────────

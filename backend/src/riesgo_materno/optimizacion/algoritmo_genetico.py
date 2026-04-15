@@ -50,35 +50,47 @@ class Individuo:
     penalizacion_desviacion: float
 
 
-def ejecutar_algoritmo_genetico(datos_validacion, parametros_override=None, progress_callback=None):
-    """Corre el AG sobre datos de validacion y devuelve el mejor individuo y el historial por generacion."""
+def ejecutar_algoritmo_genetico(
+    datos_entrenamiento,
+    datos_validacion,
+    parametros_override=None,
+    progress_callback=None,
+):
+    """Corre el AG optimizando sobre entrenamiento y eligiendo el mejor individuo por validacion."""
     parametros = {**PARAMETROS_AG, **(parametros_override or {})}
-    evaluaciones_cache = {}
+    evaluaciones_entrenamiento_cache = {}
+    evaluaciones_validacion_cache = {}
     historial = []
     mejor_individuo = None
     generaciones_sin_mejora = 0
     poblacion_inicial = inicializar_poblacion(parametros["tamano_poblacion"])
 
-    def obtener_individuo(solucion):
+    def obtener_individuo_entrenamiento(solucion):
         clave = crear_clave_solucion(solucion)
-        if clave not in evaluaciones_cache:
-            evaluaciones_cache[clave] = evaluar_individuo(solucion, datos_validacion)
-        return evaluaciones_cache[clave]
+        if clave not in evaluaciones_entrenamiento_cache:
+            evaluaciones_entrenamiento_cache[clave] = evaluar_individuo(solucion, datos_entrenamiento)
+        return evaluaciones_entrenamiento_cache[clave]
+
+    def obtener_individuo_validacion(solucion):
+        clave = crear_clave_solucion(solucion)
+        if clave not in evaluaciones_validacion_cache:
+            evaluaciones_validacion_cache[clave] = evaluar_individuo(solucion, datos_validacion)
+        return evaluaciones_validacion_cache[clave]
 
     def fitness_func(instancia_ga, solucion, indice_solucion):
-        return obtener_individuo(solucion).fitness
+        return obtener_individuo_entrenamiento(solucion).fitness
 
     def on_generation(instancia_ga):
         nonlocal mejor_individuo, generaciones_sin_mejora
-        poblacion = [obtener_individuo(solucion) for solucion in instancia_ga.population]
-        mejor_generacion = max(poblacion, key=lambda individuo: individuo.fitness)
-        promedio_fitness = float(np.mean([individuo.fitness for individuo in poblacion]))
+        poblacion_validacion = [obtener_individuo_validacion(solucion) for solucion in instancia_ga.population]
+        mejor_generacion = max(poblacion_validacion, key=lambda individuo: individuo.fitness)
+        promedio_fitness_validacion = float(np.mean([individuo.fitness for individuo in poblacion_validacion]))
 
         historial.append(
             {
                 "generacion": int(instancia_ga.generations_completed),
                 "mejor_fitness": mejor_generacion.fitness,
-                "fitness_promedio": promedio_fitness,
+                "fitness_promedio": promedio_fitness_validacion,
                 "macro_f1_validacion": mejor_generacion.macro_f1_validacion,
                 "recall_alto_validacion": mejor_generacion.recall_alto_validacion,
             }
@@ -101,7 +113,7 @@ def ejecutar_algoritmo_genetico(datos_validacion, parametros_override=None, prog
                 "tipo": "generacion",
                 "generacion": int(instancia_ga.generations_completed),
                 "mejor_fitness": round(mejor_generacion.fitness, 4),
-                "fitness_promedio": round(promedio_fitness, 4),
+                "fitness_promedio": round(promedio_fitness_validacion, 4),
                 "macro_f1_validacion": round(mejor_generacion.macro_f1_validacion, 4),
                 "recall_alto_validacion": round(mejor_generacion.recall_alto_validacion, 4),
                 "membresias_decodificadas": membresias_serializables,
@@ -117,13 +129,19 @@ def ejecutar_algoritmo_genetico(datos_validacion, parametros_override=None, prog
             return "stop"
         return None
 
-    poblacion_evaluada = [obtener_individuo(solucion) for solucion in poblacion_inicial]
-    mejor_inicial = max(poblacion_evaluada, key=lambda individuo: individuo.fitness)
+    for solucion in poblacion_inicial:
+        obtener_individuo_entrenamiento(solucion)
+        
+    poblacion_inicial_validacion = [obtener_individuo_validacion(solucion) for solucion in poblacion_inicial]
+    
+    mejor_inicial = max(poblacion_inicial_validacion, key=lambda individuo: individuo.fitness)
     historial.append(
         {
             "generacion": 0,
             "mejor_fitness": mejor_inicial.fitness,
-            "fitness_promedio": float(np.mean([individuo.fitness for individuo in poblacion_evaluada])),
+            "fitness_promedio": float(
+                np.mean([individuo.fitness for individuo in poblacion_inicial_validacion])
+            ),
             "macro_f1_validacion": mejor_inicial.macro_f1_validacion,
             "recall_alto_validacion": mejor_inicial.recall_alto_validacion,
         }
@@ -153,20 +171,18 @@ def ejecutar_algoritmo_genetico(datos_validacion, parametros_override=None, prog
     )
     instancia_ga.run()
 
-    mejor_solucion, _, _ = instancia_ga.best_solution()
-    mejor_individuo = obtener_individuo(mejor_solucion)
     return mejor_individuo, pd.DataFrame(historial)
 
 
-def evaluar_individuo(cromosoma, datos_validacion, cromosoma_base=CROMOSOMA_BASE):
-    """Repara el cromosoma, infiere sobre validacion y calcula fitness = macro_f1 + recall_alto - penalizaciones."""
+def evaluar_individuo(cromosoma, datos_split, cromosoma_base=CROMOSOMA_BASE):
+    """Repara el cromosoma, infiere sobre un split y calcula fitness = macro_f1 + recall_alto - penalizaciones."""
     cromosoma_reparado = reparar_cromosoma(cromosoma)
     if np.isnan(cromosoma_reparado).any():
         return Individuo(cromosoma_reparado, FITNESS_INVALIDO, 0.0, 0.0, 1.0, 1.0)
 
     sistema = SistemaDifusoMamdani(decodificar_cromosoma(cromosoma_reparado))
-    inferencia = sistema.inferir_lote(datos_validacion["entradas"])
-    riesgos_reales = datos_validacion["riesgos"]
+    inferencia = sistema.inferir_lote(datos_split["entradas"])
+    riesgos_reales = datos_split["riesgos"]
     riesgos_predichos = inferencia["riesgos"]
 
     macro_f1 = calcular_macro_f1(riesgos_reales, riesgos_predichos)

@@ -5,13 +5,30 @@ import threading
 
 import numpy as np
 
-from ..optimizacion.algoritmo_genetico import ejecutar_algoritmo_genetico
-from ..optimizacion.cromosoma import MEMBRESIAS_BASE, decodificar_cromosoma, reparar_cromosoma
+from ..optimizacion.algoritmo_genetico import ejecutar_algoritmo_genetico, evaluar_individuo
+from ..optimizacion.cromosoma import CROMOSOMA_BASE, MEMBRESIAS_BASE, decodificar_cromosoma, reparar_cromosoma
 from .datos import cargar_datos, convertir_split_a_diccionario, dividir_datos_estratificados
-from .evaluacion import crear_tabla_comparativa, evaluar_membresias_en_splits
+from .evaluacion import crear_tabla_comparativa_prueba, evaluar_membresias_en_splits
 from .modelo import RUTA_CSV, RUTA_MODELO_OPTIMIZADO, PARAMETROS_AG
 
 _lock_entrenamiento = threading.Lock()
+
+
+def _primer_valor(datos: dict, *claves: str, default=0.0):
+    for clave in claves:
+        if clave in datos:
+            return datos[clave]
+    return default
+
+
+def _normalizar_fila_historial(fila: dict) -> dict:
+    return {
+        "generacion": int(_primer_valor(fila, "generacion", default=0)),
+        "fitness": float(_primer_valor(fila, "fitness", "mejor_fitness", default=0.0)),
+        "fitness_promedio": float(_primer_valor(fila, "fitness_promedio", default=0.0)),
+        "macro_f1": float(_primer_valor(fila, "macro_f1", "macro_f1_validacion", default=0.0)),
+        "recall_alto": float(_primer_valor(fila, "recall_alto", "recall_alto_validacion", default=0.0)),
+    }
 
 
 def obtener_resultado_entrenamiento(forzar_reentrenamiento=False, parametros=None):
@@ -24,7 +41,7 @@ def obtener_resultado_entrenamiento(forzar_reentrenamiento=False, parametros=Non
         return entrenar_y_guardar()
 
 
-def     obtener_membresias_optimizadas():
+def obtener_membresias_optimizadas():
     """Carga las membresias optimizadas desde disco si existen, o entrena desde cero."""
     resultado = cargar_modelo_optimizado()
     if resultado is not None:
@@ -42,7 +59,7 @@ def entrenar_y_guardar(
     probabilidad_cruce=PARAMETROS_AG["probabilidad_cruce"],
     probabilidad_mutacion=PARAMETROS_AG["probabilidad_mutacion"],
 ):
-    """Carga datos, ejecuta el AG sobre validacion, guarda el mejor cromosoma en disco y devuelve el resultado completo."""
+    """Carga datos, optimiza el AG con entrenamiento, elige por validacion y guarda el mejor cromosoma."""
     parametros_override = {
         "tamano_poblacion": tamano_poblacion,
         "cantidad_hijos": cantidad_hijos,
@@ -53,21 +70,34 @@ def entrenar_y_guardar(
 
     datos = cargar_datos(RUTA_CSV)
     splits = dividir_datos_estratificados(datos)
+    #print("Splits creados:", splits.keys())
+    #print("Columnas de entrenamiento:", splits["entrenamiento"].columns)
 
     datos_por_split = {}
     for nombre, tabla in splits.items():
         datos_convertidos = convertir_split_a_diccionario(tabla)
         datos_por_split[nombre] = datos_convertidos
 
-    mejor_individuo, historial = ejecutar_algoritmo_genetico(datos_por_split["validacion"], parametros_override=parametros_override,)
-    membresias_optimizadas = decodificar_cromosoma(mejor_individuo.cromosoma)
-    resultados_optimizados = evaluar_membresias_en_splits(
-        membresias_optimizadas,
-        datos_por_split,
+    mejor_individuo, historial = ejecutar_algoritmo_genetico(
+        datos_por_split["entrenamiento"],
+        datos_por_split["validacion"],
+        parametros_override=parametros_override,
     )
+    
+    membresias_optimizadas = decodificar_cromosoma(mejor_individuo.cromosoma)
 
     resultados_base = evaluar_membresias_en_splits(MEMBRESIAS_BASE, datos_por_split)
-    tabla_comparativa = crear_tabla_comparativa(resultados_base, resultados_optimizados)
+    resultados_optimizados = evaluar_membresias_en_splits(membresias_optimizadas, datos_por_split)
+
+    fitness_base = evaluar_individuo(CROMOSOMA_BASE, datos_por_split["validacion"]).fitness
+    fitness_opt = mejor_individuo.fitness
+
+    tabla_comparativa = crear_tabla_comparativa_prueba(
+        resultados_base["validacion"],
+        resultados_optimizados["validacion"],
+        fitness_base=fitness_base,
+        fitness_opt=fitness_opt,
+    )
 
     resultado = {
         "splits": splits,
@@ -100,15 +130,26 @@ def entrenar_con_progreso(parametros: dict, progress_callback=None):
         nombre: convertir_split_a_diccionario(tabla)
         for nombre, tabla in splits.items()
     }
-    resultados_base = evaluar_membresias_en_splits(MEMBRESIAS_BASE, datos_por_split)
     mejor_individuo, historial = ejecutar_algoritmo_genetico(
+        datos_por_split["entrenamiento"],
         datos_por_split["validacion"],
         parametros_override=parametros_override,
         progress_callback=progress_callback,
     )
     membresias_optimizadas = decodificar_cromosoma(mejor_individuo.cromosoma)
+
+    resultados_base = evaluar_membresias_en_splits(MEMBRESIAS_BASE, datos_por_split)
     resultados_optimizados = evaluar_membresias_en_splits(membresias_optimizadas, datos_por_split)
-    tabla_comparativa = crear_tabla_comparativa(resultados_base, resultados_optimizados)
+
+    fitness_base = evaluar_individuo(CROMOSOMA_BASE, datos_por_split["validacion"]).fitness
+    fitness_opt = mejor_individuo.fitness
+
+    tabla_comparativa = crear_tabla_comparativa_prueba(
+        resultados_base["validacion"],
+        resultados_optimizados["validacion"],
+        fitness_base=fitness_base,
+        fitness_opt=fitness_opt,
+    )
 
     resultado = {
         "splits": splits,
@@ -144,10 +185,13 @@ def cargar_modelo_optimizado():
         "fuente_modelo": "disco",
         "ruta_modelo": str(ruta_modelo),
         "fitness": datos_modelo.get("fitness", 0.0),
-        "macro_f1_validacion": datos_modelo.get("macro_f1_validacion", 0.0),
-        "recall_alto_validacion": datos_modelo.get("recall_alto_validacion", 0.0),
+        "macro_f1": _primer_valor(datos_modelo, "macro_f1", "macro_f1_validacion", default=0.0),
+        "recall_alto": _primer_valor(datos_modelo, "recall_alto", "recall_alto_validacion", default=0.0),
         "generaciones": datos_modelo.get("generaciones", 0),
-        "historial": datos_modelo.get("historial", []),
+        "historial": [
+            _normalizar_fila_historial(fila)
+            for fila in datos_modelo.get("historial", [])
+        ],
         "tabla_comparativa": datos_modelo.get("tabla_comparativa", []),
     }
 
@@ -178,10 +222,10 @@ def guardar_modelo_optimizado(resultado):
         "ruta_csv": str(RUTA_CSV),
         "mejor_cromosoma": [float(valor) for valor in mejor_individuo.cromosoma.tolist()],
         "fitness": float(mejor_individuo.fitness),
-        "macro_f1_validacion": float(mejor_individuo.macro_f1_validacion),
-        "recall_alto_validacion": float(mejor_individuo.recall_alto_validacion),
+        "macro_f1": float(mejor_individuo.macro_f1_validacion),
+        "recall_alto": float(mejor_individuo.recall_alto_validacion),
         "generaciones": int(len(historial) - 1),
-        "historial": historial_lista,
+        "historial": [_normalizar_fila_historial(fila) for fila in historial_lista],
         "tabla_comparativa": comparativa_lista,
     }
     Path(RUTA_MODELO_OPTIMIZADO).write_text(

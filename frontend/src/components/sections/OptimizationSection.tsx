@@ -40,10 +40,10 @@ const PARAM_SPECS: ParamSpec[] = [
 ];
 
 interface SummaryData {
-  mejor_fitness: number;
+  fitness: number;
   generaciones: number;
-  macro_f1_validacion: number;
-  recall_alto_validacion: number;
+  macro_f1: number;
+  recall_alto: number;
 }
 
 type TabKey = "log" | "cromosoma";
@@ -131,18 +131,18 @@ export function OptimizationSection() {
         if (evento.tipo === "generacion") {
           const gen: GeneracionHistorial = {
             generacion: evento.generacion,
-            mejor_fitness: evento.mejor_fitness,
+            fitness: evento.fitness,
             fitness_promedio: evento.fitness_promedio,
-            macro_f1_validacion: evento.macro_f1_validacion,
-            recall_alto_validacion: evento.recall_alto_validacion,
+            macro_f1: evento.macro_f1,
+            recall_alto: evento.recall_alto,
           };
           setLiveGens((prev) => [...prev, gen]);
           setLiveMembresias(evento.membresias_decodificadas);
           const line =
             `Gen ${String(evento.generacion).padStart(3, "0")}  ` +
-            `fitness=${evento.mejor_fitness.toFixed(4)}  ` +
-            `macro_f1=${evento.macro_f1_validacion.toFixed(4)}  ` +
-            `recall_alto=${evento.recall_alto_validacion.toFixed(4)}`;
+            `fitness=${evento.fitness.toFixed(4)}  ` +
+            `macro_f1=${evento.macro_f1.toFixed(4)}  ` +
+            `recall_alto=${evento.recall_alto.toFixed(4)}`;
           setLogLines((prev) => [...prev, line]);
         } else if (evento.tipo === "done") {
           setLogLines((prev) => [
@@ -201,9 +201,9 @@ export function OptimizationSection() {
   const isRefreshing = !retraining && loading && liveGens.length > 0;
 
   const cardData: SummaryData | null = lastLive
-    ? { mejor_fitness: lastLive.mejor_fitness, generaciones: lastLive.generacion, macro_f1_validacion: lastLive.macro_f1_validacion, recall_alto_validacion: lastLive.recall_alto_validacion }
+    ? { fitness: lastLive.fitness, generaciones: lastLive.generacion, macro_f1: lastLive.macro_f1, recall_alto: lastLive.recall_alto }
     : historial?.disponible
-    ? { mejor_fitness: historial.mejor_fitness, generaciones: historial.generaciones, macro_f1_validacion: historial.macro_f1_validacion, recall_alto_validacion: historial.recall_alto_validacion }
+    ? { fitness: historial.fitness, generaciones: historial.generaciones, macro_f1: historial.macro_f1, recall_alto: historial.recall_alto }
     : null;
 
   const chartGens: GeneracionHistorial[] | null =
@@ -260,11 +260,11 @@ export function OptimizationSection() {
                 Gen {String(lastLive.generacion).padStart(3, "0")}
               </span>
               <span className="mx-2 text-slate-300">|</span>
-              fitness <span className="font-semibold">{lastLive.mejor_fitness.toFixed(4)}</span>
+              fitness <span className="font-semibold">{lastLive.fitness.toFixed(4)}</span>
               <span className="mx-2 text-slate-300">|</span>
-              macro_f1 <span className="font-semibold">{lastLive.macro_f1_validacion.toFixed(4)}</span>
+              macro_f1 <span className="font-semibold">{lastLive.macro_f1.toFixed(4)}</span>
               <span className="mx-2 text-slate-300">|</span>
-              recall_alto <span className="font-semibold">{lastLive.recall_alto_validacion.toFixed(4)}</span>
+              recall_alto <span className="font-semibold">{lastLive.recall_alto.toFixed(4)}</span>
             </span>
           ) : (
             <span className="text-xs text-cyan-700">Iniciando algoritmo genetico...</span>
@@ -567,10 +567,10 @@ function ReentrenarModal({
 
 function SummaryCards({ data, isLive }: { data: SummaryData; isLive?: boolean }) {
   const cards = [
-    { label: "Mejor fitness",     value: data.mejor_fitness.toFixed(4),                         detail: "Fitness maximo en validacion." },
+    { label: "Mejor fitness",     value: data.fitness.toFixed(4),                                detail: "Fitness maximo observado." },
     { label: "Generaciones",      value: data.generaciones.toString(),                           detail: isLive ? "Generacion actual en curso." : "Generaciones hasta convergencia." },
-    { label: "Macro F1",          value: (data.macro_f1_validacion * 100).toFixed(1) + "%",      detail: "F1 macro ponderado en validacion." },
-    { label: "Recall alto riesgo",value: (data.recall_alto_validacion * 100).toFixed(1) + "%",   detail: "Recall de la clase de riesgo alto." },
+    { label: "Macro F1",          value: (data.macro_f1 * 100).toFixed(1) + "%",                 detail: "F1 macro ponderado." },
+    { label: "Recall alto riesgo",value: (data.recall_alto * 100).toFixed(1) + "%",              detail: "Recall de la clase de riesgo alto." },
   ];
 
   return (
@@ -633,7 +633,7 @@ function ConvergenceChart({ gens, isLive }: { gens: GeneracionHistorial[]; isLiv
         symbol: "none",
         lineStyle: { width: 3, color: "#38bdf8" },
         areaStyle: { color: "rgba(56,189,248,0.10)" },
-        data: gens.map((g) => g.mejor_fitness),
+        data: gens.map((g) => g.fitness),
       },
       {
         name: "Fitness promedio",
@@ -669,20 +669,14 @@ function ConvergenceChart({ gens, isLive }: { gens: GeneracionHistorial[]; isLiv
   );
 }
 
-// ── Panel de comparación (apilado para columna derecha) ───────────────────────
+// ── Panel de comparación ──────────────────────────────────────────────────────
 
-const CLASES_COMPARACION = ["low risk", "mid risk", "high risk"] as const;
-const METRICAS_COMPARACION = ["Precision", "Recall", "F1"] as const;
+const METRICAS_COMPARACION = ["Macro F1", "Recall alto", "Fitness"] as const;
 
-function makeMetricBarOption(
-  metricLabel: string,
-  rows: GAComparacionResponse["tabla_comparativa"],
-) {
-  const claseRows = CLASES_COMPARACION.map((clase) => {
-    const found = rows.find((r) => r.metrica === `${metricLabel} ${clase}`);
-    return found ?? { metrica: `${metricLabel} ${clase}`, base: 0, optimizado: 0, delta: 0 };
-  });
-  return {
+function ComparisonPanel({ comparacion }: { comparacion: GAComparacionResponse }) {
+  const rows = comparacion.tabla_comparativa;
+
+  const chartOption = {
     backgroundColor: "transparent",
     animation: false,
     animationDuration: 0,
@@ -694,71 +688,59 @@ function makeMetricBarOption(
       borderColor: "rgba(125,211,252,0.65)",
       textStyle: { color: "#0f172a" },
       formatter: (params: { seriesName: string; value: number }[]) =>
-        params.map((p) => `${p.seriesName}: ${Number(p.value).toFixed(3)}`).join("<br/>"),
+        params.map((p) => `${p.seriesName}: ${Number(p.value).toFixed(4)}`).join("<br/>"),
     },
     legend: {
       data: ["Base", "Opt."],
-      textStyle: { color: "rgba(15,23,42,0.82)", fontSize: 10 },
-      top: 2,
-      right: 4,
+      textStyle: { color: "rgba(15,23,42,0.82)" },
+      top: 4,
     },
-    grid: { left: 6, right: 6, top: 28, bottom: 4, containLabel: true },
+    grid: { left: 8, right: 8, top: 40, bottom: 8, containLabel: true },
     xAxis: {
       type: "category",
-      data: CLASES_COMPARACION.map((c) => c.replace(" risk", "")),
-      axisLabel: { color: "rgba(30,41,59,0.82)", fontSize: 10 },
+      data: METRICAS_COMPARACION,
+      axisLabel: { color: "rgba(30,41,59,0.82)", fontSize: 11 },
       axisLine: { lineStyle: { color: "rgba(148,163,184,0.35)" } },
     },
     yAxis: {
       type: "value",
       min: 0,
-      max: 1,
-      axisLabel: { color: "rgba(30,41,59,0.82)", fontSize: 9 },
+      axisLabel: { color: "rgba(30,41,59,0.82)", fontSize: 10 },
       splitLine: { lineStyle: { color: "rgba(148,163,184,0.16)" } },
     },
     series: [
       {
         name: "Base",
         type: "bar",
-        barMaxWidth: 20,
-        itemStyle: { color: "rgba(148,163,184,0.55)", borderRadius: [4, 4, 0, 0] },
-        data: claseRows.map((r) => Number(r.base.toFixed(4))),
+        barMaxWidth: 40,
+        itemStyle: { color: "rgba(148,163,184,0.55)", borderRadius: [5, 5, 0, 0] },
+        data: METRICAS_COMPARACION.map((m) => {
+          const r = rows.find((row) => row.metrica === m);
+          return r ? Number(r.base.toFixed(4)) : 0;
+        }),
       },
       {
         name: "Opt.",
         type: "bar",
-        barMaxWidth: 20,
-        itemStyle: { color: "#38bdf8", borderRadius: [4, 4, 0, 0] },
-        data: claseRows.map((r) => Number(r.optimizado.toFixed(4))),
+        barMaxWidth: 40,
+        itemStyle: { color: "#38bdf8", borderRadius: [5, 5, 0, 0] },
+        data: METRICAS_COMPARACION.map((m) => {
+          const r = rows.find((row) => row.metrica === m);
+          return r ? Number(r.optimizado.toFixed(4)) : 0;
+        }),
       },
     ],
   };
-}
-
-function ComparisonPanel({ comparacion }: { comparacion: GAComparacionResponse }) {
-  const rows = comparacion.tabla_comparativa;
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
-      {/* Gráficas de barras — una por métrica */}
+      {/* Gráfica agrupada */}
       <ChartPanel
-        title="Precision, Recall y F1 por clase"
+        title="Macro F1, Recall alto y Fitness"
         subtitle="Cromosoma base (gris) vs modelo optimizado (azul) — split de prueba."
       >
-        <div className="grid grid-cols-3 gap-3">
-          {METRICAS_COMPARACION.map((metrica) => (
-            <div key={metrica}>
-              <div className="mb-1 text-center text-xs font-medium text-slate-500">{metrica}</div>
-              <div className="h-[200px]">
-                <ReactECharts
-                  notMerge={true}
-                  lazyUpdate={false}
-                  option={makeMetricBarOption(metrica, rows)}
-                  style={{ height: "100%", width: "100%" }}
-                />
-              </div>
-            </div>
-          ))}
+        <div className="h-[300px]">
+          <ReactECharts notMerge={true} lazyUpdate={false} option={chartOption} style={{ height: "100%", width: "100%" }} />
         </div>
       </ChartPanel>
 
@@ -776,22 +758,20 @@ function ComparisonPanel({ comparacion }: { comparacion: GAComparacionResponse }
               </tr>
             </thead>
             <tbody>
-              {METRICAS_COMPARACION.flatMap((metrica) =>
-                CLASES_COMPARACION.map((clase) => {
-                  const row = rows.find((r) => r.metrica === `${metrica} ${clase}`);
-                  if (!row) return null;
-                  return (
+              {METRICAS_COMPARACION.map((metrica) => {
+                const row = rows.find((r) => r.metrica === metrica);
+                if (!row) return null;
+                return (
                     <tr key={row.metrica} className="border-b border-sky-50">
-                      <td className="py-2 pr-4 text-slate-700 text-xs">{row.metrica}</td>
-                      <td className="py-2 px-3 text-right font-mono text-slate-400">{row.base.toFixed(3)}</td>
-                      <td className="py-2 px-3 text-right font-mono font-semibold text-cyan-700">{row.optimizado.toFixed(3)}</td>
-                      <td className={cn("py-2 pl-3 text-right font-mono", row.delta >= 0 ? "text-emerald-600" : "text-rose-600")}>
+                      <td className="py-2.5 pr-4 text-slate-700">{row.metrica}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-400">{row.base.toFixed(3)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono font-semibold text-cyan-700">{row.optimizado.toFixed(3)}</td>
+                      <td className={cn("py-2.5 pl-3 text-right font-mono", row.delta >= 0 ? "text-emerald-600" : "text-rose-600")}>
                         {row.delta >= 0 ? "+" : ""}{row.delta.toFixed(3)}
                       </td>
                     </tr>
                   );
-                })
-              )}
+              })}
             </tbody>
           </table>
         </div>

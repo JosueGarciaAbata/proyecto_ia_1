@@ -59,19 +59,19 @@ export interface ExplicacionResponse {
 
 export interface GeneracionHistorial {
   generacion: number;
-  mejor_fitness: number;
+  fitness: number;
   fitness_promedio: number;
-  macro_f1_validacion: number;
-  recall_alto_validacion: number;
+  macro_f1: number;
+  recall_alto: number;
 }
 
 export interface GAHistorialResponse {
   disponible: boolean;
   historial_generaciones: GeneracionHistorial[];
-  mejor_fitness: number;
+  fitness: number;
   generaciones: number;
-  macro_f1_validacion: number;
-  recall_alto_validacion: number;
+  macro_f1: number;
+  recall_alto: number;
 }
 
 export interface ComparacionRow {
@@ -423,17 +423,17 @@ export interface GAProgresoDone {
   exito: boolean;
   fitness: number;
   generaciones: number;
-  macro_f1_validacion: number;
-  recall_alto_validacion: number;
+  macro_f1: number;
+  recall_alto: number;
 }
 
 export interface GAProgresoGeneracion {
   tipo: "generacion";
   generacion: number;
-  mejor_fitness: number;
+  fitness: number;
   fitness_promedio: number;
-  macro_f1_validacion: number;
-  recall_alto_validacion: number;
+  macro_f1: number;
+  recall_alto: number;
   membresias_decodificadas: Record<string, Record<string, number[]>>;
 }
 
@@ -445,7 +445,7 @@ export interface GAProgresoError {
 export type GAProgresoEvento = GAProgresoGeneracion | GAProgresoDone | GAProgresoError;
 
 export async function reentrenarGA(params: ReentrenarParams = defaultReentrenarParams) {
-  return apiRequest<{ exito: boolean; fitness: number; generaciones: number; macro_f1_validacion: number; recall_alto_validacion: number }>(
+  return apiRequest<{ exito: boolean; fitness: number; generaciones: number; macro_f1: number; recall_alto: number }>(
     "/ga/reentrenar",
     { method: "POST", body: JSON.stringify(params) },
   );

@@ -41,18 +41,19 @@ def obtener_historial_ga() -> dict:
         return {
             "disponible": False,
             "historial_generaciones": [],
-            "mejor_fitness": 0.0,
+            "fitness": 0.0,
             "generaciones": 0,
-            "macro_f1_validacion": 0.0,
-            "recall_alto_validacion": 0.0,
+            "macro_f1": 0.0,
+            "recall_alto": 0.0,
         }
+    print("aqui")
     return {
         "disponible": True,
         "historial_generaciones": resultado["historial"],
-        "mejor_fitness": resultado.get("fitness", 0.0),
+        "fitness": resultado.get("fitness", 0.0),
         "generaciones": resultado.get("generaciones", 0),
-        "macro_f1_validacion": resultado.get("macro_f1_validacion", 0.0),
-        "recall_alto_validacion": resultado.get("recall_alto_validacion", 0.0),
+        "macro_f1": resultado.get("macro_f1", 0.0),
+        "recall_alto": resultado.get("recall_alto", 0.0),
     }
 
 
@@ -71,6 +72,7 @@ def obtener_comparacion_ga() -> dict:
         var: {cat: puntos.tolist() for cat, puntos in cats.items()}
         for var, cats in membresias.items()
     }
+    print("tabla_comparativa", resultado.get("tabla_comparativa", []))
     return {
         "disponible": True,
         "tabla_comparativa": resultado.get("tabla_comparativa", []),
@@ -93,8 +95,8 @@ def reentrenar_ga_con_progreso(parametros: dict, progress_callback) -> dict:
         "exito": True,
         "fitness": float(mejor.fitness),
         "generaciones": int(len(resultado["historial"]) - 1),
-        "macro_f1_validacion": float(mejor.macro_f1_validacion),
-        "recall_alto_validacion": float(mejor.recall_alto_validacion),
+        "macro_f1": float(mejor.macro_f1_validacion),
+        "recall_alto": float(mejor.recall_alto_validacion),
     }
 
 
@@ -108,8 +110,8 @@ def reentrenar_ga(parametros: dict | None = None) -> dict:
         "exito": True,
         "fitness": float(mejor.fitness),
         "generaciones": int(len(resultado["historial"]) - 1),
-        "macro_f1_validacion": float(mejor.macro_f1_validacion),
-        "recall_alto_validacion": float(mejor.recall_alto_validacion),
+        "macro_f1": float(mejor.macro_f1_validacion),
+        "recall_alto": float(mejor.recall_alto_validacion),
     }
 
 

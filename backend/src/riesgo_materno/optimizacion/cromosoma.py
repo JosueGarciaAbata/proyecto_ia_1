@@ -46,7 +46,7 @@ def reparar_trapecio(trapecio, limite_inferior, limite_superior, epsilon):
     )
     a, b, c, d = trapecio
 
-    ancho_minimo = max(epsilon * 0.5,0.000001)
+    ancho_minimo = max(epsilon * 0.5, 0.000001)
 
     if d - a < ancho_minimo:
         # Si el soporte es muy pequeno, se abre un poco desde el centro.
